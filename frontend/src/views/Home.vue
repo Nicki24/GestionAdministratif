@@ -5,11 +5,11 @@
       <p>Gestion complète des bordereaux et dossiers</p>
     </div>
 
-    <div class="stats-grid">
+    <div class="stats-grid" v-if="!loading && !error">
       <div class="stat-card">
         <div class="stat-icon">📋</div>
         <div class="stat-info">
-          <h3>24</h3>
+          <h3>{{ stats.bordereauxCount }}</h3>
           <p>Bordereaux Actifs</p>
         </div>
       </div>
@@ -17,7 +17,7 @@
       <div class="stat-card">
         <div class="stat-icon">📁</div>
         <div class="stat-info">
-          <h3>156</h3>
+          <h3>{{ stats.dossiersCount }}</h3>
           <p>Dossiers Traités</p>
         </div>
       </div>
@@ -25,7 +25,7 @@
       <div class="stat-card">
         <div class="stat-icon">✅</div>
         <div class="stat-info">
-          <h3>92%</h3>
+          <h3>{{ stats.successRate }}%</h3>
           <p>Taux de Réussite</p>
         </div>
       </div>
@@ -33,34 +33,31 @@
       <div class="stat-card">
         <div class="stat-icon">⚡</div>
         <div class="stat-info">
-          <h3>2.4h</h3>
+          <h3>{{ stats.averageTime }}</h3>
           <p>Temps Moyen</p>
         </div>
       </div>
     </div>
 
+    <div v-if="loading" class="loading-section">
+      <div class="spinner"></div>
+      <p>Chargement des statistiques...</p>
+    </div>
+
+    <div v-if="error" class="error-section">
+      <div class="error-icon">❌</div>
+      <p>{{ error }}</p>
+      <button @click="loadStats" class="btn-retry">Réessayer</button>
+    </div>
+
     <div class="recent-activity">
       <h3>Activité Récente</h3>
       <div class="activity-list">
-        <div class="activity-item">
-          <span class="activity-icon">➕</span>
+        <div class="activity-item" v-for="(activity, index) in recentActivities" :key="index">
+          <span class="activity-icon">{{ activity.icon }}</span>
           <div class="activity-content">
-            <p>Nouveau bordereau créé</p>
-            <span class="activity-time">Il y a 2 minutes</span>
-          </div>
-        </div>
-        <div class="activity-item">
-          <span class="activity-icon">📊</span>
-          <div class="activity-content">
-            <p>Rapport mensuel généré</p>
-            <span class="activity-time">Il y a 1 heure</span>
-          </div>
-        </div>
-        <div class="activity-item">
-          <span class="activity-icon">✅</span>
-          <div class="activity-content">
-            <p>Bordereau #456 approuvé</p>
-            <span class="activity-time">Il y a 3 heures</span>
+            <p>{{ activity.text }}</p>
+            <span class="activity-time">{{ activity.time }}</span>
           </div>
         </div>
       </div>
@@ -69,9 +66,61 @@
 </template>
 
 <script>
+import { bordereauService, dossierService } from '../services/api';
+
 export default {
-  name: 'HomeView'
-}
+  name: 'HomeView',
+  data() {
+    return {
+      loading: true,
+      error: null,
+      stats: {
+        bordereauxCount: 0,
+        dossiersCount: 0,
+        successRate: 0,
+        averageTime: '0h',
+      },
+      recentActivities: [
+        { icon: '➕', text: 'Nouveau bordereau créé', time: 'Il y a 2 minutes' },
+        { icon: '📊', text: 'Rapport mensuel généré', time: 'Il y a 1 heure' },
+        { icon: '✅', text: 'Bordereau #456 approuvé', time: 'Il y a 3 heures' },
+      ],
+    };
+  },
+  async mounted() {
+    await this.loadStats();
+  },
+  methods: {
+    async loadStats() {
+      try {
+        this.loading = true;
+        this.error = null;
+
+        // Récupérer les bordereaux
+        const bordereauxResponse = await bordereauService.getBordereaux();
+        if (bordereauxResponse.status === 'success') {
+          this.stats.bordereauxCount = bordereauxResponse.data.length;
+        }
+
+        // Récupérer les dossiers
+        const dossiersResponse = await dossierService.getDossiers();
+        if (dossiersResponse.status === 'success') {
+          this.stats.dossiersCount = dossiersResponse.data.length;
+        } else {
+          this.stats.dossiersCount = 0; // Fallback si l'API ne renvoie pas de status
+        }
+
+        // Calculs fictifs (à ajuster selon tes besoins réels)
+        this.stats.successRate = 92; // Exemple statique, à remplacer par une logique réelle
+        this.stats.averageTime = '2.4h'; // Exemple statique
+      } catch (error) {
+        this.error = error.message || 'Erreur lors du chargement des statistiques';
+      } finally {
+        this.loading = false;
+      }
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -125,6 +174,50 @@ export default {
 .stat-info p {
   opacity: 0.9;
   font-size: 0.9rem;
+}
+
+.loading-section {
+  text-align: center;
+  padding: 20px;
+}
+
+.spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 10px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-section {
+  text-align: center;
+  padding: 20px;
+  color: #e74c3c;
+}
+
+.error-icon {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.btn-retry {
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-retry:hover {
+  background: #2980b9;
 }
 
 .recent-activity h3 {

@@ -1,10 +1,9 @@
 <template>
-  <!-- Identique au code fourni -->
   <div class="bordereaux-page">
     <!-- En-tête de page -->
     <div class="page-header">
       <h2>📋 Gestion des Bordereaux</h2>
-      <button class="btn-primary" @click="showAddModal = true">
+      <button class="btn-primary" @click="showAddModal = true" :disabled="loading">
         <span class="btn-icon">➕</span>
         Nouveau Bordereau
       </button>
@@ -18,12 +17,13 @@
           type="text"
           placeholder="Rechercher par référence ou objet..."
           class="search-input"
+          :disabled="loading"
         />
         <span class="search-icon">🔍</span>
       </div>
       
       <div class="filter-group">
-        <select v-model="statusFilter" class="filter-select">
+        <select v-model="statusFilter" class="filter-select" :disabled="loading">
           <option value="">Tous les statuts</option>
           <option value="Mandatement">Mandatement</option>
           <option value="Secours">Secours</option>
@@ -48,16 +48,14 @@
       </div>
 
       <!-- État vide -->
-      <div v-else-if="filteredBordereaux.length === 0">
-        <div class="empty-state">
-          <div class="empty-icon">📋</div>
-          <h3>Aucun bordereau trouvé</h3>
-          <p v-if="searchQuery || statusFilter">Aucun résultat pour vos critères de recherche</p>
-          <p v-else>Commencez par créer votre premier bordereau</p>
-          <button class="btn-primary" @click="showAddModal = true">
-            ➕ Créer un bordereau
-          </button>
-        </div>
+      <div v-else-if="filteredBordereaux.length === 0" class="empty-state">
+        <div class="empty-icon">📋</div>
+        <h3>Aucun bordereau trouvé</h3>
+        <p v-if="searchQuery || statusFilter">Aucun résultat pour vos critères de recherche</p>
+        <p v-else>Commencez par créer votre premier bordereau</p>
+        <button class="btn-primary" @click="showAddModal = true" :disabled="loading">
+          ➕ Créer un bordereau
+        </button>
       </div>
 
       <!-- Tableau des bordereaux -->
@@ -116,17 +114,18 @@
                 </div>
               </td>
               <td class="actions-cell">
-                <button 
+                <router-link
+                  :to="{ name: 'Dossier', params: { id_bordereau: bordereau.id_bordereau }}"
                   class="btn-action view-btn"
-                  @click="viewBordereau(bordereau)"
-                  title="Voir détails"
+                  title="Voir dossiers"
                 >
-                  👀
-                </button>
+                  📂
+                </router-link>
                 <button 
                   class="btn-action edit-btn"
                   @click="editBordereau(bordereau)"
                   title="Modifier"
+                  :disabled="loading"
                 >
                   ✏️
                 </button>
@@ -134,6 +133,7 @@
                   class="btn-action delete-btn"
                   @click="confirmDelete(bordereau)"
                   title="Supprimer"
+                  :disabled="loading"
                 >
                   🗑️
                 </button>
@@ -146,7 +146,7 @@
         <div class="pagination" v-if="filteredBordereaux.length > itemsPerPage">
           <button 
             @click="prevPage" 
-            :disabled="currentPage === 1"
+            :disabled="currentPage === 1 || loading"
             class="pagination-btn"
           >
             ← Précédent
@@ -158,7 +158,7 @@
           
           <button 
             @click="nextPage" 
-            :disabled="currentPage === totalPages"
+            :disabled="currentPage === totalPages || loading"
             class="pagination-btn"
           >
             Suivant →
@@ -190,6 +190,7 @@
                 required
                 placeholder="Ex: 206/MEC"
                 class="form-input"
+                :disabled="saving"
               />
             </div>
             
@@ -201,12 +202,13 @@
                 placeholder="Description du bordereau..."
                 rows="3"
                 class="form-textarea"
+                :disabled="saving"
               ></textarea>
             </div>
             
             <div class="form-group">
               <label>Statut *</label>
-              <select v-model="formData.statut" required class="form-select">
+              <select v-model="formData.statut" required class="form-select" :disabled="saving">
                 <option value="">Sélectionner un statut</option>
                 <option value="Mandatement">Mandatement</option>
                 <option value="Secours">Secours</option>
@@ -215,7 +217,7 @@
             </div>
             
             <div class="form-actions">
-              <button type="button" @click="closeModal" class="btn-cancel">
+              <button type="button" @click="closeModal" class="btn-cancel" :disabled="saving">
                 Annuler
               </button>
               <button type="submit" class="btn-submit" :disabled="saving">
@@ -240,7 +242,7 @@
           <p class="warning-text">⚠️ Cette action est irréversible !</p>
           
           <div class="delete-actions">
-            <button @click="showDeleteModal = false" class="btn-cancel">
+            <button @click="showDeleteModal = false" class="btn-cancel" :disabled="deleting">
               Annuler
             </button>
             <button @click="deleteBordereau" class="btn-delete" :disabled="deleting">
@@ -259,12 +261,14 @@
 <script>
 import { bordereauService } from '../services/api';
 import { useNotification } from '@kyvg/vue3-notification';
+import { useRouter } from 'vue-router';
 
 export default {
   name: 'BordereauxView',
   setup() {
     const { notify } = useNotification();
-    return { notify };
+    const router = useRouter();
+    return { notify, router };
   },
   data() {
     return {
@@ -298,14 +302,14 @@ export default {
   },
   computed: {
     filteredBordereaux() {
-      let filtered = this.bordereaux;
+      let filtered = [...this.bordereaux];
 
       // Filtre par recherche
       if (this.searchQuery) {
         const query = this.searchQuery.toLowerCase();
         filtered = filtered.filter(b => 
           b.reference.toLowerCase().includes(query) ||
-          b.objet.toLowerCase().includes(query)
+          (b.objet && b.objet.toLowerCase().includes(query))
         );
       }
 
@@ -362,18 +366,21 @@ export default {
         this.loading = true;
         this.error = null;
         
-        // Utilisation correcte du service API
         const response = await bordereauService.getBordereaux();
         
-        // Vérifier la structure de réponse
-        if (response.status === "success") {
+        if (response.status === 'success' && Array.isArray(response.data)) {
           this.bordereaux = response.data;
         } else {
-          this.error = response.message || "Erreur lors du chargement";
+          this.error = response.message || 'Erreur : Données invalides reçues de l\'API';
         }
       } catch (error) {
-        console.error("Erreur détaillée:", error);
-        this.error = error.message || "Erreur de connexion à l'API. Vérifiez que le serveur est démarré.";
+        console.error('Erreur détaillée:', error);
+        this.error = error.message || 'Erreur de connexion à l\'API. Vérifiez que le serveur est démarré.';
+        this.notify({
+          title: 'Erreur',
+          text: this.error,
+          type: 'error'
+        });
       } finally {
         this.loading = false;
       }
@@ -389,7 +396,10 @@ export default {
     },
 
     viewBordereau(bordereau) {
-      alert(`Détails du bordereau:\n\nID: ${bordereau.id_bordereau}\nRérérence: ${bordereau.reference}\nStatut: ${bordereau.statut}\n\nDescription: ${bordereau.objet}`);
+      this.router.push({
+        name: 'Dossier',
+        params: { id_bordereau: bordereau.id_bordereau }
+      });
     },
 
     editBordereau(bordereau) {
@@ -408,26 +418,23 @@ export default {
         this.deleting = true;
         const response = await bordereauService.deleteBordereau(this.bordereauToDelete.id_bordereau);
         
-        if (response.status === "success") {
-          // Recharger la liste
+        if (response.status === 'success') {
           await this.loadBordereaux();
           this.showDeleteModal = false;
-          
           this.notify({
             title: 'Succès',
             text: response.message || 'Bordereau supprimé avec succès',
             type: 'success'
           });
         } else {
-          throw new Error(response.message || "Erreur lors de la suppression");
+          throw new Error(response.message || 'Erreur lors de la suppression');
         }
       } catch (error) {
         console.error('Erreur suppression:', error);
-        this.error = error.message || "Erreur lors de la suppression";
-        
+        this.error = error.message || 'Erreur lors de la suppression';
         this.notify({
           title: 'Erreur',
-          text: error.message || "Erreur lors de la suppression",
+          text: this.error,
           type: 'error'
         });
       } finally {
@@ -438,37 +445,30 @@ export default {
     async saveBordereau() {
       try {
         this.saving = true;
-        
         let response;
         if (this.isEditing) {
-          response = await bordereauService.updateBordereau(
-            this.formData.id_bordereau,
-            this.formData
-          );
+          response = await bordereauService.updateBordereau(this.formData.id_bordereau, this.formData);
         } else {
           response = await bordereauService.addBordereau(this.formData);
         }
         
-        if (response.status === "success") {
-          // Recharger la liste et fermer le modal
+        if (response.status === 'success') {
           await this.loadBordereaux();
           this.closeModal();
-          
           this.notify({
             title: 'Succès',
             text: response.message || `Bordereau ${this.isEditing ? 'modifié' : 'créé'} avec succès`,
             type: 'success'
           });
         } else {
-          throw new Error(response.message || "Erreur lors de la sauvegarde");
+          throw new Error(response.message || 'Erreur lors de la sauvegarde');
         }
       } catch (error) {
         console.error('Erreur sauvegarde:', error);
-        this.error = error.message || "Erreur lors de la sauvegarde";
-        
+        this.error = error.message || 'Erreur lors de la sauvegarde';
         this.notify({
           title: 'Erreur',
-          text: error.message || "Erreur lors de la sauvegarde",
+          text: this.error,
           type: 'error'
         });
       } finally {
@@ -485,16 +485,17 @@ export default {
         objet: '',
         statut: ''
       };
+      this.error = null;
     },
 
     nextPage() {
-      if (this.currentPage < this.totalPages) {
+      if (this.currentPage < this.totalPages && !this.loading) {
         this.currentPage++;
       }
     },
 
     prevPage() {
-      if (this.currentPage > 1) {
+      if (this.currentPage > 1 && !this.loading) {
         this.currentPage--;
       }
     },
@@ -515,6 +516,7 @@ export default {
     },
 
     truncateText(text, length) {
+      if (!text) return '';
       return text.length > length ? text.substring(0, length) + '...' : text;
     }
   }
@@ -567,8 +569,13 @@ export default {
   transition: background-color 0.3s ease;
 }
 
-.btn-primary:hover {
+.btn-primary:hover:not(:disabled) {
   background-color: #0056b3;
+}
+
+.btn-primary:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
 }
 
 .btn-icon {
@@ -605,6 +612,11 @@ export default {
   box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
 }
 
+.search-input:disabled {
+  background-color: #f8f9fa;
+  cursor: not-allowed;
+}
+
 .search-icon {
   position: absolute;
   right: 12px;
@@ -632,6 +644,11 @@ export default {
   outline: none;
   border-color: #007bff;
   box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.filter-select:disabled {
+  background-color: #f8f9fa;
+  cursor: not-allowed;
 }
 
 /* Contenu principal */
@@ -779,21 +796,29 @@ export default {
   cursor: pointer;
   font-size: 16px;
   transition: background-color 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
 }
 
-.view-btn:hover {
+.btn-action:hover:not(:disabled) {
   background-color: #007bff;
   color: #ffffff;
 }
 
-.edit-btn:hover {
+.btn-action.edit-btn:hover:not(:disabled) {
   background-color: #ffc107;
+  color: #000;
+}
+
+.btn-action.delete-btn:hover:not(:disabled) {
+  background-color: #dc3545;
   color: #ffffff;
 }
 
-.delete-btn:hover {
-  background-color: #dc3545;
-  color: #ffffff;
+.btn-action:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+  color: #fff;
 }
 
 /* Pagination */
@@ -920,6 +945,13 @@ export default {
   box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
 }
 
+.form-input:disabled,
+.form-textarea:disabled,
+.form-select:disabled {
+  background-color: #f8f9fa;
+  cursor: not-allowed;
+}
+
 .form-textarea {
   resize: vertical;
 }
@@ -941,8 +973,13 @@ export default {
   transition: background-color 0.3s ease;
 }
 
-.btn-cancel:hover {
+.btn-cancel:hover:not(:disabled) {
   background-color: #f8f9fa;
+}
+
+.btn-cancel:disabled {
+  background-color: #f8f9fa;
+  cursor: not-allowed;
 }
 
 .btn-submit {
@@ -955,7 +992,7 @@ export default {
   transition: background-color 0.3s ease;
 }
 
-.btn-submit:hover {
+.btn-submit:hover:not(:disabled) {
   background-color: #0056b3;
 }
 
@@ -974,7 +1011,7 @@ export default {
   transition: background-color 0.3s ease;
 }
 
-.btn-delete:hover {
+.btn-delete:hover:not(:disabled) {
   background-color: #c82333;
 }
 

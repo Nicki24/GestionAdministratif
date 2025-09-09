@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Home from "../views/Home.vue";
 import Bordereaux from "../views/Bordereaux.vue";
-import Dossiers from "../views/Dossiers.vue";
+import Dossier from "../views/Dossiers.vue";
 
 const routes = [
   { 
@@ -17,10 +17,11 @@ const routes = [
     meta: { title: "Bordereaux - CoachPro" }
   },
   { 
-    path: "/dossiers", 
-    name: "Dossiers", 
-    component: Dossiers,
-    meta: { title: "Dossiers - CoachPro" }
+    path: "/dossier/:id_bordereau", 
+    name: "Dossier", 
+    component: Dossier,
+    props: true,
+    meta: { title: "Dossier - CoachPro" }
   },
 ];
 
