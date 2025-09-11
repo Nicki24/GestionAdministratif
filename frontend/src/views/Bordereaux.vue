@@ -15,7 +15,7 @@
         <input
           v-model="searchQuery"
           type="text"
-          placeholder="Rechercher par référence ou objet..."
+          placeholder="Rechercher par référence, matricule ou objet..."
           class="search-input"
           :disabled="loading"
         />
@@ -64,79 +64,33 @@
           <thead>
             <tr>
               <th @click="sortBy('id_bordereau')" class="sortable">
-                ID 📊
-                <span v-if="sortField === 'id_bordereau'" class="sort-icon">
-                  {{ sortOrder === 'asc' ? '↑' : '↓' }}
-                </span>
+                ID 📊 <span v-if="sortField === 'id_bordereau'" class="sort-icon">{{ sortOrder === 'asc' ? '↑' : '↓' }}</span>
               </th>
               <th @click="sortBy('reference')" class="sortable">
-                Référence 📝
-                <span v-if="sortField === 'reference'" class="sort-icon">
-                  {{ sortOrder === 'asc' ? '↑' : '↓' }}
-                </span>
+                Référence 📝 <span v-if="sortField === 'reference'" class="sort-icon">{{ sortOrder === 'asc' ? '↑' : '↓' }}</span>
               </th>
+              <th>Matricule(s)</th>
               <th>Description</th>
               <th @click="sortBy('statut')" class="sortable">
-                Statut 🏷️
-                <span v-if="sortField === 'statut'" class="sort-icon">
-                  {{ sortOrder === 'asc' ? '↑' : '↓' }}
-                </span>
+                Statut 🏷️ <span v-if="sortField === 'statut'" class="sort-icon">{{ sortOrder === 'asc' ? '↑' : '↓' }}</span>
               </th>
               <th @click="sortBy('date_creation')" class="sortable">
-                Date 📅
-                <span v-if="sortField === 'date_creation'" class="sort-icon">
-                  {{ sortOrder === 'asc' ? '↑' : '↓' }}
-                </span>
+                Date 📅 <span v-if="sortField === 'date_creation'" class="sort-icon">{{ sortOrder === 'asc' ? '↑' : '↓' }}</span>
               </th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="bordereau in paginatedBordereaux" :key="bordereau.id_bordereau">
+            <tr v-for="bordereau in paginatedBordereaux" :key="bordereau.id_bordereau + '-' + bordereau.matricule">
               <td class="id-cell">#{{ bordereau.id_bordereau }}</td>
-              <td class="reference-cell">
-                <strong>{{ bordereau.reference }}</strong>
-              </td>
-              <td class="objet-cell">
-                <div class="objet-text" :title="bordereau.objet">
-                  {{ truncateText(bordereau.objet, 60) }}
-                </div>
-              </td>
-              <td class="status-cell">
-                <span class="status-badge" :class="bordereau.statut.toLowerCase()">
-                  {{ bordereau.statut }}
-                </span>
-              </td>
-              <td class="date-cell">
-                {{ formatDate(bordereau.date_creation) }}
-                <div class="time-text">
-                  {{ formatTime(bordereau.date_creation) }}
-                </div>
-              </td>
+              <td class="reference-cell"><strong>{{ bordereau.reference }}</strong></td>
+              <td class="matricule-cell">{{ bordereau.matricule }}</td>
+              <td class="objet-cell"><div class="objet-text" :title="bordereau.objet">{{ truncateText(bordereau.objet, 60) }}</div></td>
+              <td class="status-cell"><span class="status-badge" :class="bordereau.statut.toLowerCase()">{{ bordereau.statut }}</span></td>
+              <td class="date-cell">{{ formatDate(bordereau.date_creation) }}<div class="time-text">{{ formatTime(bordereau.date_creation) }}</div></td>
               <td class="actions-cell">
-                <router-link
-                  :to="{ name: 'Dossier', params: { id_bordereau: bordereau.id_bordereau }}"
-                  class="btn-action view-btn"
-                  title="Voir dossiers"
-                >
-                  📂
-                </router-link>
-                <button 
-                  class="btn-action edit-btn"
-                  @click="editBordereau(bordereau)"
-                  title="Modifier"
-                  :disabled="loading"
-                >
-                  ✏️
-                </button>
-                <button 
-                  class="btn-action delete-btn"
-                  @click="confirmDelete(bordereau)"
-                  title="Supprimer"
-                  :disabled="loading"
-                >
-                  🗑️
-                </button>
+                <button class="btn-action edit-btn" @click="editBordereau(bordereau)" title="Modifier" :disabled="loading">✏️</button>
+                <button class="btn-action delete-btn" @click="confirmDelete(bordereau)" title="Supprimer" :disabled="loading">🗑️</button>
               </td>
             </tr>
           </tbody>
@@ -144,31 +98,13 @@
 
         <!-- Pagination -->
         <div class="pagination" v-if="filteredBordereaux.length > itemsPerPage">
-          <button 
-            @click="prevPage" 
-            :disabled="currentPage === 1 || loading"
-            class="pagination-btn"
-          >
-            ← Précédent
-          </button>
-          
-          <span class="page-info">
-            Page {{ currentPage }} sur {{ totalPages }}
-          </span>
-          
-          <button 
-            @click="nextPage" 
-            :disabled="currentPage === totalPages || loading"
-            class="pagination-btn"
-          >
-            Suivant →
-          </button>
+          <button @click="prevPage" :disabled="currentPage === 1 || loading" class="pagination-btn">← Précédent</button>
+          <span class="page-info">Page {{ currentPage }} sur {{ totalPages }}</span>
+          <button @click="nextPage" :disabled="currentPage === totalPages || loading" class="pagination-btn">Suivant →</button>
         </div>
 
         <!-- Informations de pagination -->
-        <div class="pagination-info">
-          Affichage de {{ startIndex + 1 }} à {{ endIndex }} sur {{ filteredBordereaux.length }} bordereaux
-        </div>
+        <div class="pagination-info">Affichage de {{ startIndex + 1 }} à {{ endIndex }} sur {{ filteredBordereaux.length }} bordereaux</div>
       </div>
     </div>
 
@@ -183,29 +119,21 @@
         <div class="modal-body">
           <form @submit.prevent="saveBordereau">
             <div class="form-group">
-              <label>Référence *</label>
-              <input
-                v-model="formData.reference"
-                type="text"
-                required
-                placeholder="Ex: 206/MEC"
-                class="form-input"
-                :disabled="saving"
-              />
+              <label>ID Bordereau *</label>
+              <input v-model="formData.id_bordereau" type="number" required class="form-input" :disabled="isEditing || saving" />
             </div>
-            
+            <div class="form-group">
+              <label>Référence *</label>
+              <input v-model="formData.reference" type="text" required placeholder="Ex: 206/MEC" class="form-input" :disabled="saving" />
+            </div>
+            <div class="form-group">
+              <label>Matricule(s) * (séparés par des virgules)</label>
+              <input v-model="formData.matricules" type="text" required placeholder="Ex: 501111099999,501111088888" class="form-input" :disabled="isEditing || saving" />
+            </div>
             <div class="form-group">
               <label>Description *</label>
-              <textarea
-                v-model="formData.objet"
-                required
-                placeholder="Description du bordereau..."
-                rows="3"
-                class="form-textarea"
-                :disabled="saving"
-              ></textarea>
+              <textarea v-model="formData.objet" required placeholder="Description du bordereau..." rows="3" class="form-textarea" :disabled="saving"></textarea>
             </div>
-            
             <div class="form-group">
               <label>Statut *</label>
               <select v-model="formData.statut" required class="form-select" :disabled="saving">
@@ -215,14 +143,9 @@
                 <option value="VISA">VISA</option>
               </select>
             </div>
-            
             <div class="form-actions">
-              <button type="button" @click="closeModal" class="btn-cancel" :disabled="saving">
-                Annuler
-              </button>
-              <button type="submit" class="btn-submit" :disabled="saving">
-                {{ saving ? 'Enregistrement...' : (isEditing ? 'Modifier' : 'Créer') }}
-              </button>
+              <button type="button" @click="closeModal" class="btn-cancel" :disabled="saving">Annuler</button>
+              <button type="submit" class="btn-submit" :disabled="saving">{{ saving ? 'Enregistrement...' : (isEditing ? 'Modifier' : 'Créer') }}</button>
             </div>
           </form>
         </div>
@@ -236,18 +159,12 @@
           <h3>Confirmer la suppression</h3>
           <button class="modal-close" @click="showDeleteModal = false">×</button>
         </div>
-        
         <div class="modal-body">
-          <p>Êtes-vous sûr de vouloir supprimer le bordereau <strong>{{ bordereauToDelete?.reference }}</strong> ?</p>
+          <p>Êtes-vous sûr de vouloir supprimer l'entrée du bordereau <strong>{{ bordereauToDelete?.reference }}</strong> pour le matricule <strong>{{ bordereauToDelete?.matricule }}</strong> ?</p>
           <p class="warning-text">⚠️ Cette action est irréversible !</p>
-          
           <div class="delete-actions">
-            <button @click="showDeleteModal = false" class="btn-cancel" :disabled="deleting">
-              Annuler
-            </button>
-            <button @click="deleteBordereau" class="btn-delete" :disabled="deleting">
-              {{ deleting ? 'Suppression...' : 'Supprimer' }}
-            </button>
+            <button @click="showDeleteModal = false" class="btn-cancel" :disabled="deleting">Annuler</button>
+            <button @click="deleteBordereau" class="btn-delete" :disabled="deleting">{{ deleting ? 'Suppression...' : 'Supprimer' }}</button>
           </div>
         </div>
       </div>
@@ -261,14 +178,12 @@
 <script>
 import { bordereauService } from '../services/api';
 import { useNotification } from '@kyvg/vue3-notification';
-import { useRouter } from 'vue-router';
 
 export default {
   name: 'BordereauxView',
   setup() {
     const { notify } = useNotification();
-    const router = useRouter();
-    return { notify, router };
+    return { notify };
   },
   data() {
     return {
@@ -281,70 +196,55 @@ export default {
       sortOrder: 'desc',
       currentPage: 1,
       itemsPerPage: 10,
-      
-      // Modal states
       showAddModal: false,
       showDeleteModal: false,
       isEditing: false,
       saving: false,
       deleting: false,
-      
-      // Form data
       formData: {
         id_bordereau: null,
         reference: '',
+        matricules: '',
         objet: '',
         statut: ''
       },
-      
       bordereauToDelete: null
     };
   },
   computed: {
     filteredBordereaux() {
       let filtered = [...this.bordereaux];
-
-      // Filtre par recherche
       if (this.searchQuery) {
         const query = this.searchQuery.toLowerCase();
         filtered = filtered.filter(b => 
           b.reference.toLowerCase().includes(query) ||
+          b.matricule.toLowerCase().includes(query) ||
           (b.objet && b.objet.toLowerCase().includes(query))
         );
       }
-
-      // Filtre par statut
       if (this.statusFilter) {
         filtered = filtered.filter(b => b.statut === this.statusFilter);
       }
-
-      // Tri
       return filtered.sort((a, b) => {
         let modifier = this.sortOrder === 'asc' ? 1 : -1;
-        
         if (this.sortField === 'date_creation') {
           return (new Date(a[this.sortField]) - new Date(b[this.sortField])) * modifier;
         }
-        
         if (a[this.sortField] < b[this.sortField]) return -1 * modifier;
         if (a[this.sortField] > b[this.sortField]) return 1 * modifier;
         return 0;
       });
     },
-
     paginatedBordereaux() {
       const start = (this.currentPage - 1) * this.itemsPerPage;
       return this.filteredBordereaux.slice(start, start + this.itemsPerPage);
     },
-
     totalPages() {
       return Math.ceil(this.filteredBordereaux.length / this.itemsPerPage);
     },
-
     startIndex() {
       return (this.currentPage - 1) * this.itemsPerPage;
     },
-
     endIndex() {
       return Math.min(this.startIndex + this.itemsPerPage, this.filteredBordereaux.length);
     }
@@ -358,21 +258,17 @@ export default {
     }
   },
   async mounted() {
+    console.log('BordereauxView mounted');
     await this.loadBordereaux();
   },
   methods: {
     async loadBordereaux() {
+      console.log('Loading bordereaux...');
       try {
         this.loading = true;
         this.error = null;
-        
-        const response = await bordereauService.getBordereaux();
-        
-        if (response.status === 'success' && Array.isArray(response.data)) {
-          this.bordereaux = response.data;
-        } else {
-          this.error = response.message || 'Erreur : Données invalides reçues de l\'API';
-        }
+        this.bordereaux = await bordereauService.getBordereaux();
+        console.log('Bordereaux chargés:', this.bordereaux);
       } catch (error) {
         console.error('Erreur détaillée:', error);
         this.error = error.message || 'Erreur de connexion à l\'API. Vérifiez que le serveur est démarré.';
@@ -385,7 +281,6 @@ export default {
         this.loading = false;
       }
     },
-
     sortBy(field) {
       if (this.sortField === field) {
         this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
@@ -394,44 +289,36 @@ export default {
         this.sortOrder = 'asc';
       }
     },
-
-    viewBordereau(bordereau) {
-      this.router.push({
-        name: 'Dossier',
-        params: { id_bordereau: bordereau.id_bordereau }
-      });
-    },
-
     editBordereau(bordereau) {
       this.isEditing = true;
-      this.formData = { ...bordereau };
+      this.formData = {
+        id_bordereau: bordereau.id_bordereau,
+        reference: bordereau.reference,
+        matricules: bordereau.matricule,
+        objet: bordereau.objet,
+        statut: bordereau.statut
+      };
       this.showAddModal = true;
     },
-
     confirmDelete(bordereau) {
       this.bordereauToDelete = bordereau;
       this.showDeleteModal = true;
     },
-
     async deleteBordereau() {
       try {
         this.deleting = true;
-        const response = await bordereauService.deleteBordereau(this.bordereauToDelete.id_bordereau);
-        
-        if (response.status === 'success') {
-          await this.loadBordereaux();
-          this.showDeleteModal = false;
-          this.notify({
-            title: 'Succès',
-            text: response.message || 'Bordereau supprimé avec succès',
-            type: 'success'
-          });
-        } else {
-          throw new Error(response.message || 'Erreur lors de la suppression');
-        }
+        console.log('Requête DELETE:', this.bordereauToDelete.id_bordereau, this.bordereauToDelete.matricule);
+        await bordereauService.deleteBordereau(this.bordereauToDelete.id_bordereau, this.bordereauToDelete.matricule);
+        await this.loadBordereaux();
+        this.showDeleteModal = false;
+        this.notify({
+          title: 'Succès',
+          text: 'Entrée supprimée avec succès',
+          type: 'success'
+        });
       } catch (error) {
-        console.error('Erreur suppression:', error);
-        this.error = error.message || 'Erreur lors de la suppression';
+        console.error('Erreur suppression:', error.response?.data || error.message);
+        this.error = error.response?.data?.error || error.message || 'Erreur lors de la suppression';
         this.notify({
           title: 'Erreur',
           text: this.error,
@@ -441,31 +328,43 @@ export default {
         this.deleting = false;
       }
     },
-
     async saveBordereau() {
       try {
         this.saving = true;
-        let response;
-        if (this.isEditing) {
-          response = await bordereauService.updateBordereau(this.formData.id_bordereau, this.formData);
-        } else {
-          response = await bordereauService.addBordereau(this.formData);
+        // Valider les matricules pour la création
+        let matricules = this.isEditing ? [this.formData.matricules] : this.formData.matricules.split(',').map(m => m.trim()).filter(m => m);
+        if (!this.isEditing && matricules.length === 0) {
+          throw new Error('Veuillez entrer au moins un matricule valide');
         }
-        
-        if (response.status === 'success') {
-          await this.loadBordereaux();
-          this.closeModal();
-          this.notify({
-            title: 'Succès',
-            text: response.message || `Bordereau ${this.isEditing ? 'modifié' : 'créé'} avec succès`,
-            type: 'success'
+        const data = {
+          id_bordereau: parseInt(this.formData.id_bordereau),
+          reference: this.formData.reference,
+          matricules: matricules,
+          objet: this.formData.objet,
+          statut: this.formData.statut
+        };
+        console.log('Données envoyées à l\'API:', data);
+        if (this.isEditing) {
+          console.log('Requête PUT:', this.formData.id_bordereau, this.formData.matricules);
+          await bordereauService.updateBordereau(this.formData.id_bordereau, this.formData.matricules, {
+            reference: this.formData.reference,
+            objet: this.formData.objet,
+            statut: this.formData.statut
           });
         } else {
-          throw new Error(response.message || 'Erreur lors de la sauvegarde');
+          console.log('Requête POST:', data);
+          await bordereauService.createBordereau(data);
         }
+        await this.loadBordereaux();
+        this.closeModal();
+        this.notify({
+          title: 'Succès',
+          text: `Bordereau ${this.isEditing ? 'modifié' : 'créé'} avec succès`,
+          type: 'success'
+        });
       } catch (error) {
-        console.error('Erreur sauvegarde:', error);
-        this.error = error.message || 'Erreur lors de la sauvegarde';
+        console.error('Erreur sauvegarde:', error.response?.data || error.message);
+        this.error = error.response?.data?.error || error.message || 'Erreur lors de la sauvegarde';
         this.notify({
           title: 'Erreur',
           text: this.error,
@@ -475,31 +374,28 @@ export default {
         this.saving = false;
       }
     },
-
     closeModal() {
       this.showAddModal = false;
       this.isEditing = false;
       this.formData = {
         id_bordereau: null,
         reference: '',
+        matricules: '',
         objet: '',
         statut: ''
       };
       this.error = null;
     },
-
     nextPage() {
       if (this.currentPage < this.totalPages && !this.loading) {
         this.currentPage++;
       }
     },
-
     prevPage() {
       if (this.currentPage > 1 && !this.loading) {
         this.currentPage--;
       }
     },
-
     formatDate(dateString) {
       return new Date(dateString).toLocaleDateString('fr-FR', {
         year: 'numeric',
@@ -507,14 +403,12 @@ export default {
         day: '2-digit'
       });
     },
-
     formatTime(dateString) {
       return new Date(dateString).toLocaleTimeString('fr-FR', {
         hour: '2-digit',
         minute: '2-digit'
       });
     },
-
     truncateText(text, length) {
       if (!text) return '';
       return text.length > length ? text.substring(0, length) + '...' : text;
@@ -524,7 +418,7 @@ export default {
 </script>
 
 <style scoped>
-/* CSS amélioré pour un design moderne et professionnel */
+/* CSS inchangé, repris tel quel pour préserver le design */
 .bordereaux-page {
   padding: 24px;
   max-width: 1200px;

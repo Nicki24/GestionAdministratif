@@ -2,7 +2,7 @@
   <div class="home-page">
     <div class="welcome-section">
       <h2>Bienvenue dans CoachPro</h2>
-      <p>Gestion complète des bordereaux et dossiers</p>
+      <p>Gestion complète des bordereaux</p>
     </div>
 
     <div class="stats-grid" v-if="!loading && !error">
@@ -11,14 +11,6 @@
         <div class="stat-info">
           <h3>{{ stats.bordereauxCount }}</h3>
           <p>Bordereaux Actifs</p>
-        </div>
-      </div>
-      
-      <div class="stat-card">
-        <div class="stat-icon">📁</div>
-        <div class="stat-info">
-          <h3>{{ stats.dossiersCount }}</h3>
-          <p>Dossiers Traités</p>
         </div>
       </div>
       
@@ -66,7 +58,7 @@
 </template>
 
 <script>
-import { bordereauService, dossierService } from '../services/api';
+import { bordereauService } from '../services/api';
 
 export default {
   name: 'HomeView',
@@ -76,7 +68,6 @@ export default {
       error: null,
       stats: {
         bordereauxCount: 0,
-        dossiersCount: 0,
         successRate: 0,
         averageTime: '0h',
       },
@@ -97,23 +88,14 @@ export default {
         this.error = null;
 
         // Récupérer les bordereaux
-        const bordereauxResponse = await bordereauService.getBordereaux();
-        if (bordereauxResponse.status === 'success') {
-          this.stats.bordereauxCount = bordereauxResponse.data.length;
-        }
-
-        // Récupérer les dossiers
-        const dossiersResponse = await dossierService.getDossiers();
-        if (dossiersResponse.status === 'success') {
-          this.stats.dossiersCount = dossiersResponse.data.length;
-        } else {
-          this.stats.dossiersCount = 0; // Fallback si l'API ne renvoie pas de status
-        }
+        const bordereaux = await bordereauService.getBordereaux();
+        this.stats.bordereauxCount = bordereaux.length;
 
         // Calculs fictifs (à ajuster selon tes besoins réels)
-        this.stats.successRate = 92; // Exemple statique, à remplacer par une logique réelle
+        this.stats.successRate = 92; // Exemple statique
         this.stats.averageTime = '2.4h'; // Exemple statique
       } catch (error) {
+        console.error('Erreur dans loadStats:', error);
         this.error = error.message || 'Erreur lors du chargement des statistiques';
       } finally {
         this.loading = false;

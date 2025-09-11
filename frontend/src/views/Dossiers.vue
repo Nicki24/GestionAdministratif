@@ -1,42 +1,73 @@
 <template>
   <div class="dossiers-page">
+    <!-- En-tête -->
     <div class="page-header">
-      <h2>Gestion des Dossiers</h2>
-      <button class="btn-primary" @click="showAddModal = true" :disabled="loading">
+      <h2 v-if="id_bordereau">Gestion des Dossiers pour Bordereau #{{ id_bordereau }}</h2>
+      <h2 v-else>Erreur : ID du Bordereau manquant</h2>
+      <button class="btn-primary" @click="showAddModal = true" :disabled="loading || !id_bordereau">
         <span class="btn-icon">📁</span>
         Nouveau Dossier
       </button>
     </div>
 
+    <!-- Filtres (recherche par matricule) -->
+    <div class="filters-section">
+      <div class="search-box">
+        <input
+          v-model="searchQuery"
+          type="text"
+          placeholder="Rechercher par matricule..."
+          class="search-input"
+          :disabled="loading || !id_bordereau"
+        />
+        <span class="search-icon">🔍</span>
+      </div>
+    </div>
+
+    <!-- Contenu principal -->
     <div class="content-section">
+      <!-- État de chargement -->
       <div v-if="loading" class="loading-section">
         <div class="spinner"></div>
         <p>Chargement des dossiers...</p>
       </div>
 
+      <!-- État d'erreur -->
       <div v-if="error" class="error-section">
         <div class="error-icon">❌</div>
         <p>{{ error }}</p>
         <button @click="loadDossiers" class="btn-retry">Réessayer</button>
       </div>
 
-      <div v-if="!loading && !error && dossiers.length === 0" class="empty-state">
+      <!-- État vide -->
+      <div v-if="!loading && !error && filteredDossiers.length === 0 && id_bordereau" class="empty-state">
         <div class="empty-icon">📁</div>
         <h3>Aucun dossier trouvé</h3>
         <p>Créez un nouveau dossier pour ce bordereau.</p>
       </div>
 
-      <div v-if="!loading && !error && dossiers.length > 0" class="dossiers-table">
+      <!-- Tableau des dossiers -->
+      <div v-if="!loading && !error && filteredDossiers.length > 0" class="dossiers-table">
         <table>
           <thead>
             <tr>
-              <th>ID Dossier</th>
-              <th>Matricule</th>
+              <th class="sortable" @click="sortBy('id_dossier')">
+                ID Dossier
+                <span class="sort-icon" v-if="sortField === 'id_dossier'">
+                  {{ sortOrder === 'asc' ? '▲' : '▼' }}
+                </span>
+              </th>
+              <th class="sortable" @click="sortBy('matricule')">
+                Matricule
+                <span class="sort-icon" v-if="sortField === 'matricule'">
+                  {{ sortOrder === 'asc' ? '▲' : '▼' }}
+                </span>
+              </th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="dossier in dossiers" :key="dossier.id_dossier">
+            <tr v-for="dossier in paginatedDossiers" :key="dossier.id_dossier">
               <td>{{ dossier.id_dossier }}</td>
               <td>{{ dossier.matricule }}</td>
               <td>
@@ -50,6 +81,20 @@
             </tr>
           </tbody>
         </table>
+
+        <!-- Pagination -->
+        <div class="pagination" v-if="filteredDossiers.length > itemsPerPage">
+          <button @click="prevPage" :disabled="currentPage === 1 || loading" class="pagination-btn">
+            ← Précédent
+          </button>
+          <span class="page-info">Page {{ currentPage }} sur {{ totalPages }}</span>
+          <button @click="nextPage" :disabled="currentPage === totalPages || loading" class="pagination-btn">
+            Suivant →
+          </button>
+        </div>
+        <div class="pagination-info">
+          Affichage de {{ startIndex + 1 }} à {{ endIndex }} sur {{ filteredDossiers.length }} dossiers
+        </div>
       </div>
     </div>
 
@@ -68,7 +113,7 @@
             </div>
             <div class="form-actions">
               <button type="button" @click="closeModal" class="btn-cancel" :disabled="saving">Annuler</button>
-              <button type="submit" class="btn-submit" :disabled="saving">{{ saving ? 'Enregistrement...' : (isEditing ? 'Modifier' : 'Créer') }}</button>
+              <button type="submit" class="btn-submit" :disabled="saving || !id_bordereau">{{ saving ? 'Enregistrement...' : (isEditing ? 'Modifier' : 'Créer') }}</button>
             </div>
           </form>
         </div>
@@ -92,11 +137,15 @@
         </div>
       </div>
     </div>
+
+    <!-- Notifications -->
+    <notifications position="top right" />
   </div>
 </template>
 
 <script>
 import { dossierService } from '../services/api';
+import { useNotification } from '@kyvg/vue3-notification';
 
 export default {
   name: 'DossierView',
@@ -106,11 +155,20 @@ export default {
       required: true
     }
   },
+  setup() {
+    const { notify } = useNotification();
+    return { notify };
+  },
   data() {
     return {
       loading: true,
       error: null,
       dossiers: [],
+      searchQuery: '',
+      sortField: 'id_dossier',
+      sortOrder: 'desc',
+      currentPage: 1,
+      itemsPerPage: 10,
       showAddModal: false,
       showDeleteModal: false,
       isEditing: false,
@@ -123,24 +181,88 @@ export default {
       dossierToDelete: null,
     };
   },
+  computed: {
+    filteredDossiers() {
+      let filtered = [...this.dossiers];
+      if (this.searchQuery) {
+        const query = this.searchQuery.toLowerCase();
+        filtered = filtered.filter(d => d.matricule.toLowerCase().includes(query));
+      }
+      return filtered.sort((a, b) => {
+        let modifier = this.sortOrder === 'asc' ? 1 : -1;
+        if (a[this.sortField] < b[this.sortField]) return -1 * modifier;
+        if (a[this.sortField] > b[this.sortField]) return 1 * modifier;
+        return 0;
+      });
+    },
+    paginatedDossiers() {
+      const start = (this.currentPage - 1) * this.itemsPerPage;
+      return this.filteredDossiers.slice(start, start + this.itemsPerPage);
+    },
+    totalPages() {
+      return Math.ceil(this.filteredDossiers.length / this.itemsPerPage);
+    },
+    startIndex() {
+      return (this.currentPage - 1) * this.itemsPerPage;
+    },
+    endIndex() {
+      return Math.min(this.startIndex + this.itemsPerPage, this.filteredDossiers.length);
+    }
+  },
+  watch: {
+    searchQuery() {
+      this.currentPage = 1;
+    }
+  },
   async mounted() {
+    console.log('DossierView mounted with id_bordereau:', this.id_bordereau); // Débogage
     await this.loadDossiers();
   },
   methods: {
     async loadDossiers() {
+      if (!this.id_bordereau) {
+        this.error = "ID du bordereau manquant. Veuillez utiliser une URL comme /dossier/1.";
+        this.notify({
+          title: 'Erreur',
+          text: this.error,
+          type: 'error'
+        });
+        this.loading = false;
+        return;
+      }
       try {
         this.loading = true;
         this.error = null;
+        console.log(`Loading dossiers for id_bordereau: ${this.id_bordereau}`); // Débogage
         const response = await dossierService.getDossiersByBordereau(this.id_bordereau);
+        console.log('API Response:', response); // Débogage
         if (response.status === 'success') {
           this.dossiers = response.data || [];
         } else {
           this.error = response.message || 'Erreur lors du chargement des dossiers';
+          this.notify({
+            title: 'Erreur',
+            text: this.error,
+            type: 'error'
+          });
         }
       } catch (error) {
         this.error = error.message || 'Erreur de connexion à l\'API';
+        this.notify({
+          title: 'Erreur',
+          text: this.error,
+          type: 'error'
+        });
       } finally {
         this.loading = false;
+      }
+    },
+    sortBy(field) {
+      if (this.sortField === field) {
+        this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+      } else {
+        this.sortField = field;
+        this.sortOrder = 'asc';
       }
     },
     editDossier(dossier) {
@@ -153,6 +275,15 @@ export default {
       this.showDeleteModal = true;
     },
     async saveDossier() {
+      if (!this.id_bordereau) {
+        this.error = "ID du bordereau manquant pour l'enregistrement.";
+        this.notify({
+          title: 'Erreur',
+          text: this.error,
+          type: 'error'
+        });
+        return;
+      }
       try {
         this.saving = true;
         const data = { id_bordereau: this.id_bordereau, matricule: this.formData.matricule };
@@ -165,11 +296,26 @@ export default {
         if (response.status === 'success') {
           this.closeModal();
           await this.loadDossiers();
+          this.notify({
+            title: 'Succès',
+            text: response.message || `Dossier ${this.isEditing ? 'modifié' : 'créé'} avec succès`,
+            type: 'success'
+          });
         } else {
           this.error = response.message || 'Erreur lors de l\'enregistrement';
+          this.notify({
+            title: 'Erreur',
+            text: this.error,
+            type: 'error'
+          });
         }
       } catch (error) {
         this.error = error.message || 'Erreur lors de l\'enregistrement';
+        this.notify({
+          title: 'Erreur',
+          text: this.error,
+          type: 'error'
+        });
       } finally {
         this.saving = false;
       }
@@ -181,11 +327,26 @@ export default {
         if (response.status === 'success') {
           this.showDeleteModal = false;
           await this.loadDossiers();
+          this.notify({
+            title: 'Succès',
+            text: response.message || 'Dossier supprimé avec succès',
+            type: 'success'
+          });
         } else {
           this.error = response.message || 'Erreur lors de la suppression';
+          this.notify({
+            title: 'Erreur',
+            text: this.error,
+            type: 'error'
+          });
         }
       } catch (error) {
         this.error = error.message || 'Erreur lors de la suppression';
+        this.notify({
+          title: 'Erreur',
+          text: this.error,
+          type: 'error'
+        });
       } finally {
         this.deleting = false;
       }
@@ -196,68 +357,144 @@ export default {
       this.formData = { id_dossier: null, matricule: '' };
       this.error = null;
     },
+    nextPage() {
+      if (this.currentPage < this.totalPages && !this.loading) {
+        this.currentPage++;
+      }
+    },
+    prevPage() {
+      if (this.currentPage > 1 && !this.loading) {
+        this.currentPage--;
+      }
+    }
   },
 };
 </script>
 
 <style scoped>
+/* Le style reste inchangé, copié de la version précédente pour cohérence */
 .dossiers-page {
-  padding: 20px;
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: #f5f7fa;
+  min-height: 100vh;
 }
 
 .page-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  gap: 16px;
+  background-color: #ffffff;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .page-header h2 {
-  color: #2c3e50;
+  color: #1a3c34;
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
 }
 
 .btn-primary {
-  background: #3498db;
-  color: white;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 8px;
-  cursor: pointer;
   display: flex;
   align-items: center;
   gap: 8px;
+  padding: 10px 16px;
+  background-color: #007bff;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
   font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: #2980b9;
+  background-color: #0056b3;
 }
 
 .btn-primary:disabled {
-  background: #95c9e6;
+  background-color: #6c757d;
   cursor: not-allowed;
 }
 
+.btn-icon {
+  font-size: 16px;
+}
+
+.filters-section {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.search-box {
+  position: relative;
+  flex: 1;
+  min-width: 200px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px 40px 10px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: #ffffff;
+  transition: border-color 0.3s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.search-input:disabled {
+  background-color: #f8f9fa;
+  cursor: not-allowed;
+}
+
+.search-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: #6c757d;
+}
+
 .content-section {
-  background: white;
-  border-radius: 15px;
-  padding: 25px;
-  min-height: 400px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .loading-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
   text-align: center;
-  padding: 20px;
 }
 
 .spinner {
+  width: 40px;
+  height: 40px;
   border: 4px solid #f3f3f3;
-  border-top: 4px solid #3498db;
+  border-top: 4px solid #007bff;
   border-radius: 50%;
-  width: 30px;
-  height: 30px;
   animation: spin 1s linear infinite;
-  margin: 0 auto 10px;
 }
 
 @keyframes spin {
@@ -267,188 +504,317 @@ export default {
 
 .error-section {
   text-align: center;
-  padding: 20px;
-  color: #e74c3c;
+  padding: 40px;
+  color: #dc3545;
 }
 
 .error-icon {
-  font-size: 2rem;
-  margin-bottom: 10px;
+  font-size: 48px;
+  margin-bottom: 16px;
 }
 
 .btn-retry {
-  background: #3498db;
-  color: white;
+  padding: 10px 16px;
+  background-color: #dc3545;
+  color: #ffffff;
   border: none;
-  padding: 8px 16px;
-  border-radius: 5px;
+  border-radius: 6px;
+  font-size: 14px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .btn-retry:hover {
-  background: #2980b9;
+  background-color: #c82333;
 }
 
 .empty-state {
   text-align: center;
-  padding: 20px;
-  color: #7f8c8d;
+  padding: 40px;
 }
 
 .empty-icon {
-  font-size: 2rem;
-  margin-bottom: 10px;
+  font-size: 48px;
+  margin-bottom: 16px;
+  color: #6c757d;
 }
 
-.dossiers-table table {
+.dossiers-table {
   width: 100%;
   border-collapse: collapse;
+  background-color: #ffffff;
 }
 
 .dossiers-table th,
 .dossiers-table td {
   padding: 12px;
   text-align: left;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 .dossiers-table th {
-  background: #f8f9fa;
-  color: #2c3e50;
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #1a3c34;
+}
+
+.sortable {
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.sortable:hover {
+  background-color: #e9ecef;
+}
+
+.sort-icon {
+  margin-left: 4px;
 }
 
 .btn-action {
-  background: none;
+  padding: 6px;
   border: none;
+  border-radius: 4px;
+  background-color: #f8f9fa;
   cursor: pointer;
-  margin-right: 8px;
-  font-size: 1rem;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
 }
 
-.edit-btn { color: #3498db; }
-.delete-btn { color: #e74c3c; }
+.btn-action.edit-btn:hover:not(:disabled) {
+  background-color: #ffc107;
+  color: #000;
+}
+
+.btn-action.delete-btn:hover:not(:disabled) {
+  background-color: #dc3545;
+  color: #ffffff;
+}
 
 .btn-action:disabled {
-  color: #95c9e6;
+  background-color: #6c757d;
   cursor: not-allowed;
+  color: #fff;
+}
+
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.pagination-btn {
+  padding: 8px 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background-color: #ffffff;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.pagination-btn:disabled {
+  background-color: #f8f9fa;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background-color: #007bff;
+  color: #ffffff;
+  border-color: #007bff;
+}
+
+.page-info {
+  font-size: 14px;
+  color: #6c757d;
+}
+
+.pagination-info {
+  margin-top: 16px;
+  font-size: 14px;
+  color: #6c757d;
+  text-align: center;
 }
 
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1000;
 }
 
 .modal {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 400px;
-  max-width: 90%;
+  background-color: #ffffff;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 500px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  padding: 16px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 .modal-header h3 {
-  color: #2c3e50;
+  margin: 0;
+  font-size: 18px;
+  color: #1a3c34;
 }
 
 .modal-close {
   background: none;
   border: none;
-  font-size: 1.5rem;
+  font-size: 20px;
   cursor: pointer;
+  color: #6c757d;
 }
 
 .modal-body {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+  padding: 24px;
 }
 
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 16px;
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 5px;
-  color: #2c3e50;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #1a3c34;
 }
 
 .form-input {
   width: 100%;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+  padding: 10px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: #ffffff;
+  transition: border-color 0.3s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
 }
 
 .form-input:disabled {
-  background: #f0f0f0;
+  background-color: #f8f9fa;
   cursor: not-allowed;
 }
 
-.form-actions {
+.form-actions,
+.delete-actions {
   display: flex;
+  gap: 16px;
   justify-content: flex-end;
-  gap: 10px;
+  margin-top: 24px;
 }
 
 .btn-cancel {
-  background: #ddd;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 5px;
+  padding: 10px 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background-color: #ffffff;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .btn-cancel:hover:not(:disabled) {
-  background: #ccc;
+  background-color: #f8f9fa;
 }
 
 .btn-cancel:disabled {
-  background: #f0f0f0;
+  background-color: #f8f9fa;
   cursor: not-allowed;
 }
 
-.btn-submit,
-.btn-delete {
-  background: #3498db;
-  color: white;
+.btn-submit {
+  padding: 10px 16px;
+  background-color: #007bff;
+  color: #ffffff;
   border: none;
-  padding: 8px 16px;
-  border-radius: 5px;
+  border-radius: 6px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.btn-delete {
-  background: #e74c3c;
+.btn-submit:hover:not(:disabled) {
+  background-color: #0056b3;
 }
 
-.btn-submit:hover:not(:disabled),
-.btn-delete:hover:not(:disabled) {
-  opacity: 0.9;
-}
-
-.btn-submit:disabled,
-.btn-delete:disabled {
-  background: #95c9e6;
+.btn-submit:disabled {
+  background-color: #6c757d;
   cursor: not-allowed;
 }
 
-.delete-modal .warning-text {
-  color: #e74c3c;
-  margin: 10px 0;
+.btn-delete {
+  padding: 10px 16px;
+  background-color: #dc3545;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-delete:hover:not(:disabled) {
+  background-color: #c82333;
+}
+
+.btn-delete:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.warning-text {
+  color: #dc3545;
+  margin-top: 8px;
+}
+
+@media (max-width: 768px) {
+  .dossiers-page {
+    padding: 16px;
+  }
+
+  .filters-section {
+    flex-direction: column;
+  }
+
+  .search-box {
+    min-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .dossiers-page {
+    padding: 12px;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .modal {
+    max-width: 90%;
+  }
 }
 </style>

@@ -1,211 +1,168 @@
 <?php
-// bordereau_api.php - Gestion des bordereaux avec CORS
-header("Access-Control-Allow-Origin: http://localhost:8080");
-header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
-header("Access-Control-Allow-Credentials: true");
+// Activer l'affichage des erreurs pour le débogage
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
-// Gérer les requêtes OPTIONS pour CORS
-if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+header('Content-Type: application/json');
+require 'db_connect.php';
+
+// Activer CORS
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
+
+// Gérer les requêtes OPTIONS (préliminaires CORS)
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
-    exit();
+    exit;
 }
 
-// Définir le type de contenu JSON
-header("Content-Type: application/json; charset=UTF-8");
-
-// Connexion à MySQL
-$host = "localhost";
-$dbname = "gestion_bordereaux";
-$username = "root";
-$password = "";
+// Récupérer la méthode HTTP
+$method = $_SERVER['REQUEST_METHOD'];
 
 try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    echo json_encode(["status" => "error", "message" => "Connexion échouée : " . $e->getMessage()]);
-    exit();
-}
+    switch ($method) {
+        // GET : Lister tous les bordereaux ou un bordereau spécifique
+        case 'GET':
+            if (isset($_GET['id_bordereau']) && is_numeric($_GET['id_bordereau'])) {
+                $id_bordereau = $_GET['id_bordereau'];
+                $stmt = $pdo->prepare("SELECT * FROM bordereau WHERE id_bordereau = ?");
+                $stmt->execute([$id_bordereau]);
+                $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                echo json_encode($result);
+            } else {
+                $stmt = $pdo->query("SELECT * FROM bordereau");
+                $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                echo json_encode($result);
+            }
+            break;
 
-// Méthode HTTP utilisée
-$method = $_SERVER["REQUEST_METHOD"];
-$statuts_valides = ['Mandatement', 'Secours', 'VISA'];
-
-switch ($method) {
-    case "GET":
-        if (isset($_GET["id_bordereau"])) {
-            $id = filter_var($_GET["id_bordereau"], FILTER_VALIDATE_INT);
-            if (!$id) {
-                echo json_encode(["status" => "error", "message" => "ID invalide"]);
+        // POST : Créer un bordereau (avec un ou plusieurs matricules)
+        case 'POST':
+            $data = json_decode(file_get_contents('php://input'), true);
+            if (!isset($data['id_bordereau'], $data['reference'], $data['matricules'], $data['objet'], $data['statut'])) {
+                http_response_code(400);
+                echo json_encode(['error' => 'Données manquantes']);
                 break;
             }
 
-            $stmt = $pdo->prepare("SELECT * FROM bordereau WHERE id_bordereau = ?");
-            $stmt->execute([$id]);
-            $bordereau = $stmt->fetch(PDO::FETCH_ASSOC);
+            $id_bordereau = $data['id_bordereau'];
+            $reference = $data['reference'];
+            $matricules = $data['matricules'];
+            $objet = $data['objet'];
+            $statut = $data['statut'];
 
-            if ($bordereau) {
-                $stmt = $pdo->prepare("SELECT * FROM dossier WHERE id_bordereau = ?");
-                $stmt->execute([$bordereau["id_bordereau"]]);
-                $bordereau["dossiers"] = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                echo json_encode(["status" => "success", "data" => $bordereau]);
-            } else {
-                echo json_encode(["status" => "error", "message" => "Aucun bordereau trouvé avec cet ID"]);
+            if (!is_array($matricules) || empty($matricules)) {
+                http_response_code(400);
+                echo json_encode(['error' => 'Liste de matricules invalide']);
+                break;
             }
-        } else {
-            $stmt = $pdo->query("SELECT * FROM bordereau ORDER BY date_creation DESC");
-            $bordereaux = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            foreach ($bordereaux as &$b) {
-                $stmt = $pdo->prepare("SELECT * FROM dossier WHERE id_bordereau = ?");
-                $stmt->execute([$b["id_bordereau"]]);
-                $b["dossiers"] = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            }
-            echo json_encode(["status" => "success", "data" => $bordereaux]);
-        }
-        break;
-
-    case "POST":
-        $input = json_decode(file_get_contents("php://input"), true);
-        
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            echo json_encode(["status" => "error", "message" => "JSON invalide"]);
-            break;
-        }
-
-        if (empty($input["reference"]) || empty($input["objet"]) || empty($input["statut"])) {
-            echo json_encode(["status" => "error", "message" => "Champs obligatoires manquants"]);
-            break;
-        }
-
-        if (!in_array($input["statut"], $statuts_valides)) {
-            echo json_encode(["status" => "error", "message" => "Statut invalide. Valeurs acceptées: Mandatement, Secours, VISA"]);
-            break;
-        }
-
-        try {
-            $pdo->beginTransaction();
-
-            $stmt = $pdo->prepare("INSERT INTO bordereau (reference, objet, statut) VALUES (?, ?, ?)");
-            $stmt->execute([$input["reference"], $input["objet"], $input["statut"]]);
-            $id_bordereau = $pdo->lastInsertId();
-
-            if (!empty($input["dossiers"])) {
-                foreach ($input["dossiers"] as $matricule) {
-                    $matricule = trim($matricule);
-                    if (!empty($matricule)) {
-                        $stmt = $pdo->prepare("INSERT INTO dossier (id_bordereau, matricule) VALUES (?, ?)");
-                        $stmt->execute([$id_bordereau, $matricule]);
+            try {
+                $pdo->beginTransaction();
+                $stmt = $pdo->prepare("INSERT INTO bordereau (id_bordereau, reference, matricule, objet, statut, date_creation) VALUES (?, ?, ?, ?, ?, NOW())");
+                foreach ($matricules as $matricule) {
+                    if (empty($matricule)) {
+                        continue;
                     }
+                    $stmt->execute([$id_bordereau, $reference, $matricule, $objet, $statut]);
                 }
+                $pdo->commit();
+                http_response_code(201);
+                echo json_encode(['message' => 'Bordereau créé']);
+            } catch (Exception $e) {
+                $pdo->rollBack();
+                http_response_code(500);
+                echo json_encode(['error' => 'Erreur lors de la création : ' . $e->getMessage()]);
             }
-
-            $stmt = $pdo->prepare("SELECT * FROM bordereau WHERE id_bordereau = ?");
-            $stmt->execute([$id_bordereau]);
-            $newBordereau = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            $stmt = $pdo->prepare("SELECT * FROM dossier WHERE id_bordereau = ?");
-            $stmt->execute([$id_bordereau]);
-            $newBordereau["dossiers"] = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-            $pdo->commit();
-            
-            echo json_encode([
-                "status" => "success",
-                "message" => "Bordereau ajouté avec succès",
-                "data" => $newBordereau
-            ]);
-        } catch (Exception $e) {
-            $pdo->rollBack();
-            echo json_encode(["status" => "error", "message" => "Erreur: " . $e->getMessage()]);
-        }
-        break;
-
-    case "PUT":
-        if (!isset($_GET["id_bordereau"])) {
-            echo json_encode(["status" => "error", "message" => "ID requis pour la modification"]);
             break;
-        }
 
-        $id = filter_var($_GET["id_bordereau"], FILTER_VALIDATE_INT);
-        if (!$id) {
-            echo json_encode(["status" => "error", "message" => "ID invalide"]);
+        // PUT : Mettre à jour un bordereau spécifique
+        case 'PUT':
+            if (isset($_GET['id_bordereau'], $_GET['matricule'])) {
+                $id_bordereau = $_GET['id_bordereau'];
+                $matricule = $_GET['matricule'];
+                $data = json_decode(file_get_contents('php://input'), true);
+
+                $reference = $data['reference'] ?? null;
+                $objet = $data['objet'] ?? null;
+                $statut = $data['statut'] ?? null;
+
+                $updates = [];
+                $params = [];
+                if ($reference) {
+                    $updates[] = "reference = ?";
+                    $params[] = $reference;
+                }
+                if ($objet) {
+                    $updates[] = "objet = ?";
+                    $params[] = $objet;
+                }
+                if ($statut) {
+                    $updates[] = "statut = ?";
+                    $params[] = $statut;
+                }
+
+                if (empty($updates)) {
+                    http_response_code(400);
+                    echo json_encode(['error' => 'Aucune donnée à mettre à jour']);
+                    break;
+                }
+
+                $params[] = $id_bordereau;
+                $params[] = $matricule;
+                $query = "UPDATE bordereau SET " . implode(', ', $updates) . " WHERE id_bordereau = ? AND matricule = ?";
+                $stmt = $pdo->prepare($query);
+                $stmt->execute($params);
+                if ($stmt->rowCount() > 0) {
+                    echo json_encode(['message' => 'Bordereau mis à jour']);
+                } else {
+                    http_response_code(404);
+                    echo json_encode(['error' => 'Bordereau ou matricule non trouvé']);
+                }
+            } else {
+                http_response_code(400);
+                echo json_encode(['error' => 'ID bordereau ou matricule manquant']);
+            }
             break;
-        }
 
-        $input = json_decode(file_get_contents("php://input"), true);
-        
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            echo json_encode(["status" => "error", "message" => "JSON invalide"]);
+        // DELETE : Supprimer une entrée spécifique ou toutes les entrées d’un id_bordereau
+        case 'DELETE':
+            if (isset($_GET['id_bordereau'], $_GET['matricule'])) {
+                $id_bordereau = $_GET['id_bordereau'];
+                $matricule = $_GET['matricule'];
+                $stmt = $pdo->prepare("DELETE FROM bordereau WHERE id_bordereau = ? AND matricule = ?");
+                $stmt->execute([$id_bordereau, $matricule]);
+                if ($stmt->rowCount() > 0) {
+                    echo json_encode(['message' => 'Entrée supprimée']);
+                } else {
+                    http_response_code(404);
+                    echo json_encode(['error' => 'Bordereau ou matricule non trouvé']);
+                }
+            } elseif (isset($_GET['id_bordereau'])) {
+                $id_bordereau = $_GET['id_bordereau'];
+                $stmt = $pdo->prepare("DELETE FROM bordereau WHERE id_bordereau = ?");
+                $stmt->execute([$id_bordereau]);
+                if ($stmt->rowCount() > 0) {
+                    echo json_encode(['message' => 'Bordereau supprimé']);
+                } else {
+                    http_response_code(404);
+                    echo json_encode(['error' => 'Bordereau non trouvé']);
+                }
+            } else {
+                http_response_code(400);
+                echo json_encode(['error' => 'ID bordereau manquant']);
+            }
             break;
-        }
 
-        if (empty($input["reference"]) || empty($input["objet"]) || empty($input["statut"])) {
-            echo json_encode(["status" => "error", "message" => "Champs obligatoires manquants"]);
+        default:
+            http_response_code(405);
+            echo json_encode(['error' => 'Méthode non autorisée']);
             break;
-        }
-
-        if (!in_array($input["statut"], $statuts_valides)) {
-            echo json_encode(["status" => "error", "message" => "Statut invalide. Valeurs acceptées: Mandatement, Secours, VISA"]);
-            break;
-        }
-
-        // Vérifier si le bordereau existe
-        $stmt = $pdo->prepare("SELECT * FROM bordereau WHERE id_bordereau = ?");
-        $stmt->execute([$id]);
-        
-        if (!$stmt->fetch()) {
-            echo json_encode(["status" => "error", "message" => "Bordereau introuvable"]);
-            break;
-        }
-
-        $stmt = $pdo->prepare("UPDATE bordereau SET reference = ?, objet = ?, statut = ? WHERE id_bordereau = ?");
-        $stmt->execute([$input["reference"], $input["objet"], $input["statut"], $id]);
-
-        $stmt = $pdo->prepare("SELECT * FROM bordereau WHERE id_bordereau = ?");
-        $stmt->execute([$id]);
-        $updatedBordereau = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        echo json_encode([
-            "status" => "success",
-            "message" => "Bordereau modifié avec succès",
-            "data" => $updatedBordereau
-        ]);
-        break;
-
-    case "DELETE":
-        if (!isset($_GET["id_bordereau"])) {
-            echo json_encode(["status" => "error", "message" => "ID requis pour la suppression"]);
-            break;
-        }
-
-        $id = filter_var($_GET["id_bordereau"], FILTER_VALIDATE_INT);
-        if (!$id) {
-            echo json_encode(["status" => "error", "message" => "ID invalide"]);
-            break;
-        }
-
-        // Vérifier si le bordereau existe
-        $stmt = $pdo->prepare("SELECT * FROM bordereau WHERE id_bordereau = ?");
-        $stmt->execute([$id]);
-        $bordereau = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if (!$bordereau) {
-            echo json_encode(["status" => "error", "message" => "Bordereau introuvable"]);
-            break;
-        }
-
-        $stmt = $pdo->prepare("DELETE FROM bordereau WHERE id_bordereau = ?");
-        $stmt->execute([$id]);
-
-        echo json_encode([
-            "status" => "success",
-            "message" => "Bordereau supprimé avec succès",
-            "data" => $bordereau
-        ]);
-        break;
-
-    default:
-        echo json_encode(["status" => "error", "message" => "Méthode non autorisée"]);
+    }
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Erreur serveur : ' . $e->getMessage()]);
 }
+?>

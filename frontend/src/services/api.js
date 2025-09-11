@@ -32,9 +32,7 @@ api.interceptors.response.use(
   },
   (error) => {
     console.error("❌ Response error:", error.response?.status, error.message);
-    
     if (error.response) {
-      // Le serveur a répondu avec un code d'erreur
       switch (error.response.status) {
         case 404:
           error.message = "Ressource non trouvée";
@@ -46,13 +44,10 @@ api.interceptors.response.use(
           error.message = `Erreur ${error.response.status}: ${error.response.statusText}`;
       }
     } else if (error.request) {
-      // La requête a été faite mais aucune réponse n'a été reçue
       error.message = "Impossible de se connecter au serveur. Vérifiez que le serveur est démarré.";
     } else {
-      // Une erreur s'est produite lors de la configuration de la requête
       error.message = "Erreur de configuration de la requête";
     }
-    
     return Promise.reject(error);
   }
 );
@@ -63,16 +58,7 @@ export const bordereauService = {
   async getBordereaux() {
     try {
       const response = await api.get("/bordereau_api.php");
-      
-      // Vérifier la structure de réponse de votre API
-      if (response.data.status === "success") {
-        return { 
-          data: response.data.data,
-          status: "success"
-        };
-      } else {
-        throw new Error(response.data.message || "Erreur inconnue de l'API");
-      }
+      return response.data; // Retourne directement les données (tableau)
     } catch (error) {
       console.error("Erreur dans getBordereaux:", error);
       throw error;
@@ -83,15 +69,7 @@ export const bordereauService = {
   async getBordereau(id) {
     try {
       const response = await api.get(`/bordereau_api.php?id_bordereau=${id}`);
-      
-      if (response.data.status === "success") {
-        return { 
-          data: response.data.data,
-          status: "success"
-        };
-      } else {
-        throw new Error(response.data.message || "Bordereau non trouvé");
-      }
+      return response.data; // Retourne directement les données (tableau)
     } catch (error) {
       console.error("Erreur dans getBordereau:", error);
       throw error;
@@ -99,119 +77,45 @@ export const bordereauService = {
   },
 
   // Créer un nouveau bordereau
-  async addBordereau(data) {
+  async createBordereau(data) {
     try {
       const response = await api.post("/bordereau_api.php", data);
-      
-      if (response.data.status === "success") {
-        return { 
-          data: response.data.data,
-          message: response.data.message,
-          status: "success"
-        };
-      } else {
-        throw new Error(response.data.message || "Erreur lors de la création");
-      }
+      return response.data; // Retourne { message: "Bordereau créé" }
     } catch (error) {
-      console.error("Erreur dans addBordereau:", error);
+      console.error("Erreur dans createBordereau:", error);
       throw error;
     }
   },
 
-  // Modifier un bordereau existant
-  async updateBordereau(id, data) {
+  // Modifier une entrée de bordereau
+  async updateBordereau(id_bordereau, matricule, data) {
     try {
-      const response = await api.put(`/bordereau_api.php?id_bordereau=${id}`, data);
-      
-      if (response.data.status === "success") {
-        return { 
-          data: response.data.data,
-          message: response.data.message,
-          status: "success"
-        };
-      } else {
-        throw new Error(response.data.message || "Erreur lors de la modification");
-      }
+      const response = await api.put(`/bordereau_api.php?id_bordereau=${id_bordereau}&matricule=${matricule}`, data);
+      return response.data; // Retourne { message: "Bordereau mis à jour" }
     } catch (error) {
       console.error("Erreur dans updateBordereau:", error);
       throw error;
     }
   },
 
-  // Supprimer un bordereau
-  async deleteBordereau(id) {
+  // Supprimer une entrée de bordereau
+  async deleteBordereau(id_bordereau, matricule) {
     try {
-      const response = await api.delete(`/bordereau_api.php?id_bordereau=${id}`);
-      
-      if (response.data.status === "success") {
-        return { 
-          data: response.data.data,
-          message: response.data.message,
-          status: "success"
-        };
-      } else {
-        throw new Error(response.data.message || "Erreur lors de la suppression");
-      }
+      const response = await api.delete(`/bordereau_api.php?id_bordereau=${id_bordereau}&matricule=${matricule}`);
+      return response.data; // Retourne { message: "Entrée supprimée" }
     } catch (error) {
       console.error("Erreur dans deleteBordereau:", error);
       throw error;
     }
-  }
-};
-
-// Service pour les dossiers
-export const dossierService = {
-  // Récupérer tous les dossiers
-  async getDossiers() {
-    try {
-      const response = await api.get("/dossier_api.php");
-      return response.data;
-    } catch (error) {
-      console.error("Erreur dans getDossiers:", error);
-      throw error;
-    }
   },
 
-  // Récupérer les dossiers d'un bordereau spécifique
-  async getDossiersByBordereau(id_bordereau) {
+  // Supprimer un bordereau complet
+  async deleteBordereauComplet(id_bordereau) {
     try {
-      const response = await api.get(`/dossier_api.php?id_bordereau=${id_bordereau}`);
-      return response.data;
+      const response = await api.delete(`/bordereau_api.php?id_bordereau=${id_bordereau}`);
+      return response.data; // Retourne { message: "Bordereau supprimé" }
     } catch (error) {
-      console.error("Erreur dans getDossiersByBordereau:", error);
-      throw error;
-    }
-  },
-
-  // Ajouter un dossier
-  async addDossier(data) {
-    try {
-      const response = await api.post("/dossier_api.php", data);
-      return response.data;
-    } catch (error) {
-      console.error("Erreur dans addDossier:", error);
-      throw error;
-    }
-  },
-
-  // Modifier un dossier
-  async updateDossier(id, data) {
-    try {
-      const response = await api.put(`/dossier_api.php?id_dossier=${id}`, data);
-      return response.data;
-    } catch (error) {
-      console.error("Erreur dans updateDossier:", error);
-      throw error;
-    }
-  },
-
-  // Supprimer un dossier
-  async deleteDossier(id) {
-    try {
-      const response = await api.delete(`/dossier_api.php?id_dossier=${id}`);
-      return response.data;
-    } catch (error) {
-      console.error("Erreur dans deleteDossier:", error);
+      console.error("Erreur dans deleteBordereauComplet:", error);
       throw error;
     }
   }

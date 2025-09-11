@@ -14,10 +14,6 @@
           <span class="icon">📋</span>
           <span class="text">Bordereaux</span>
         </router-link>
-        <router-link to="/dossiers" class="nav-item" active-class="router-link-active">
-          <span class="icon">📁</span>
-          <span class="text">Dossiers</span>
-        </router-link>
         <div class="nav-section">Gestion</div>
         <a href="#" class="nav-item" @click.prevent>
           <span class="icon">📊</span>
@@ -106,10 +102,6 @@
                   <span class="stat-value">24</span>
                 </div>
                 <div class="stat-item">
-                  <span class="stat-label">Dossiers traités</span>
-                  <span class="stat-value">156</span>
-                </div>
-                <div class="stat-item">
                   <span class="stat-label">Taux de réussite</span>
                   <span class="stat-value">92%</span>
                 </div>
@@ -124,10 +116,6 @@
                   <span class="action-icon">➕</span>
                   Nouveau Bordereau
                 </router-link>
-                <button class="action-btn" @click="importDossiers">
-                  <span class="action-icon">📁</span>
-                  Importer Dossiers
-                </button>
                 <button class="action-btn" @click="generateReport">
                   <span class="action-icon">📊</span>
                   Générer Rapport
@@ -154,28 +142,21 @@ export default {
       switch (route.name) {
         case 'Home': return 'Tableau de Bord';
         case 'Bordereaux': return 'Gestion des Bordereaux';
-        case 'Dossiers': return 'Gestion des Dossiers';
         default: return 'Système de Gestion';
       }
     });
 
-    const importDossiers = () => {
-      console.log('Import des dossiers...');
-      // Implémentez la logique d'import ici
-    };
-
     const generateReport = () => {
       console.log('Génération du rapport...');
-      // Implémentez la logique de rapport ici
+      // Implémenter la logique de rapport ici si nécessaire
     };
 
     return {
       currentPageTitle,
-      importDossiers,
       generateReport
     };
   }
-}
+};
 </script>
 
 <style>
