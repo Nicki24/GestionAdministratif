@@ -1,0 +1,37 @@
+[GET] Requête reçue à 2025-09-14 14:32:27
+[GET] Requête reçue à 2025-09-14 14:32:32
+[POST] Requête reçue à 2025-09-14 14:32:57
+[POST] Données reçues : {"id_bordereau":2012,"matricules":["789652"],"reference":"752\/HGF","objet":"gzg\"","statut":"VISA","isEditing":false}
+[POST] Succès : {"message":"Bordereau cr\u00e9\u00e9","id_bordereau":2012,"matricules":["789652"]}
+[GET] Requête reçue à 2025-09-14 14:32:57
+[POST] Requête reçue à 2025-09-14 14:33:23
+[POST] Données reçues : {"id_bordereau":2012,"matricules":["852123"],"reference":"862\/HJK","objet":"ehzhy","statut":"VISA","isEditing":false}
+[POST] Succès : {"message":"Bordereau cr\u00e9\u00e9","id_bordereau":2012,"matricules":["852123"]}
+[GET] Requête reçue à 2025-09-14 14:33:23
+[POST] Requête reçue à 2025-09-14 14:34:24
+[POST] Données reçues : {"id_bordereau":2014,"matricules":["201458","965312"],"reference":"568\/DS","objet":"ddede","statut":"Mandatement","isEditing":false}
+[POST] Succès : {"message":"Bordereau cr\u00e9\u00e9","id_bordereau":2014,"matricules":["201458","965312"]}
+[GET] Requête reçue à 2025-09-14 14:34:24
+[PUT] Requête reçue à 2025-09-14 14:34:40
+[PUT] Données reçues pour id_bordereau 2014 : {"id_bordereau":2014,"matricules":["201458","965312","458746"],"reference":"568\/DS","objet":"ddede","statut":"Mandatement","isEditing":true}
+[PUT] Succès : {"message":"Bordereau mis \u00e0 jour"}
+[GET] Requête reçue à 2025-09-14 14:34:40
+[POST] Requête reçue à 2025-09-14 14:40:04
+[POST] Données reçues : {"id_bordereau":2014,"matricules":["478965"],"reference":"258\/TT","objet":"cdcdcdfrt","statut":"Mandatement","isEditing":false}
+[POST] Succès : {"message":"Bordereau cr\u00e9\u00e9","id_bordereau":2014,"matricules":["478965"]}
+[GET] Requête reçue à 2025-09-14 14:40:04
+[GET] Requête reçue à 2025-09-14 15:02:36
+[GET] Requête reçue à 2025-09-14 15:02:39
+[POST] Requête reçue à 2025-09-14 15:03:02
+[POST] Données reçues : {"id_bordereau":2014,"matricules":["784523"],"reference":"754\/JHG","objet":"izgeuyt","statut":"Mandatement","isEditing":false}
+[POST] Erreur : {"error":"Cet id_bordereau (2014) existe d\u00e9j\u00e0"}
+[POST] Requête reçue à 2025-09-14 15:03:47
+[POST] Données reçues : {"id_bordereau":2015,"matricules":["511134","324778"],"reference":"","objet":"Demande de d\u00e9pot","statut":"VISA","isEditing":false}
+[POST] Succès : {"message":"Bordereau cr\u00e9\u00e9","id_bordereau":2015,"matricules":["511134","324778"]}
+[GET] Requête reçue à 2025-09-14 15:03:47
+[PUT] Requête reçue à 2025-09-14 15:03:59
+[PUT] Données reçues pour id_bordereau 2015 : {"id_bordereau":2015,"matricules":["324778","511134"],"reference":"521\/KJH","objet":"Demande de d\u00e9pot","statut":"VISA","isEditing":true}
+[PUT] Succès : {"message":"Bordereau mis \u00e0 jour"}
+[GET] Requête reçue à 2025-09-14 15:04:00
+[GET] Requête reçue à 2025-09-14 15:04:21
+[GET] Requête reçue à 2025-09-14 15:04:50

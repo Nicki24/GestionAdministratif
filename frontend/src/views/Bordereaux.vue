@@ -48,7 +48,7 @@
       </div>
 
       <!-- État vide -->
-      <div v-else-if="filteredBordereaux.length === 0" class="empty-state">
+      <div v-else-if="groupedBordereaux.length === 0" class="empty-state">
         <div class="empty-icon">📋</div>
         <h3>Aucun bordereau trouvé</h3>
         <p v-if="searchQuery || statusFilter">Aucun résultat pour vos critères de recherche</p>
@@ -69,7 +69,7 @@
               <th @click="sortBy('reference')" class="sortable">
                 Référence 📝 <span v-if="sortField === 'reference'" class="sort-icon">{{ sortOrder === 'asc' ? '↑' : '↓' }}</span>
               </th>
-              <th>Matricule(s)</th>
+              <th>Matricules</th>
               <th>Description</th>
               <th @click="sortBy('statut')" class="sortable">
                 Statut 🏷️ <span v-if="sortField === 'statut'" class="sort-icon">{{ sortOrder === 'asc' ? '↑' : '↓' }}</span>
@@ -81,10 +81,10 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="bordereau in paginatedBordereaux" :key="bordereau.id_bordereau + '-' + bordereau.matricule">
+            <tr v-for="bordereau in paginatedBordereaux" :key="bordereau.id_bordereau">
               <td class="id-cell">#{{ bordereau.id_bordereau }}</td>
-              <td class="reference-cell"><strong>{{ bordereau.reference }}</strong></td>
-              <td class="matricule-cell">{{ bordereau.matricule }}</td>
+              <td class="reference-cell"><strong>{{ bordereau.reference || '(vide)' }}</strong></td>
+              <td class="matricule-cell">{{ bordereau.matricules.join(', ') }}</td>
               <td class="objet-cell"><div class="objet-text" :title="bordereau.objet">{{ truncateText(bordereau.objet, 60) }}</div></td>
               <td class="status-cell"><span class="status-badge" :class="bordereau.statut.toLowerCase()">{{ bordereau.statut }}</span></td>
               <td class="date-cell">{{ formatDate(bordereau.date_creation) }}<div class="time-text">{{ formatTime(bordereau.date_creation) }}</div></td>
@@ -97,14 +97,14 @@
         </table>
 
         <!-- Pagination -->
-        <div class="pagination" v-if="filteredBordereaux.length > itemsPerPage">
+        <div class="pagination" v-if="groupedBordereaux.length > itemsPerPage">
           <button @click="prevPage" :disabled="currentPage === 1 || loading" class="pagination-btn">← Précédent</button>
           <span class="page-info">Page {{ currentPage }} sur {{ totalPages }}</span>
           <button @click="nextPage" :disabled="currentPage === totalPages || loading" class="pagination-btn">Suivant →</button>
         </div>
 
         <!-- Informations de pagination -->
-        <div class="pagination-info">Affichage de {{ startIndex + 1 }} à {{ endIndex }} sur {{ filteredBordereaux.length }} bordereaux</div>
+        <div class="pagination-info">Affichage de {{ startIndex + 1 }} à {{ endIndex }} sur {{ groupedBordereaux.length }} bordereaux</div>
       </div>
     </div>
 
@@ -120,24 +120,67 @@
           <form @submit.prevent="saveBordereau">
             <div class="form-group">
               <label>ID Bordereau *</label>
-              <input v-model="formData.id_bordereau" type="number" required class="form-input" :disabled="isEditing || saving" />
+              <input
+                v-model.number="formData.id_bordereau"
+                type="number"
+                class="form-input"
+                required
+                :disabled="isEditing || saving"
+                min="1"
+                placeholder="Entrez un ID unique"
+              />
             </div>
             <div class="form-group">
-              <label>Référence *</label>
-              <input v-model="formData.reference" type="text" required placeholder="Ex: 206/MEC" class="form-input" :disabled="saving" />
+              <label>Référence</label>
+              <input
+                v-model="formData.reference"
+                type="text"
+                placeholder="Ex: 206/MEC (facultatif)"
+                class="form-input"
+                :disabled="saving"
+                maxlength="50"
+              />
             </div>
             <div class="form-group">
-              <label>Matricule(s) * (séparés par des virgules)</label>
-              <input v-model="formData.matricules" type="text" required placeholder="Ex: 501111099999,501111088888" class="form-input" :disabled="isEditing || saving" />
+              <label>Matricule(s) * (6 chiffres)</label>
+              <div class="matricule-input-group">
+                <input
+                  v-model="formData.matriculeInput"
+                  type="text"
+                  :placeholder="formData.matricules.length > 0 ? `${formData.matricules.length} matricule(s) ajouté(s)` : 'Ex: 501111'"
+                  class="form-input"
+                  :disabled="saving"
+                  @input="validateSingleMatricule"
+                />
+                <button
+                  type="button"
+                  class="btn-add-multiple"
+                  @click="showMatriculeModal = true"
+                  :disabled="saving"
+                  title="Ajouter plusieurs matricules"
+                >
+                  ➕ Plusieurs
+                </button>
+              </div>
+              <small v-if="matriculeError" class="error-text">{{ matriculeError }}</small>
             </div>
             <div class="form-group">
-              <label>Description *</label>
-              <textarea v-model="formData.objet" required placeholder="Description du bordereau..." rows="3" class="form-textarea" :disabled="saving"></textarea>
+              <label>Description * (max 500 caractères)</label>
+              <textarea
+                v-model="formData.objet"
+                required
+                placeholder="Description du bordereau..."
+                rows="3"
+                class="form-textarea"
+                :disabled="saving"
+                maxlength="500"
+              ></textarea>
+              <small class="char-count">{{ formData.objet.length }}/500</small>
             </div>
             <div class="form-group">
               <label>Statut *</label>
               <select v-model="formData.statut" required class="form-select" :disabled="saving">
-                <option value="">Sélectionner un statut</option>
+                <option value="" disabled>Sélectionner un statut</option>
                 <option value="Mandatement">Mandatement</option>
                 <option value="Secours">Secours</option>
                 <option value="VISA">VISA</option>
@@ -145,9 +188,64 @@
             </div>
             <div class="form-actions">
               <button type="button" @click="closeModal" class="btn-cancel" :disabled="saving">Annuler</button>
-              <button type="submit" class="btn-submit" :disabled="saving">{{ saving ? 'Enregistrement...' : (isEditing ? 'Modifier' : 'Créer') }}</button>
+              <button type="submit" class="btn-submit" :disabled="saving || formData.matricules.length === 0">
+                {{ saving ? 'Enregistrement...' : (isEditing ? 'Modifier' : 'Créer') }}
+              </button>
             </div>
           </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal pour gérer plusieurs matricules -->
+    <div v-if="showMatriculeModal" class="modal-overlay">
+      <div class="modal matricule-modal">
+        <div class="modal-header">
+          <h3>Gérer les matricules</h3>
+          <button class="modal-close" @click="closeMatriculeModal">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Ajouter un matricule (6 chiffres)</label>
+            <div class="matricule-input-group">
+              <input
+                v-model="newMatricule"
+                type="text"
+                placeholder="Ex: 501111"
+                class="form-input"
+                @input="validateNewMatricule"
+                :disabled="saving"
+              />
+              <button
+                type="button"
+                class="btn-add-matricule"
+                @click="addMatricule"
+                :disabled="!isValidNewMatricule || saving"
+              >
+                Ajouter
+              </button>
+            </div>
+            <small v-if="newMatriculeError" class="error-text">{{ newMatriculeError }}</small>
+          </div>
+          <div class="matricule-list" v-if="formData.matricules.length > 0">
+            <h4>Matricules ajoutés ({{ formData.matricules.length }})</h4>
+            <ul>
+              <li v-for="(matricule, index) in formData.matricules" :key="index">
+                {{ matricule }}
+                <button
+                  class="btn-remove-matricule"
+                  @click="removeMatricule(index)"
+                  :disabled="saving"
+                  title="Supprimer ce matricule"
+                >
+                  🗑️
+                </button>
+              </li>
+            </ul>
+          </div>
+          <div class="form-actions">
+            <button type="button" @click="closeMatriculeModal" class="btn-cancel" :disabled="saving">Fermer</button>
+          </div>
         </div>
       </div>
     </div>
@@ -160,7 +258,7 @@
           <button class="modal-close" @click="showDeleteModal = false">×</button>
         </div>
         <div class="modal-body">
-          <p>Êtes-vous sûr de vouloir supprimer l'entrée du bordereau <strong>{{ bordereauToDelete?.reference }}</strong> pour le matricule <strong>{{ bordereauToDelete?.matricule }}</strong> ?</p>
+          <p>Êtes-vous sûr de vouloir supprimer le bordereau <strong>{{ bordereauToDelete?.reference || '(vide)' }}</strong> (ID: <strong>{{ bordereauToDelete?.id_bordereau }}</strong>) avec les matricules <strong>{{ bordereauToDelete?.matricules.join(', ') }}</strong> ?</p>
           <p class="warning-text">⚠️ Cette action est irréversible !</p>
           <div class="delete-actions">
             <button @click="showDeleteModal = false" class="btn-cancel" :disabled="deleting">Annuler</button>
@@ -198,34 +296,59 @@ export default {
       itemsPerPage: 10,
       showAddModal: false,
       showDeleteModal: false,
+      showMatriculeModal: false,
       isEditing: false,
       saving: false,
       deleting: false,
       formData: {
         id_bordereau: null,
         reference: '',
-        matricules: '',
+        matriculeInput: '',
+        matricules: [],
         objet: '',
         statut: ''
       },
-      bordereauToDelete: null
+      bordereauToDelete: null,
+      newMatricule: '',
+      newMatriculeError: '',
+      matriculeError: '',
+      isValidNewMatricule: false
     };
   },
   computed: {
-    filteredBordereaux() {
-      let filtered = [...this.bordereaux];
+    groupedBordereaux() {
+      // Regrouper les bordereaux par id_bordereau
+      const grouped = {};
+      this.bordereaux.forEach(b => {
+        if (!grouped[b.id_bordereau]) {
+          grouped[b.id_bordereau] = {
+            id_bordereau: b.id_bordereau,
+            reference: b.reference,
+            matricules: [],
+            objet: b.objet,
+            statut: b.statut,
+            date_creation: b.date_creation
+          };
+        }
+        grouped[b.id_bordereau].matricules.push(b.matricule);
+      });
+      let result = Object.values(grouped);
+      
+      // Appliquer les filtres
       if (this.searchQuery) {
         const query = this.searchQuery.toLowerCase();
-        filtered = filtered.filter(b => 
+        result = result.filter(b => 
           b.reference.toLowerCase().includes(query) ||
-          b.matricule.toLowerCase().includes(query) ||
+          b.matricules.some(m => m.toLowerCase().includes(query)) ||
           (b.objet && b.objet.toLowerCase().includes(query))
         );
       }
       if (this.statusFilter) {
-        filtered = filtered.filter(b => b.statut === this.statusFilter);
+        result = result.filter(b => b.statut === this.statusFilter);
       }
-      return filtered.sort((a, b) => {
+
+      // Appliquer le tri
+      return result.sort((a, b) => {
         let modifier = this.sortOrder === 'asc' ? 1 : -1;
         if (this.sortField === 'date_creation') {
           return (new Date(a[this.sortField]) - new Date(b[this.sortField])) * modifier;
@@ -237,16 +360,16 @@ export default {
     },
     paginatedBordereaux() {
       const start = (this.currentPage - 1) * this.itemsPerPage;
-      return this.filteredBordereaux.slice(start, start + this.itemsPerPage);
+      return this.groupedBordereaux.slice(start, start + this.itemsPerPage);
     },
     totalPages() {
-      return Math.ceil(this.filteredBordereaux.length / this.itemsPerPage);
+      return Math.ceil(this.groupedBordereaux.length / this.itemsPerPage);
     },
     startIndex() {
       return (this.currentPage - 1) * this.itemsPerPage;
     },
     endIndex() {
-      return Math.min(this.startIndex + this.itemsPerPage, this.filteredBordereaux.length);
+      return Math.min(this.startIndex + this.itemsPerPage, this.groupedBordereaux.length);
     }
   },
   watch: {
@@ -255,6 +378,16 @@ export default {
     },
     statusFilter() {
       this.currentPage = 1;
+    },
+    'formData.objet'(value) {
+      if (value.length > 500) {
+        this.formData.objet = value.substring(0, 500);
+        this.notify({
+          title: 'Erreur',
+          text: 'La description dépasse la limite de 500 caractères',
+          type: 'error'
+        });
+      }
     }
   },
   async mounted() {
@@ -271,7 +404,7 @@ export default {
         console.log('Bordereaux chargés:', this.bordereaux);
       } catch (error) {
         console.error('Erreur détaillée:', error);
-        this.error = error.message || 'Erreur de connexion à l\'API. Vérifiez que le serveur est démarré.';
+        this.error = error.response?.data?.error || error.message || 'Erreur de connexion à l\'API';
         this.notify({
           title: 'Erreur',
           text: this.error,
@@ -294,7 +427,8 @@ export default {
       this.formData = {
         id_bordereau: bordereau.id_bordereau,
         reference: bordereau.reference,
-        matricules: bordereau.matricule,
+        matriculeInput: '',
+        matricules: [...bordereau.matricules],
         objet: bordereau.objet,
         statut: bordereau.statut
       };
@@ -307,13 +441,13 @@ export default {
     async deleteBordereau() {
       try {
         this.deleting = true;
-        console.log('Requête DELETE:', this.bordereauToDelete.id_bordereau, this.bordereauToDelete.matricule);
-        await bordereauService.deleteBordereau(this.bordereauToDelete.id_bordereau, this.bordereauToDelete.matricule);
+        console.log('Requête DELETE:', this.bordereauToDelete.id_bordereau);
+        await bordereauService.deleteBordereau(this.bordereauToDelete.id_bordereau);
         await this.loadBordereaux();
         this.showDeleteModal = false;
         this.notify({
           title: 'Succès',
-          text: 'Entrée supprimée avec succès',
+          text: 'Bordereau supprimé avec succès',
           type: 'success'
         });
       } catch (error) {
@@ -328,40 +462,95 @@ export default {
         this.deleting = false;
       }
     },
+    validateSingleMatricule() {
+      this.matriculeError = '';
+      if (this.formData.matriculeInput) {
+        const matricule = this.formData.matriculeInput.trim();
+        if (!/^\d{6}$/.test(matricule)) {
+          this.matriculeError = 'Le matricule doit contenir exactement 6 chiffres';
+        } else if (!this.formData.matricules.includes(matricule)) {
+          this.formData.matricules = [matricule];
+        }
+      } else {
+        this.formData.matricules = [];
+      }
+    },
+    validateNewMatricule() {
+      this.newMatriculeError = '';
+      this.isValidNewMatricule = false;
+      const matricule = this.newMatricule.trim();
+      if (matricule) {
+        if (!/^\d{6}$/.test(matricule)) {
+          this.newMatriculeError = 'Le matricule doit contenir exactement 6 chiffres';
+        } else if (this.formData.matricules.includes(matricule)) {
+          this.newMatriculeError = 'Ce matricule est déjà ajouté';
+        } else {
+          this.isValidNewMatricule = true;
+        }
+      }
+    },
+    addMatricule() {
+      if (this.isValidNewMatricule) {
+        this.formData.matricules.push(this.newMatricule.trim());
+        this.newMatricule = '';
+        this.validateNewMatricule();
+      }
+    },
+    removeMatricule(index) {
+      this.formData.matricules.splice(index, 1);
+    },
     async saveBordereau() {
       try {
         this.saving = true;
-        // Valider les matricules pour la création
-        let matricules = this.isEditing ? [this.formData.matricules] : this.formData.matricules.split(',').map(m => m.trim()).filter(m => m);
-        if (!this.isEditing && matricules.length === 0) {
-          throw new Error('Veuillez entrer au moins un matricule valide');
+
+        // Valider l'id_bordereau
+        if (!this.formData.id_bordereau || this.formData.id_bordereau < 1) {
+          throw new Error('L\'ID bordereau doit être un nombre positif');
         }
+
+        // Valider les matricules
+        if (this.formData.matricules.length === 0) {
+          throw new Error('Au moins un matricule est requis');
+        }
+
+        // Valider la référence
+        if (this.formData.reference.length > 50) {
+          throw new Error('La référence dépasse la limite de 50 caractères');
+        }
+
+        // Valider les champs obligatoires
+        if (!this.formData.objet || !this.formData.statut) {
+          throw new Error('Les champs objet et statut sont requis');
+        }
+
         const data = {
-          id_bordereau: parseInt(this.formData.id_bordereau),
+          id_bordereau: this.formData.id_bordereau,
+          matricules: this.formData.matricules,
           reference: this.formData.reference,
-          matricules: matricules,
           objet: this.formData.objet,
-          statut: this.formData.statut
+          statut: this.formData.statut,
+          isEditing: this.isEditing
         };
         console.log('Données envoyées à l\'API:', data);
         if (this.isEditing) {
-          console.log('Requête PUT:', this.formData.id_bordereau, this.formData.matricules);
-          await bordereauService.updateBordereau(this.formData.id_bordereau, this.formData.matricules, {
-            reference: this.formData.reference,
-            objet: this.formData.objet,
-            statut: this.formData.statut
+          console.log('Requête PUT:', this.formData.id_bordereau);
+          await bordereauService.updateBordereau(this.formData.id_bordereau, data);
+          this.notify({
+            title: 'Succès',
+            text: 'Bordereau modifié avec succès',
+            type: 'success'
           });
         } else {
           console.log('Requête POST:', data);
-          await bordereauService.createBordereau(data);
+          const response = await bordereauService.createBordereau(data);
+          this.notify({
+            title: 'Succès',
+            text: `Bordereau créé avec succès (ID: ${response.id_bordereau})`,
+            type: 'success'
+          });
         }
         await this.loadBordereaux();
         this.closeModal();
-        this.notify({
-          title: 'Succès',
-          text: `Bordereau ${this.isEditing ? 'modifié' : 'créé'} avec succès`,
-          type: 'success'
-        });
       } catch (error) {
         console.error('Erreur sauvegarde:', error.response?.data || error.message);
         this.error = error.response?.data?.error || error.message || 'Erreur lors de la sauvegarde';
@@ -376,15 +565,27 @@ export default {
     },
     closeModal() {
       this.showAddModal = false;
+      this.showMatriculeModal = false;
       this.isEditing = false;
       this.formData = {
         id_bordereau: null,
         reference: '',
-        matricules: '',
+        matriculeInput: '',
+        matricules: [],
         objet: '',
         statut: ''
       };
+      this.newMatricule = '';
+      this.newMatriculeError = '';
+      this.matriculeError = '';
+      this.isValidNewMatricule = false;
       this.error = null;
+    },
+    closeMatriculeModal() {
+      this.showMatriculeModal = false;
+      this.newMatricule = '';
+      this.newMatriculeError = '';
+      this.isValidNewMatricule = false;
     },
     nextPage() {
       if (this.currentPage < this.totalPages && !this.loading) {
@@ -418,7 +619,6 @@ export default {
 </script>
 
 <style scoped>
-/* CSS inchangé, repris tel quel pour préserver le design */
 .bordereaux-page {
   padding: 24px;
   max-width: 1200px;
@@ -850,6 +1050,18 @@ export default {
   resize: vertical;
 }
 
+.char-count,
+.error-text {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #6c757d;
+}
+
+.error-text {
+  color: #dc3545;
+}
+
 .form-actions,
 .delete-actions {
   display: flex;
@@ -919,6 +1131,72 @@ export default {
   margin-top: 8px;
 }
 
+.matricule-input-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.btn-add-multiple,
+.btn-add-matricule {
+  padding: 10px 16px;
+  background-color: #28a745;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-add-multiple:hover:not(:disabled),
+.btn-add-matricule:hover:not(:disabled) {
+  background-color: #218838;
+}
+
+.btn-add-multiple:disabled,
+.btn-add-matricule:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.matricule-list {
+  margin-top: 16px;
+}
+
+.matricule-list ul {
+  list-style: none;
+  padding: 0;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.matricule-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.btn-remove-matricule {
+  padding: 4px;
+  background-color: #dc3545;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.btn-remove-matricule:hover:not(:disabled) {
+  background-color: #c82333;
+}
+
+.btn-remove-matricule:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .bordereaux-page {
@@ -932,6 +1210,11 @@ export default {
   .search-box,
   .filter-group {
     min-width: 100%;
+  }
+
+  .matricule-input-group {
+    flex-direction: column;
+    align-items: stretch;
   }
 }
 

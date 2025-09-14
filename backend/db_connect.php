@@ -1,13 +1,11 @@
 <?php
 $host = 'localhost';
-$user = 'root';
-$password = '';
-$database = 'gestion_bordereaux';
-
+$dbname = 'gestion_bordereaux';
+$username = 'root';
+$password = ''; // Remplace par ton mot de passe si nécessaire
 try {
-    $pdo = new PDO("mysql:host=$host;dbname=$database;charset=utf8mb4", $user, $password);
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     die("Erreur de connexion : " . $e->getMessage());
 }

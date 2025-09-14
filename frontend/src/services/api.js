@@ -58,7 +58,7 @@ export const bordereauService = {
   async getBordereaux() {
     try {
       const response = await api.get("/bordereau_api.php");
-      return response.data; // Retourne directement les données (tableau)
+      return response.data; // Retourne un tableau de bordereaux
     } catch (error) {
       console.error("Erreur dans getBordereaux:", error);
       throw error;
@@ -69,7 +69,7 @@ export const bordereauService = {
   async getBordereau(id) {
     try {
       const response = await api.get(`/bordereau_api.php?id_bordereau=${id}`);
-      return response.data; // Retourne directement les données (tableau)
+      return response.data; // Retourne un tableau de bordereaux pour l'id_bordereau
     } catch (error) {
       console.error("Erreur dans getBordereau:", error);
       throw error;
@@ -80,17 +80,17 @@ export const bordereauService = {
   async createBordereau(data) {
     try {
       const response = await api.post("/bordereau_api.php", data);
-      return response.data; // Retourne { message: "Bordereau créé" }
+      return response.data; // Retourne { message: "Bordereau créé", id_bordereau: <id>, matricules: [...] }
     } catch (error) {
       console.error("Erreur dans createBordereau:", error);
       throw error;
     }
   },
 
-  // Modifier une entrée de bordereau
-  async updateBordereau(id_bordereau, matricule, data) {
+  // Modifier un bordereau
+  async updateBordereau(id_bordereau, data) {
     try {
-      const response = await api.put(`/bordereau_api.php?id_bordereau=${id_bordereau}&matricule=${matricule}`, data);
+      const response = await api.put(`/bordereau_api.php?id_bordereau=${id_bordereau}`, data);
       return response.data; // Retourne { message: "Bordereau mis à jour" }
     } catch (error) {
       console.error("Erreur dans updateBordereau:", error);
@@ -98,11 +98,11 @@ export const bordereauService = {
     }
   },
 
-  // Supprimer une entrée de bordereau
-  async deleteBordereau(id_bordereau, matricule) {
+  // Supprimer un bordereau
+  async deleteBordereau(id_bordereau) {
     try {
-      const response = await api.delete(`/bordereau_api.php?id_bordereau=${id_bordereau}&matricule=${matricule}`);
-      return response.data; // Retourne { message: "Entrée supprimée" }
+      const response = await api.delete(`/bordereau_api.php?id_bordereau=${id_bordereau}`);
+      return response.data; // Retourne { message: "Bordereau supprimé" }
     } catch (error) {
       console.error("Erreur dans deleteBordereau:", error);
       throw error;
