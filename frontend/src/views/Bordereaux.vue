@@ -15,7 +15,7 @@
         <input
           v-model="searchQuery"
           type="text"
-          placeholder="Rechercher par référence, matricule ou objet..."
+          placeholder="Rechercher par ID, référence, matricule ou objet..."
           class="search-input"
           :disabled="loading"
         />
@@ -338,6 +338,7 @@ export default {
       if (this.searchQuery) {
         const query = this.searchQuery.toLowerCase();
         result = result.filter(b => 
+          b.id_bordereau.toString().toLowerCase().includes(query) || // Ajout de la recherche par ID
           b.reference.toLowerCase().includes(query) ||
           b.matricules.some(m => m.toLowerCase().includes(query)) ||
           (b.objet && b.objet.toLowerCase().includes(query))
@@ -1198,6 +1199,25 @@ export default {
 }
 
 /* Responsive */
+@media (max-width: 1024px) {
+  .bordereaux-table th,
+  .bordereaux-table td {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  .actions-cell {
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .modal {
+    max-width: 90%;
+    height: 90vh;
+    overflow-y: auto;
+  }
+}
+
 @media (max-width: 768px) {
   .bordereaux-page {
     padding: 16px;
@@ -1215,6 +1235,20 @@ export default {
   .matricule-input-group {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .bordereaux-table th,
+  .bordereaux-table td {
+    font-size: 12px;
+  }
+
+  .pagination {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .pagination-btn {
+    width: 100%;
   }
 }
 
@@ -1241,6 +1275,53 @@ export default {
 
   .modal {
     max-width: 90%;
+    height: 90vh;
+    overflow-y: auto;
+  }
+
+  .bordereaux-table {
+    display: block;
+    overflow-x: auto;
+  }
+
+  .bordereaux-table thead {
+    display: none;
+  }
+
+  .bordereaux-table tbody,
+  .bordereaux-table tr {
+    display: block;
+    width: 100%;
+  }
+
+  .bordereaux-table td {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid #e0e0e0;
+    position: relative;
+  }
+
+  .bordereaux-table td::before {
+    content: attr(data-label);
+    font-weight: bold;
+    width: 120px;
+    min-width: 120px;
+    margin-right: 10px;
+    color: #1a3c34;
+  }
+
+  .bordereaux-table td[data-label="ID"]::before { content: "ID: "; }
+  .bordereaux-table td[data-label="Référence"]::before { content: "Référence: "; }
+  .bordereaux-table td[data-label="Matricules"]::before { content: "Matricules: "; }
+  .bordereaux-table td[data-label="Description"]::before { content: "Description: "; }
+  .bordereaux-table td[data-label="Statut"]::before { content: "Statut: "; }
+  .bordereaux-table td[data-label="Date"]::before { content: "Date: "; }
+  .bordereaux-table td[data-label="Actions"]::before { content: "Actions: "; }
+
+  .actions-cell {
+    flex-direction: row;
+    justify-content: space-around;
   }
 }
 </style>

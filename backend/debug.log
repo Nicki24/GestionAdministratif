@@ -35,3 +35,628 @@
 [GET] Requête reçue à 2025-09-14 15:04:00
 [GET] Requête reçue à 2025-09-14 15:04:21
 [GET] Requête reçue à 2025-09-14 15:04:50
+[GET] Requête reçue à 2025-09-15 06:14:08
+[GET] Requête reçue à 2025-09-15 06:14:15
+[GET] Requête reçue à 2025-09-15 06:14:55
+[GET] Requête reçue à 2025-09-15 06:15:01
+[POST] Requête reçue à 2025-09-15 06:15:28
+[POST] Données reçues : {"id_bordereau":2015,"matricules":["456897"],"reference":"145\/QS","objet":"ya'zy'zy","statut":"Mandatement","isEditing":false}
+[POST] Erreur : {"error":"Cet id_bordereau (2015) existe d\u00e9j\u00e0"}
+[POST] Requête reçue à 2025-09-15 06:16:02
+[POST] Données reçues : {"id_bordereau":2016,"matricules":["789654","147845"],"reference":"","objet":"qqdfefef","statut":"VISA","isEditing":false}
+[POST] Succès : {"message":"Bordereau cr\u00e9\u00e9","id_bordereau":2016,"matricules":["789654","147845"]}
+[GET] Requête reçue à 2025-09-15 06:16:02
+[GET] Requête reçue à 2025-09-15 08:16:28
+[GET] Requête reçue à 2025-09-15 08:16:32
+[GET] Requête reçue à 2025-09-15 08:17:04
+[GET] Requête reçue à 2025-09-15 08:17:07
+[GET] Requête reçue à 2025-09-15 08:20:07
+[GET] Requête reçue à 2025-09-15 08:25:27
+[GET] Requête reçue à 2025-09-15 08:25:32
+[GET] Requête reçue à 2025-09-15 08:25:37
+[GET] Requête reçue à 2025-09-15 08:25:50
+[GET] Requête reçue à 2025-09-15 08:26:06
+[GET] Requête reçue à 2025-09-15 08:26:09
+[GET] Requête reçue à 2025-09-15 08:26:19
+[GET] Requête reçue à 2025-09-15 08:26:34
+[GET] Requête reçue à 2025-09-15 08:26:37
+[GET] Requête reçue à 2025-09-15 08:26:43
+[GET] Requête reçue à 2025-09-15 08:26:50
+[GET] Requête reçue à 2025-09-15 08:26:51
+[GET] Requête reçue à 2025-09-15 08:28:25
+[GET] Requête reçue à 2025-09-15 08:28:34
+[GET] Requête reçue à 2025-09-15 08:28:35
+[GET] Requête reçue à 2025-09-15 08:28:43
+[GET] Requête reçue à 2025-09-15 08:28:49
+[GET] Requête reçue à 2025-09-15 08:39:06
+[GET] Requête reçue à 2025-09-15 08:39:06
+[GET] Requête reçue à 2025-09-15 08:39:16
+[GET] Requête reçue à 2025-09-15 08:39:16
+[GET] Requête reçue à 2025-09-15 08:39:51
+[GET] Requête reçue à 2025-09-15 08:39:51
+[GET] Requête reçue à 2025-09-15 08:39:53
+[GET] Requête reçue à 2025-09-15 08:39:55
+[GET] Requête reçue à 2025-09-15 08:40:37
+[GET] Requête reçue à 2025-09-15 08:40:48
+[GET] Requête reçue à 2025-09-15 08:54:56
+[GET] Requête reçue à 2025-09-15 08:54:59
+[GET] Requête reçue à 2025-09-15 08:55:07
+[GET] Requête reçue à 2025-09-15 08:55:13
+[GET] Requête reçue à 2025-09-15 08:56:45
+[GET] Requête reçue à 2025-09-15 08:56:47
+[GET] Requête reçue à 2025-09-15 08:57:23
+[GET] Requête reçue à 2025-09-15 08:59:52
+[GET] Requête reçue à 2025-09-15 08:59:53
+[GET] Requête reçue à 2025-09-15 08:59:53
+[GET] Requête reçue à 2025-09-15 08:59:55
+[GET] Requête reçue à 2025-09-15 09:00:10
+[GET] Requête reçue à 2025-09-15 09:00:21
+[GET] Requête reçue à 2025-09-15 09:00:25
+[GET] Requête reçue à 2025-09-16 05:32:45
+[GET] Requête reçue à 2025-09-16 05:33:09
+[POST] Requête reçue à 2025-09-16 05:34:35
+[POST] Données reçues : {"id_bordereau":2016,"matricules":["456789","478912"],"reference":"","objet":"Degregerey","statut":"VISA","isEditing":false}
+[POST] Erreur : {"error":"Cet id_bordereau (2016) existe d\u00e9j\u00e0"}
+[POST] Requête reçue à 2025-09-16 05:34:41
+[POST] Données reçues : {"id_bordereau":2017,"matricules":["456789","478912"],"reference":"","objet":"Degregerey","statut":"VISA","isEditing":false}
+[POST] Succès : {"message":"Bordereau cr\u00e9\u00e9","id_bordereau":2017,"matricules":["456789","478912"]}
+[GET] Requête reçue à 2025-09-16 05:34:41
+[GET] Requête reçue à 2025-09-16 05:36:44
+[GET] Requête reçue à 2025-09-16 05:36:45
+[GET] Requête reçue à 2025-09-16 05:36:59
+[GET] Requête reçue à 2025-09-16 05:37:32
+[GET] Requête reçue à 2025-09-16 05:37:34
+[GET] Requête reçue à 2025-09-16 05:37:35
+[GET] Requête reçue à 2025-09-16 05:37:41
+[GET] Requête reçue à 2025-09-16 05:37:53
+[GET] Requête reçue à 2025-09-16 05:38:31
+[GET] Requête reçue à 2025-09-16 06:14:08
+[POST] Requête reçue à 2025-09-16 06:16:30
+[POST] Données reçues : {"id_bordereau":2018,"matricules":["457894"],"reference":"206\/CISCO","objet":"Demande mandatement","statut":"Mandatement","isEditing":false}
+[POST] Succès : {"message":"Bordereau cr\u00e9\u00e9","id_bordereau":2018,"matricules":["457894"]}
+[GET] Requête reçue à 2025-09-16 06:16:30
+[GET] Requête reçue à 2025-09-21 05:08:04
+[GET] Requête reçue à 2025-09-21 05:08:13
+[GET] Requête reçue à 2025-09-21 05:44:00
+[GET] Requête reçue à 2025-09-21 05:44:03
+[GET] Requête reçue à 2025-09-21 05:44:05
+[POST] Requête reçue à 2025-09-21 05:44:38
+[POST] Données reçues : {"id_banque":103,"nom":"Rasolo","section":"PVO005"}
+[POST] Succès : {"message":"Banque ajout\u00e9e avec succ\u00e8s","id_banque":103}
+[GET] Requête reçue à 2025-09-21 05:44:38
+[GET] Requête reçue à 2025-09-21 05:45:35
+[GET] Requête reçue à 2025-09-21 05:45:39
+[GET] Requête reçue à 2025-09-21 05:46:22
+[GET] Requête reçue à 2025-09-21 05:46:26
+[GET] Requête reçue à 2025-09-21 05:52:06
+[GET] Requête reçue à 2025-09-21 05:52:32
+[GET] Requête reçue à 2025-09-21 12:12:24
+[GET] Requête reçue à 2025-09-21 12:12:27
+[GET] Requête reçue à 2025-09-21 12:12:59
+[GET] Requête reçue à 2025-09-21 12:13:02
+[GET] Requête reçue à 2025-09-21 12:20:51
+[GET] Requête reçue à 2025-09-21 12:22:36
+[GET] Requête reçue à 2025-09-21 12:22:42
+[GET] Requête reçue à 2025-09-21 12:23:27
+[GET] Requête reçue à 2025-09-21 12:23:29
+[GET] Requête reçue à 2025-09-21 12:23:33
+[GET] Requête reçue à 2025-09-21 12:23:45
+[GET] Requête reçue à 2025-09-21 12:24:39
+[GET] Requête reçue à 2025-09-21 12:24:40
+[GET] Requête reçue à 2025-09-21 12:24:47
+[GET] Requête reçue à 2025-09-21 12:24:47
+[GET] Requête reçue à 2025-09-21 12:50:17
+[GET] Requête reçue à 2025-09-21 12:50:20
+[GET] Requête reçue à 2025-09-21 12:50:22
+[GET] Requête reçue à 2025-09-21 12:50:23
+[GET] Requête reçue à 2025-09-21 12:50:24
+[GET] Requête reçue à 2025-09-21 12:50:24
+[GET] Requête reçue à 2025-09-21 12:50:25
+[GET] Requête reçue à 2025-09-21 12:50:31
+[GET] Requête reçue à 2025-09-21 12:50:33
+[GET] Requête reçue à 2025-09-21 12:50:50
+[GET] Requête reçue à 2025-09-21 12:50:52
+[GET] Requête reçue à 2025-09-21 12:51:03
+[GET] Requête reçue à 2025-09-21 12:51:05
+[GET] Requête reçue à 2025-09-21 12:51:07
+[GET] Requête reçue à 2025-09-21 12:51:56
+[GET] Requête reçue à 2025-09-21 12:58:05
+[GET] Requête reçue à 2025-09-21 12:58:07
+[GET] Requête reçue à 2025-09-21 12:58:13
+[GET] Requête reçue à 2025-09-21 12:58:53
+[GET] Requête reçue à 2025-09-21 13:39:51
+[GET] Requête reçue à 2025-09-21 13:39:53
+[GET] Requête reçue à 2025-09-21 13:39:54
+[GET] Requête reçue à 2025-09-21 13:39:55
+[GET] Requête reçue à 2025-09-21 13:40:28
+[GET] Requête reçue à 2025-09-21 14:03:44
+[GET] Requête reçue à 2025-09-21 14:03:45
+[GET] Requête reçue à 2025-09-21 14:03:46
+[GET] Requête reçue à 2025-09-21 14:04:14
+[GET] Requête reçue à 2025-09-21 14:04:15
+[GET] Requête reçue à 2025-09-21 14:04:17
+[GET] Requête reçue à 2025-09-21 14:04:17
+[GET] Requête reçue à 2025-09-21 14:04:27
+[GET] Requête reçue à 2025-09-21 14:04:29
+[GET] Requête reçue à 2025-09-21 14:04:30
+[GET] Requête reçue à 2025-09-21 14:45:32
+[GET] Requête reçue à 2025-09-21 14:45:36
+[GET] Requête reçue à 2025-09-21 14:45:37
+[GET] Requête reçue à 2025-09-21 14:45:42
+[GET] Requête reçue à 2025-09-21 14:45:43
+[GET] Requête reçue à 2025-09-21 14:45:44
+[POST] Requête reçue à 2025-09-21 14:46:23
+[POST] Données reçues : {"id_bordereau":2018,"matricules":["226756","123658"],"reference":"","objet":"hhehteht","statut":"Mandatement","isEditing":false}
+[POST] Erreur : {"error":"Cet id_bordereau (2018) existe d\u00e9j\u00e0"}
+[POST] Requête reçue à 2025-09-21 14:46:34
+[POST] Données reçues : {"id_bordereau":2019,"matricules":["226756","123658"],"reference":"","objet":"hhehteht","statut":"Mandatement","isEditing":false}
+[POST] Succès : {"message":"Bordereau cr\u00e9\u00e9","id_bordereau":2019,"matricules":["226756","123658"]}
+[GET] Requête reçue à 2025-09-21 14:46:35
+[DELETE] Requête reçue à 2025-09-21 14:46:44
+[DELETE] Succès : {"message":"Bordereau supprim\u00e9"}
+[GET] Requête reçue à 2025-09-21 14:46:44
+[GET] Requête reçue à 2025-09-21 14:46:46
+[GET] Requête reçue à 2025-09-21 14:47:19
+[GET] Requête reçue à 2025-09-21 14:47:25
+[GET] Requête reçue à 2025-09-21 14:47:27
+[GET] Requête reçue à 2025-09-21 14:47:30
+[GET] Requête reçue à 2025-09-21 14:47:54
+[GET] Requête reçue à 2025-09-21 14:50:16
+[GET] Requête reçue à 2025-09-21 15:09:48
+[GET] Requête reçue à 2025-09-21 15:09:48
+[GET] Requête reçue à 2025-09-21 15:12:25
+[GET] Requête reçue à 2025-09-21 15:12:28
+[GET] Requête reçue à 2025-09-21 15:12:41
+[GET] Requête reçue à 2025-09-21 15:12:42
+[GET] Requête reçue à 2025-09-21 15:12:44
+[GET] Requête reçue à 2025-09-21 15:12:45
+[GET] Requête reçue à 2025-09-21 15:12:46
+[GET] Requête reçue à 2025-09-21 15:12:47
+[GET] Requête reçue à 2025-09-21 15:12:48
+[GET] Requête reçue à 2025-09-21 15:12:49
+[GET] Requête reçue à 2025-09-21 15:12:49
+[GET] Requête reçue à 2025-09-21 15:12:50
+[GET] Requête reçue à 2025-09-21 15:12:50
+[GET] Requête reçue à 2025-09-21 15:12:51
+[GET] Requête reçue à 2025-09-21 15:12:52
+[GET] Requête reçue à 2025-09-21 15:12:53
+[GET] Requête reçue à 2025-09-21 15:35:06
+[GET] Requête reçue à 2025-09-21 15:35:06
+[GET] Requête reçue à 2025-09-21 15:35:06
+[GET] Requête reçue à 2025-09-21 15:35:06
+[GET] Requête reçue à 2025-09-21 15:35:32
+[GET] Requête reçue à 2025-09-21 15:35:32
+[GET] Requête reçue à 2025-09-21 15:35:32
+[GET] Requête reçue à 2025-09-21 15:35:32
+[GET] Requête reçue à 2025-09-21 15:35:32
+[GET] Requête reçue à 2025-09-21 15:35:33
+[GET] Requête reçue à 2025-09-21 15:35:33
+[GET] Requête reçue à 2025-09-21 15:35:34
+[GET] Requête reçue à 2025-09-21 15:35:38
+[GET] Requête reçue à 2025-09-21 15:35:39
+[GET] Requête reçue à 2025-09-21 15:35:45
+[GET] Requête reçue à 2025-09-21 15:35:48
+[GET] Requête reçue à 2025-09-21 15:35:50
+[GET] Requête reçue à 2025-09-22 05:57:01
+[GET] Requête reçue à 2025-09-22 05:57:01
+[GET] Requête reçue à 2025-09-22 05:57:05
+[GET] Requête reçue à 2025-09-22 05:57:12
+[GET] Requête reçue à 2025-09-22 05:57:42
+[GET] Requête reçue à 2025-09-22 05:57:51
+[GET] Requête reçue à 2025-09-22 05:57:54
+[GET] Requête reçue à 2025-09-22 06:08:59
+[GET] Requête reçue à 2025-09-22 06:09:01
+[GET] Requête reçue à 2025-09-22 06:09:01
+[GET] Requête reçue à 2025-09-22 06:09:01
+[GET] Requête reçue à 2025-09-22 06:17:49
+[GET] Requête reçue à 2025-09-22 06:19:56
+[GET] Requête reçue à 2025-09-22 06:19:57
+[GET] Requête reçue à 2025-09-22 06:50:56
+[GET] Requête reçue à 2025-09-22 06:50:57
+[GET] Requête reçue à 2025-09-22 06:51:07
+[GET] Requête reçue à 2025-09-22 06:51:10
+[GET] Requête reçue à 2025-09-22 06:51:31
+[GET] Requête reçue à 2025-09-22 06:51:32
+[GET] Requête reçue à 2025-09-22 06:51:33
+[GET] Requête reçue à 2025-09-22 06:51:50
+[GET] Requête reçue à 2025-09-22 07:09:01
+[GET] Requête reçue à 2025-09-22 07:09:01
+[GET] Requête reçue à 2025-09-22 07:24:29
+[GET] Requête reçue à 2025-09-22 07:24:55
+[GET] Requête reçue à 2025-09-22 07:29:01
+[GET] Requête reçue à 2025-09-22 07:29:03
+[GET] Requête reçue à 2025-09-22 07:52:21
+[GET] Requête reçue à 2025-09-22 07:52:21
+[GET] Requête reçue à 2025-09-22 07:52:21
+[GET] Requête reçue à 2025-09-22 07:52:28
+[GET] Requête reçue à 2025-09-22 08:09:01
+[GET] Requête reçue à 2025-09-22 08:09:01
+[GET] Requête reçue à 2025-09-22 08:09:44
+[GET] Requête reçue à 2025-09-22 08:09:44
+[GET] Requête reçue à 2025-09-22 08:10:36
+[GET] Requête reçue à 2025-09-22 08:10:36
+[GET] Requête reçue à 2025-09-22 08:10:42
+[GET] Requête reçue à 2025-09-22 08:10:42
+[GET] Requête reçue à 2025-09-22 08:10:42
+[GET] Requête reçue à 2025-09-22 08:10:49
+[GET] Requête reçue à 2025-09-22 08:10:50
+[GET] Requête reçue à 2025-09-22 08:10:52
+[GET] Requête reçue à 2025-09-22 08:10:52
+[GET] Requête reçue à 2025-09-22 08:11:55
+[GET] Requête reçue à 2025-09-22 08:11:55
+[GET] Requête reçue à 2025-09-22 08:11:55
+[GET] Requête reçue à 2025-09-22 08:12:03
+[GET] Requête reçue à 2025-09-22 08:12:04
+[GET] Requête reçue à 2025-09-22 08:12:12
+[GET] Requête reçue à 2025-09-22 08:12:14
+[GET] Requête reçue à 2025-09-22 08:12:15
+[GET] Requête reçue à 2025-09-22 08:12:16
+[GET] Requête reçue à 2025-09-22 08:14:48
+[GET] Requête reçue à 2025-09-22 08:14:48
+[GET] Requête reçue à 2025-09-22 08:14:52
+[GET] Requête reçue à 2025-09-22 08:14:52
+[GET] Requête reçue à 2025-09-22 08:14:52
+[GET] Requête reçue à 2025-09-22 08:22:22
+[GET] Requête reçue à 2025-09-22 08:22:22
+[GET] Requête reçue à 2025-09-22 08:22:22
+[GET] Requête reçue à 2025-09-22 08:22:22
+[GET] Requête reçue à 2025-09-22 08:22:23
+[GET] Requête reçue à 2025-09-22 08:22:23
+[GET] Requête reçue à 2025-09-22 08:25:36
+[GET] Requête reçue à 2025-09-22 08:25:36
+[GET] Requête reçue à 2025-09-22 08:25:36
+[GET] Requête reçue à 2025-09-22 08:25:36
+[GET] Requête reçue à 2025-09-22 08:25:36
+[GET] Requête reçue à 2025-09-22 08:25:36
+[GET] Requête reçue à 2025-09-22 08:26:03
+[GET] Requête reçue à 2025-09-22 08:26:03
+[GET] Requête reçue à 2025-09-22 08:26:03
+[GET] Requête reçue à 2025-09-22 08:26:03
+[GET] Requête reçue à 2025-09-22 08:26:05
+[GET] Requête reçue à 2025-09-22 08:26:05
+[GET] Requête reçue à 2025-09-22 08:26:05
+[GET] Requête reçue à 2025-09-23 07:42:24
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3}]
+[GET] Requête reçue à 2025-09-23 07:42:24
+[GET] Requête reçue à 2025-09-23 07:42:26
+[GET] Requête reçue à 2025-09-23 07:42:26
+[GET] Requête reçue à 2025-09-23 07:42:26
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3}]
+[GET] Requête reçue à 2025-09-23 07:42:29
+[GET] Requête reçue à 2025-09-23 07:42:31
+[GET] Requête reçue à 2025-09-23 07:42:33
+[GET] Requête reçue à 2025-09-23 07:50:59
+[GET] Statistiques retournées pour banque (period=7): [{"day":"2025-09-21","count":3}]
+[GET] Requête reçue à 2025-09-23 07:50:59
+[GET] Requête reçue à 2025-09-23 07:50:59
+[GET] Requête reçue à 2025-09-23 07:51:05
+[GET] Requête reçue à 2025-09-23 07:51:06
+[GET] Requête reçue à 2025-09-23 07:51:15
+[GET] Requête reçue à 2025-09-23 07:51:17
+[GET] Requête reçue à 2025-09-23 07:51:18
+[GET] Requête reçue à 2025-09-23 07:51:19
+[GET] Requête reçue à 2025-09-23 07:51:19
+[GET] Requête reçue à 2025-09-23 07:51:20
+[GET] Requête reçue à 2025-09-23 07:51:26
+[GET] Requête reçue à 2025-09-23 07:51:27
+[GET] Requête reçue à 2025-09-23 07:51:28
+[GET] Requête reçue à 2025-09-23 07:51:29
+[GET] Requête reçue à 2025-09-23 07:51:30
+[GET] Requête reçue à 2025-09-23 07:51:33
+[GET] Requête reçue à 2025-09-23 07:51:47
+[GET] Statistiques retournées pour banque (period=7): [{"day":"2025-09-21","count":3}]
+[GET] Requête reçue à 2025-09-23 07:51:47
+[GET] Requête reçue à 2025-09-23 07:51:47
+[POST] Requête reçue à 2025-09-23 07:52:03
+[POST] Données reçues : {"id_banque":104,"nom":"John","section":"PVO005"}
+[POST] Succès : {"message":"Banque ajout\u00e9e avec succ\u00e8s","id_banque":104}
+[GET] Requête reçue à 2025-09-23 07:52:03
+[PUT] Requête reçue à 2025-09-23 07:52:16
+[PUT] Données reçues : {"id_banque":104,"nom":"Baptiste","section":"PVO005"}
+[PUT] Succès : {"message":"Banque mise \u00e0 jour avec succ\u00e8s"}
+[GET] Requête reçue à 2025-09-23 07:52:16
+[GET] Requête reçue à 2025-09-23 07:54:04
+[GET] Requête reçue à 2025-09-23 07:54:04
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 07:54:04
+[GET] Requête reçue à 2025-09-23 07:54:08
+[GET] Requête reçue à 2025-09-23 07:54:09
+[PUT] Requête reçue à 2025-09-23 07:54:20
+[PUT] Données reçues : {"id_banque":104,"nom":"Batista","section":"PVO005"}
+[PUT] Succès : {"message":"Banque mise \u00e0 jour avec succ\u00e8s"}
+[GET] Requête reçue à 2025-09-23 07:54:20
+[PUT] Requête reçue à 2025-09-23 07:54:35
+[PUT] Données reçues : {"id_banque":104,"nom":"SOAVOLA","section":"PVO005"}
+[PUT] Succès : {"message":"Banque mise \u00e0 jour avec succ\u00e8s"}
+[GET] Requête reçue à 2025-09-23 07:54:35
+[GET] Requête reçue à 2025-09-23 08:05:28
+[GET] Requête reçue à 2025-09-23 08:05:28
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 08:05:28
+[GET] Requête reçue à 2025-09-23 08:05:32
+[GET] Requête reçue à 2025-09-23 08:05:32
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 08:05:34
+[GET] Requête reçue à 2025-09-23 08:05:34
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 08:05:38
+[GET] Requête reçue à 2025-09-23 08:05:38
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 08:05:39
+[GET] Requête reçue à 2025-09-23 08:05:39
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 08:05:41
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 08:05:41
+[GET] Requête reçue à 2025-09-23 08:05:43
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 08:05:43
+[GET] Requête reçue à 2025-09-23 08:05:44
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 08:05:44
+[GET] Requête reçue à 2025-09-23 08:05:46
+[GET] Requête reçue à 2025-09-23 08:12:53
+[GET] Requête reçue à 2025-09-23 08:12:54
+[GET] Requête reçue à 2025-09-23 08:12:54
+[GET] Requête reçue à 2025-09-23 08:12:54
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 08:13:38
+[GET] Requête reçue à 2025-09-23 08:13:38
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 08:13:38
+[GET] Requête reçue à 2025-09-23 08:13:45
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 08:13:45
+[GET] Requête reçue à 2025-09-23 08:13:45
+[GET] Requête reçue à 2025-09-23 08:13:53
+[GET] Requête reçue à 2025-09-23 08:13:56
+[GET] Requête reçue à 2025-09-23 08:13:57
+[GET] Requête reçue à 2025-09-23 08:13:58
+[GET] Requête reçue à 2025-09-23 08:13:59
+[GET] Requête reçue à 2025-09-23 08:14:17
+[GET] Requête reçue à 2025-09-23 08:50:02
+[GET] Requête reçue à 2025-09-23 08:50:02
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 08:50:03
+[GET] Requête reçue à 2025-09-23 08:50:07
+[GET] Requête reçue à 2025-09-23 08:50:10
+[GET] Requête reçue à 2025-09-23 08:50:12
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 08:50:12
+[GET] Requête reçue à 2025-09-23 08:50:44
+[GET] Requête reçue à 2025-09-23 08:50:58
+[GET] Requête reçue à 2025-09-23 08:50:58
+[GET] Requête reçue à 2025-09-23 08:51:00
+[GET] Requête reçue à 2025-09-23 08:51:00
+[GET] Requête reçue à 2025-09-23 08:51:00
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 08:52:07
+[GET] Requête reçue à 2025-09-23 08:52:08
+[GET] Requête reçue à 2025-09-23 08:52:09
+[GET] Requête reçue à 2025-09-23 08:52:09
+[GET] Requête reçue à 2025-09-23 08:52:10
+[GET] Requête reçue à 2025-09-23 08:52:10
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 08:52:11
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 08:52:11
+[GET] Requête reçue à 2025-09-23 08:52:23
+[GET] Requête reçue à 2025-09-23 08:52:23
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 08:52:25
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 08:52:26
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 08:52:26
+[GET] Requête reçue à 2025-09-23 08:52:27
+[GET] Requête reçue à 2025-09-23 08:52:27
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 08:52:28
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 08:52:28
+[GET] Requête reçue à 2025-09-23 08:52:29
+[GET] Requête reçue à 2025-09-23 08:52:29
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 08:52:31
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 08:52:31
+[GET] Requête reçue à 2025-09-23 08:52:33
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 08:52:33
+[GET] Requête reçue à 2025-09-23 08:53:11
+[GET] Requête reçue à 2025-09-23 08:53:11
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 08:53:11
+[GET] Requête reçue à 2025-09-23 08:53:11
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 08:53:17
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 08:53:17
+[GET] Requête reçue à 2025-09-23 08:53:17
+[GET] Requête reçue à 2025-09-23 08:53:22
+[GET] Requête reçue à 2025-09-23 08:53:22
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 12:18:35
+[GET] Requête reçue à 2025-09-23 12:18:35
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 12:18:35
+[GET] Requête reçue à 2025-09-23 12:18:35
+[GET] Requête reçue à 2025-09-23 12:18:35
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 12:18:35
+[GET] Requête reçue à 2025-09-23 12:18:41
+[GET] Requête reçue à 2025-09-23 12:18:44
+[GET] Requête reçue à 2025-09-23 12:18:46
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 12:18:46
+[GET] Requête reçue à 2025-09-23 12:19:07
+[GET] Requête reçue à 2025-09-23 12:19:07
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 12:19:08
+[GET] Requête reçue à 2025-09-23 12:19:08
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 12:19:09
+[GET] Requête reçue à 2025-09-23 12:19:09
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 12:19:11
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 12:19:11
+[GET] Requête reçue à 2025-09-23 12:20:26
+[GET] Requête reçue à 2025-09-23 12:20:26
+[GET] Requête reçue à 2025-09-23 12:20:27
+[GET] Requête reçue à 2025-09-23 12:20:28
+[GET] Requête reçue à 2025-09-23 12:20:29
+[GET] Requête reçue à 2025-09-23 12:20:37
+[GET] Requête reçue à 2025-09-23 12:20:38
+[GET] Requête reçue à 2025-09-23 12:21:20
+[GET] Requête reçue à 2025-09-23 12:21:20
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 12:21:20
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 12:21:20
+[GET] Requête reçue à 2025-09-23 12:37:28
+[GET] Requête reçue à 2025-09-23 12:37:29
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 12:37:29
+[GET] Requête reçue à 2025-09-23 12:37:31
+[GET] Requête reçue à 2025-09-23 12:37:31
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 12:37:48
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 12:37:48
+[GET] Requête reçue à 2025-09-23 12:37:53
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 12:37:53
+[GET] Requête reçue à 2025-09-23 12:38:05
+[GET] Requête reçue à 2025-09-23 12:38:05
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 12:38:07
+[GET] Requête reçue à 2025-09-23 12:38:07
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 12:38:09
+[GET] Requête reçue à 2025-09-23 12:38:09
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 12:38:09
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 12:38:09
+[GET] Requête reçue à 2025-09-23 12:38:10
+[GET] Requête reçue à 2025-09-23 12:38:11
+[GET] Requête reçue à 2025-09-23 12:38:11
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 12:38:16
+[GET] Requête reçue à 2025-09-23 12:38:22
+[GET] Requête reçue à 2025-09-23 12:38:29
+[GET] Requête reçue à 2025-09-23 12:38:29
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 12:38:35
+[GET] Requête reçue à 2025-09-23 12:38:37
+[GET] Requête reçue à 2025-09-23 12:38:44
+[GET] Requête reçue à 2025-09-23 12:39:07
+[GET] Requête reçue à 2025-09-23 12:39:10
+[GET] Requête reçue à 2025-09-23 12:39:10
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 12:44:58
+[GET] Requête reçue à 2025-09-23 12:45:07
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 12:45:07
+[GET] Requête reçue à 2025-09-23 12:45:16
+[GET] Requête reçue à 2025-09-23 12:45:16
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 12:45:47
+[GET] Requête reçue à 2025-09-23 12:45:47
+[GET] Requête reçue à 2025-09-23 12:45:48
+[GET] Requête reçue à 2025-09-23 12:45:49
+[GET] Requête reçue à 2025-09-23 12:45:50
+[GET] Requête reçue à 2025-09-23 12:45:52
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 12:45:52
+[GET] Requête reçue à 2025-09-23 12:46:22
+[GET] Requête reçue à 2025-09-23 12:46:37
+[GET] Requête reçue à 2025-09-23 12:46:37
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 12:46:38
+[GET] Requête reçue à 2025-09-23 12:46:55
+[GET] Requête reçue à 2025-09-23 12:46:55
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 13:12:10
+[GET] Requête reçue à 2025-09-23 13:12:11
+[GET] Requête reçue à 2025-09-23 13:12:12
+[GET] Requête reçue à 2025-09-23 13:12:12
+[GET] Requête reçue à 2025-09-23 13:12:13
+[GET] Requête reçue à 2025-09-23 13:12:14
+[GET] Requête reçue à 2025-09-23 13:12:14
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 13:12:20
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 13:12:20
+[GET] Requête reçue à 2025-09-23 13:12:21
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 13:12:21
+[GET] Requête reçue à 2025-09-23 13:18:21
+[GET] Requête reçue à 2025-09-23 13:18:22
+[GET] Requête reçue à 2025-09-23 13:18:22
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 13:18:22
+[GET] Requête reçue à 2025-09-23 13:18:22
+[GET] Requête reçue à 2025-09-23 13:18:25
+[GET] Requête reçue à 2025-09-23 13:18:25
+[GET] Requête reçue à 2025-09-23 13:18:25
+[GET] Requête reçue à 2025-09-23 13:18:25
+[GET] Requête reçue à 2025-09-23 13:18:25
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 13:18:42
+[GET] Requête reçue à 2025-09-23 13:18:42
+[GET] Requête reçue à 2025-09-23 13:18:42
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1}]
+[GET] Requête reçue à 2025-09-23 13:18:42
+[GET] Requête reçue à 2025-09-23 13:19:45
+[POST] Requête reçue à 2025-09-23 13:20:00
+[POST] Données reçues : {"id_banque":105,"nom":"John Cena","section":"PVO005"}
+[POST] Succès : {"message":"Banque ajout\u00e9e avec succ\u00e8s","id_banque":105}
+[GET] Requête reçue à 2025-09-23 13:20:00
+[GET] Requête reçue à 2025-09-23 13:20:03
+[GET] Requête reçue à 2025-09-23 13:20:03
+[GET] Requête reçue à 2025-09-23 13:20:03
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":2}]
+[GET] Requête reçue à 2025-09-23 13:20:03
+[GET] Requête reçue à 2025-09-23 13:20:33
+[GET] Requête reçue à 2025-09-23 13:20:33
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":2}]
+[GET] Requête reçue à 2025-09-23 13:20:33
+[GET] Requête reçue à 2025-09-23 13:20:33
+[GET] Requête reçue à 2025-09-23 13:20:36
+[GET] Requête reçue à 2025-09-23 13:20:36
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":2}]
+[GET] Requête reçue à 2025-09-23 13:20:36
+[GET] Requête reçue à 2025-09-23 13:20:36
+[GET] Requête reçue à 2025-09-23 13:20:59
+[GET] Requête reçue à 2025-09-23 13:20:59
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":2}]
+[GET] Requête reçue à 2025-09-23 13:20:59
+[GET] Requête reçue à 2025-09-23 13:20:59
+[GET] Requête reçue à 2025-09-23 13:21:10
+[GET] Requête reçue à 2025-09-23 13:21:11
+[GET] Requête reçue à 2025-09-23 13:21:11
+[GET] Requête reçue à 2025-09-23 13:21:13
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":2}]
+[GET] Requête reçue à 2025-09-23 13:21:13
+[GET] Requête reçue à 2025-09-23 13:21:13
+[GET] Requête reçue à 2025-09-23 13:21:13
+[GET] Requête reçue à 2025-09-23 13:21:24
+[GET] Requête reçue à 2025-09-23 13:21:29
+[GET] Requête reçue à 2025-09-23 13:21:30
+[GET] Requête reçue à 2025-09-23 13:21:33
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":2}]
+[GET] Requête reçue à 2025-09-23 13:21:33
+[GET] Requête reçue à 2025-09-23 13:21:33
+[GET] Requête reçue à 2025-09-23 13:21:33
+[GET] Requête reçue à 2025-09-23 13:23:16
+[GET] Requête reçue à 2025-09-23 13:23:17
+[GET] Requête reçue à 2025-09-23 13:23:18
+[GET] Requête reçue à 2025-09-23 13:23:19
+[GET] Requête reçue à 2025-09-23 13:23:19
+[GET] Requête reçue à 2025-09-23 13:23:20
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":2}]
+[GET] Requête reçue à 2025-09-23 13:23:20
+[GET] Requête reçue à 2025-09-23 13:23:20
+[GET] Requête reçue à 2025-09-23 13:23:20

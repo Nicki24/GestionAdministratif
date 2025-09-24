@@ -26,9 +26,15 @@ file_put_contents('debug.log', "[$method] Requête reçue à " . date('Y-m-d H:i
 
 try {
     switch ($method) {
-        // GET : Lister tous les bordereaux ou un bordereau spécifique
+        // GET : Lister tous les bordereaux, un bordereau spécifique ou les statistiques
         case 'GET':
-            if (isset($_GET['id_bordereau']) && is_numeric($_GET['id_bordereau'])) {
+            if (isset($_GET['stats']) && isset($_GET['period']) && is_numeric($_GET['period'])) {
+                $period = (int)$_GET['period'];
+                $stmt = $pdo->prepare("SELECT DATE(date_creation) AS day, COUNT(*) AS count FROM bordereau WHERE date_creation >= DATE_SUB(CURDATE(), INTERVAL ? DAY) GROUP BY DATE(date_creation)");
+                $stmt->execute([$period]);
+                $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                echo json_encode($result);
+            } elseif (isset($_GET['id_bordereau']) && is_numeric($_GET['id_bordereau'])) {
                 $id_bordereau = (int)$_GET['id_bordereau'];
                 $stmt = $pdo->prepare("SELECT * FROM bordereau WHERE id_bordereau = ?");
                 $stmt->execute([$id_bordereau]);

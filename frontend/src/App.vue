@@ -14,11 +14,15 @@
           <span class="icon">📋</span>
           <span class="text">Bordereaux</span>
         </router-link>
+        <router-link to="/banque" class="nav-item" active-class="router-link-active">
+          <span class="icon">🏦</span>
+          <span class="text">Banques</span>
+        </router-link>
         <div class="nav-section">Gestion</div>
-        <a href="#" class="nav-item" @click.prevent>
+        <router-link to="/statistiques" class="nav-item" active-class="router-link-active">
           <span class="icon">📊</span>
           <span class="text">Statistiques</span>
-        </a>
+        </router-link>
         <a href="#" class="nav-item" @click.prevent>
           <span class="icon">💰</span>
           <span class="text">Finance</span>
@@ -63,13 +67,13 @@
 
           <!-- Sidebar Widgets -->
           <div class="sidebar-widgets">
-            <!-- Next Game Card -->
+            <!-- Next Report Card -->
             <div class="widget-card">
-              <h3>📅 Prochain Match</h3>
+              <h3>📊 Prochain Rapport</h3>
               <div class="widget-content">
                 <div class="game-info">
-                  <span class="league">Serie A</span>
-                  <span class="date">11 Novembre 2024</span>
+                  <span class="league">Rapport Financier</span>
+                  <span class="date">{{ nextReportDate }}</span>
                 </div>
               </div>
             </div>
@@ -84,6 +88,10 @@
                 </div>
                 <div class="status-item">
                   <span class="status-dot active"></span>
+                  <span>API Banques</span>
+                </div>
+                <div class="status-item">
+                  <span class="status-dot active"></span>
                   <span>Base de données</span>
                 </div>
                 <div class="status-item">
@@ -95,17 +103,7 @@
 
             <!-- Statistics -->
             <div class="widget-card">
-              <h3>📈 Statistiques</h3>
-              <div class="widget-content">
-                <div class="stat-item">
-                  <span class="stat-label">Bordereaux actifs</span>
-                  <span class="stat-value">24</span>
-                </div>
-                <div class="stat-item">
-                  <span class="stat-label">Taux de réussite</span>
-                  <span class="stat-value">92%</span>
-                </div>
-              </div>
+              <StatisticsWidget />
             </div>
 
             <!-- Quick Actions -->
@@ -115,6 +113,10 @@
                 <router-link to="/bordereaux" class="action-btn">
                   <span class="action-icon">➕</span>
                   Nouveau Bordereau
+                </router-link>
+                <router-link to="/banque" class="action-btn">
+                  <span class="action-icon">🏦</span>
+                  Nouvelle Banque
                 </router-link>
                 <button class="action-btn" @click="generateReport">
                   <span class="action-icon">📊</span>
@@ -130,11 +132,15 @@
 </template>
 
 <script>
-import { computed } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
+import StatisticsWidget from './components/Statistics.vue';
 
 export default {
   name: 'App',
+  components: {
+    StatisticsWidget
+  },
   setup() {
     const route = useRoute();
     
@@ -142,6 +148,8 @@ export default {
       switch (route.name) {
         case 'Home': return 'Tableau de Bord';
         case 'Bordereaux': return 'Gestion des Bordereaux';
+        case 'Banque': return 'Gestion des Banques';
+        case 'Statistiques': return 'Statistiques'; // Ajout pour la nouvelle route
         default: return 'Système de Gestion';
       }
     });
@@ -151,9 +159,31 @@ export default {
       // Implémenter la logique de rapport ici si nécessaire
     };
 
+    // Calcul de la date du prochain rapport
+    const nextReportDate = ref('');
+    
+    const updateNextReportDate = () => {
+      const today = new Date();
+      // Ajouter 7 jours pour simuler le prochain rapport
+      const nextReport = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+      const options = { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      };
+      nextReportDate.value = nextReport.toLocaleDateString('fr-FR', options);
+    };
+
+    onMounted(() => {
+      updateNextReportDate();
+      // Mise à jour toutes les heures (optionnel)
+      setInterval(updateNextReportDate, 60 * 60 * 1000);
+    });
+
     return {
       currentPageTitle,
-      generateReport
+      generateReport,
+      nextReportDate
     };
   }
 };
@@ -177,12 +207,18 @@ body {
   min-height: 100vh;
 }
 
-/* Sidebar Styles */
+/* Sidebar Styles (fixe à gauche) */
 .sidebar {
   width: 250px;
   background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
   color: white;
   padding: 20px 0;
+  position: fixed; /* Fixe la sidebar */
+  top: 0;
+  left: 0;
+  height: 100vh; /* Pleine hauteur */
+  z-index: 1000; /* Au-dessus du contenu */
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .logo {
@@ -237,13 +273,15 @@ body {
   font-size: 0.95rem;
 }
 
-/* Main Content Styles */
+/* Main Content Styles (ajusté pour sidebar fixe) */
 .main-content {
   flex: 1;
+  margin-left: 250px; /* Largeur de la sidebar */
   display: flex;
   flex-direction: column;
 }
 
+/* Header Styles (fixe en haut) */
 .header {
   background: white;
   padding: 20px 30px;
@@ -251,6 +289,11 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: fixed; /* Fixe l'en-tête */
+  top: 0;
+  left: 250px; /* Aligner avec la sidebar */
+  right: 0;
+  z-index: 1000; /* Au-dessus du contenu */
 }
 
 .header-left h1 {
@@ -280,11 +323,12 @@ body {
   font-size: 1.2rem;
 }
 
-/* Content Area */
+/* Content Area (ajusté pour en-tête fixe) */
 .content {
   flex: 1;
   padding: 30px;
-  overflow-y: auto;
+  margin-top: 80px; /* Hauteur approximative de l'en-tête + padding */
+  overflow-y: auto; /* Défilement global si nécessaire */
 }
 
 .dashboard-grid {
@@ -300,6 +344,8 @@ body {
   border-radius: 15px;
   padding: 25px;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  max-height: calc(100vh - 130px); /* Ajuster pour en-tête et padding */
+  overflow-y: auto; /* Défilement interne */
 }
 
 /* Widget Styles */
@@ -428,6 +474,14 @@ body {
   .sidebar {
     width: 200px;
   }
+  
+  .main-content {
+    margin-left: 200px;
+  }
+  
+  .header {
+    left: 200px;
+  }
 }
 
 @media (max-width: 768px) {
@@ -449,6 +503,14 @@ body {
   .nav-item .icon {
     margin-right: 0;
     font-size: 1.4rem;
+  }
+  
+  .main-content {
+    margin-left: 60px;
+  }
+  
+  .header {
+    left: 60px;
   }
 }
 </style>

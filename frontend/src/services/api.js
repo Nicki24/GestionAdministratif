@@ -121,4 +121,51 @@ export const bordereauService = {
   }
 };
 
+// Service pour les banques
+export const banqueService = {
+  // Récupérer toutes les banques
+  async getBanques() {
+    try {
+      const response = await api.get("/banque_api.php");
+      return response.data; // Retourne un tableau de banques
+    } catch (error) {
+      console.error("Erreur dans getBanques:", error);
+      throw error;
+    }
+  },
+
+  // Créer une nouvelle banque
+  async createBanque(data) {
+    try {
+      const response = await api.post("/banque_api.php", data);
+      return response.data; // Retourne { message: "Banque ajoutée", id_banque: <id> }
+    } catch (error) {
+      console.error("Erreur dans createBanque:", error);
+      throw error;
+    }
+  },
+
+  // Modifier une banque
+  async updateBanque(id_banque, data) {
+    try {
+      const response = await api.put(`/banque_api.php?id_banque=${id_banque}`, data);
+      return response.data; // Retourne { message: "Banque mise à jour" }
+    } catch (error) {
+      console.error("Erreur dans updateBanque:", error);
+      throw error;
+    }
+  },
+
+  // Supprimer une banque
+  async deleteBanque(id_banque) {
+    try {
+      const response = await api.delete(`/banque_api.php?id_banque=${id_banque}`);
+      return response.data; // Retourne { message: "Banque supprimée" }
+    } catch (error) {
+      console.error("Erreur dans deleteBanque:", error);
+      throw error;
+    }
+  }
+};
+
 export default api;

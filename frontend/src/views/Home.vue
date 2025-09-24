@@ -108,6 +108,8 @@ export default {
 <style scoped>
 .home-page {
   padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .welcome-section {
@@ -235,5 +237,106 @@ export default {
 .activity-time {
   font-size: 0.8rem;
   color: #7f8c8d;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .home-page {
+    padding: 15px;
+  }
+
+  .welcome-section h2 {
+    font-size: 1.5rem;
+  }
+
+  .welcome-section p {
+    font-size: 1rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-card {
+    padding: 15px;
+  }
+
+  .stat-icon {
+    font-size: 2rem;
+  }
+
+  .stat-info h3 {
+    font-size: 1.5rem;
+  }
+
+  .stat-info p {
+    font-size: 0.8rem;
+  }
+
+  .activity-item {
+    padding: 10px;
+  }
+
+  .activity-icon {
+    font-size: 1.2rem;
+  }
+
+  .activity-content p {
+    font-size: 0.9rem;
+  }
+
+  .activity-time {
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-page {
+    padding: 10px;
+  }
+
+  .welcome-section h2 {
+    font-size: 1.2rem;
+  }
+
+  .welcome-section p {
+    font-size: 0.9rem;
+  }
+
+  .stat-card {
+    flex-direction: column;
+    text-align: center;
+    padding: 10px;
+  }
+
+  .stat-icon {
+    font-size: 1.8rem;
+  }
+
+  .stat-info h3 {
+    font-size: 1.2rem;
+  }
+
+  .stat-info p {
+    font-size: 0.7rem;
+  }
+
+  .activity-item {
+    flex-direction: column;
+    text-align: center;
+    padding: 8px;
+  }
+
+  .activity-icon {
+    font-size: 1rem;
+  }
+
+  .activity-content p {
+    font-size: 0.8rem;
+  }
+
+  .activity-time {
+    font-size: 0.6rem;
+  }
 }
 </style>

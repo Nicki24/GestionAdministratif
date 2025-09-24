@@ -13,4 +13,4 @@ app.use(Notifications); // Ajouter les notifications
 // Monter l'application
 app.mount("#app");
 
-console.log("Vue app mounted with router and notifications");
+console.log("Vue app mounted with router and notifications"); 
