@@ -30,6 +30,12 @@
           <option value="VISA">VISA</option>
         </select>
       </div>
+      <!-- Contrôle de navigation par mois -->
+      <div class="month-nav">
+        <button @click="prevMonth" :disabled="loading" class="nav-btn">⬅ Précédent</button>
+        <span class="month-label">{{ currentMonthYear }}</span>
+        <button @click="nextMonth" :disabled="loading" class="nav-btn">Suivant ➡</button>
+      </div>
     </div>
 
     <!-- Contenu principal -->
@@ -52,7 +58,7 @@
         <div class="empty-icon">📋</div>
         <h3>Aucun bordereau trouvé</h3>
         <p v-if="searchQuery || statusFilter">Aucun résultat pour vos critères de recherche</p>
-        <p v-else>Commencez par créer votre premier bordereau</p>
+        <p v-else>Commencez par créer votre premier bordereau pour {{ currentMonthYear }}</p>
         <button class="btn-primary" @click="showAddModal = true" :disabled="loading">
           ➕ Créer un bordereau
         </button>
@@ -82,13 +88,13 @@
           </thead>
           <tbody>
             <tr v-for="bordereau in paginatedBordereaux" :key="bordereau.id_bordereau">
-              <td class="id-cell">#{{ bordereau.id_bordereau }}</td>
-              <td class="reference-cell"><strong>{{ bordereau.reference || '(vide)' }}</strong></td>
-              <td class="matricule-cell">{{ bordereau.matricules.join(', ') }}</td>
-              <td class="objet-cell"><div class="objet-text" :title="bordereau.objet">{{ truncateText(bordereau.objet, 60) }}</div></td>
-              <td class="status-cell"><span class="status-badge" :class="bordereau.statut.toLowerCase()">{{ bordereau.statut }}</span></td>
-              <td class="date-cell">{{ formatDate(bordereau.date_creation) }}<div class="time-text">{{ formatTime(bordereau.date_creation) }}</div></td>
-              <td class="actions-cell">
+              <td class="id-cell" data-label="ID">#{{ bordereau.id_bordereau }}</td>
+              <td class="reference-cell" data-label="Référence"><strong>{{ bordereau.reference || '(vide)' }}</strong></td>
+              <td class="matricule-cell" data-label="Matricules">{{ bordereau.matricules.join(', ') }}</td>
+              <td class="objet-cell" data-label="Description"><div class="objet-text" :title="bordereau.objet">{{ truncateText(bordereau.objet, 60) }}</div></td>
+              <td class="status-cell" data-label="Statut"><span class="status-badge" :class="bordereau.statut.toLowerCase()">{{ bordereau.statut }}</span></td>
+              <td class="date-cell" data-label="Date">{{ formatDate(bordereau.date_creation) }}<div class="time-text">{{ formatTime(bordereau.date_creation) }}</div></td>
+              <td class="actions-cell" data-label="Actions">
                 <button class="btn-action edit-btn" @click="editBordereau(bordereau)" title="Modifier" :disabled="loading">✏️</button>
                 <button class="btn-action delete-btn" @click="confirmDelete(bordereau)" title="Supprimer" :disabled="loading">🗑️</button>
               </td>
@@ -312,7 +318,10 @@ export default {
       newMatricule: '',
       newMatriculeError: '',
       matriculeError: '',
-      isValidNewMatricule: false
+      isValidNewMatricule: false,
+      currentMonth: new Date().getMonth() + 1, // Mois courant (1-12)
+      currentYear: new Date().getFullYear(),   // Année courante
+      interval: null
     };
   },
   computed: {
@@ -334,11 +343,17 @@ export default {
       });
       let result = Object.values(grouped);
       
+      // Filtrer par mois et année actuels
+      result = result.filter(b => {
+        const date = new Date(b.date_creation);
+        return date.getMonth() + 1 === this.currentMonth && date.getFullYear() === this.currentYear;
+      });
+
       // Appliquer les filtres
       if (this.searchQuery) {
         const query = this.searchQuery.toLowerCase();
         result = result.filter(b => 
-          b.id_bordereau.toString().toLowerCase().includes(query) || // Ajout de la recherche par ID
+          b.id_bordereau.toString().toLowerCase().includes(query) ||
           b.reference.toLowerCase().includes(query) ||
           b.matricules.some(m => m.toLowerCase().includes(query)) ||
           (b.objet && b.objet.toLowerCase().includes(query))
@@ -371,6 +386,13 @@ export default {
     },
     endIndex() {
       return Math.min(this.startIndex + this.itemsPerPage, this.groupedBordereaux.length);
+    },
+    currentMonthYear() {
+      const months = [
+        'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+        'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+      ];
+      return `${months[this.currentMonth - 1]} ${this.currentYear}`;
     }
   },
   watch: {
@@ -389,11 +411,30 @@ export default {
           type: 'error'
         });
       }
+    },
+    // Détecter un changement de mois automatique
+    currentMonth(newMonth, oldMonth) {
+      if (newMonth !== oldMonth) {
+        this.currentPage = 1; // Réinitialiser la pagination
+        this.loadBordereaux(); // Recharger les données si nécessaire (optionnel)
+      }
+    },
+    currentYear(newYear, oldYear) {
+      if (newYear !== oldYear) {
+        this.currentPage = 1; // Réinitialiser la pagination
+        this.loadBordereaux(); // Recharger les données si nécessaire (optionnel)
+      }
     }
   },
   async mounted() {
     console.log('BordereauxView mounted');
+    this.updateCurrentDate();
     await this.loadBordereaux();
+    // Vérifier le mois toutes les minutes
+    this.interval = setInterval(this.updateCurrentDate, 60000);
+  },
+  beforeUnmount() {
+    if (this.interval) clearInterval(this.interval); // Nettoyer l'intervalle
   },
   methods: {
     async loadBordereaux() {
@@ -614,6 +655,33 @@ export default {
     truncateText(text, length) {
       if (!text) return '';
       return text.length > length ? text.substring(0, length) + '...' : text;
+    },
+    updateCurrentDate() {
+      const now = new Date();
+      const newMonth = now.getMonth() + 1; // Mois en 1-12
+      const newYear = now.getFullYear();
+      if (this.currentMonth !== newMonth || this.currentYear !== newYear) {
+        this.currentMonth = newMonth;
+        this.currentYear = newYear;
+      }
+    },
+    prevMonth() {
+      if (this.currentMonth === 1) {
+        this.currentMonth = 12;
+        this.currentYear--;
+      } else {
+        this.currentMonth--;
+      }
+      this.currentPage = 1; // Réinitialiser la pagination
+    },
+    nextMonth() {
+      if (this.currentMonth === 12) {
+        this.currentMonth = 1;
+        this.currentYear++;
+      } else {
+        this.currentMonth++;
+      }
+      this.currentPage = 1; // Réinitialiser la pagination
     }
   }
 };
@@ -744,6 +812,41 @@ export default {
 .filter-select:disabled {
   background-color: #f8f9fa;
   cursor: not-allowed;
+}
+
+/* Navigation par mois */
+.month-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 200px;
+}
+
+.month-label {
+  font-weight: 500;
+  color: #1a3c34;
+  font-size: 14px;
+}
+
+.nav-btn {
+  padding: 8px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background-color: #ffffff;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.nav-btn:hover:not(:disabled) {
+  background-color: #007bff;
+  color: #ffffff;
+  border-color: #007bff;
+}
+
+.nav-btn:disabled {
+  background-color: #f8f9fa;
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 /* Contenu principal */
@@ -1228,7 +1331,8 @@ export default {
   }
 
   .search-box,
-  .filter-group {
+  .filter-group,
+  .month-nav {
     min-width: 100%;
   }
 

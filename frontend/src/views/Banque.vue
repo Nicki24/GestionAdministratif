@@ -21,6 +21,12 @@
         />
         <span class="search-icon">🔍</span>
       </div>
+      <!-- Contrôle de navigation par mois -->
+      <div class="month-nav">
+        <button @click="prevMonth" :disabled="loading" class="nav-btn">⬅ Précédent</button>
+        <span class="month-label">{{ currentMonthYear }}</span>
+        <button @click="nextMonth" :disabled="loading" class="nav-btn">Suivant ➡</button>
+      </div>
     </div>
 
     <!-- Contenu principal -->
@@ -43,7 +49,7 @@
         <div class="empty-icon">🏦</div>
         <h3>Aucune banque trouvée</h3>
         <p v-if="searchQuery">Aucun résultat pour vos critères de recherche</p>
-        <p v-else>Commencez par ajouter une banque</p>
+        <p v-else>Commencez par ajouter une banque pour {{ currentMonthYear }}</p>
         <button class="btn-primary" @click="showAddModal = true" :disabled="loading">
           ➕ Ajouter une banque
         </button>
@@ -199,12 +205,22 @@ export default {
         section: ''
       },
       banqueToDelete: null,
-      idError: ''
+      idError: '',
+      currentMonth: new Date().getMonth() + 1, // Mois courant (1-12)
+      currentYear: new Date().getFullYear(),   // Année courante
+      interval: null
     };
   },
   computed: {
     filteredBanques() {
       let result = [...this.banques];
+      
+      // Filtrer par mois et année actuels
+      result = result.filter(b => {
+        const date = new Date(b.date_creation);
+        return date.getMonth() + 1 === this.currentMonth && date.getFullYear() === this.currentYear;
+      });
+
       if (this.searchQuery) {
         const query = this.searchQuery.toLowerCase();
         result = result.filter(b =>
@@ -231,15 +247,41 @@ export default {
     },
     endIndex() {
       return Math.min(this.startIndex + this.itemsPerPage, this.filteredBanques.length);
+    },
+    currentMonthYear() {
+      const months = [
+        'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+        'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+      ];
+      return `${months[this.currentMonth - 1]} ${this.currentYear}`;
     }
   },
   watch: {
     searchQuery() {
       this.currentPage = 1;
+    },
+    // Détecter un changement de mois automatique
+    currentMonth(newMonth, oldMonth) {
+      if (newMonth !== oldMonth) {
+        this.currentPage = 1; // Réinitialiser la pagination
+        this.loadBanques(); // Recharger les données si nécessaire (optionnel)
+      }
+    },
+    currentYear(newYear, oldYear) {
+      if (newYear !== oldYear) {
+        this.currentPage = 1; // Réinitialiser la pagination
+        this.loadBanques(); // Recharger les données si nécessaire (optionnel)
+      }
     }
   },
   async mounted() {
+    this.updateCurrentDate();
     await this.loadBanques();
+    // Vérifier le mois toutes les minutes
+    this.interval = setInterval(this.updateCurrentDate, 60000);
+  },
+  beforeUnmount() {
+    if (this.interval) clearInterval(this.interval); // Nettoyer l'intervalle
   },
   methods: {
     async loadBanques() {
@@ -365,6 +407,33 @@ export default {
         month: '2-digit',
         day: '2-digit'
       });
+    },
+    updateCurrentDate() {
+      const now = new Date();
+      const newMonth = now.getMonth() + 1; // Mois en 1-12
+      const newYear = now.getFullYear();
+      if (this.currentMonth !== newMonth || this.currentYear !== newYear) {
+        this.currentMonth = newMonth;
+        this.currentYear = newYear;
+      }
+    },
+    prevMonth() {
+      if (this.currentMonth === 1) {
+        this.currentMonth = 12;
+        this.currentYear--;
+      } else {
+        this.currentMonth--;
+      }
+      this.currentPage = 1; // Réinitialiser la pagination
+    },
+    nextMonth() {
+      if (this.currentMonth === 12) {
+        this.currentMonth = 1;
+        this.currentYear++;
+      } else {
+        this.currentMonth++;
+      }
+      this.currentPage = 1; // Réinitialiser la pagination
     }
   }
 };
@@ -468,6 +537,41 @@ export default {
   transform: translateY(-50%);
   font-size: 16px;
   color: #6c757d;
+}
+
+/* Navigation par mois */
+.month-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 200px;
+}
+
+.month-label {
+  font-weight: 500;
+  color: #1a3c34;
+  font-size: 14px;
+}
+
+.nav-btn {
+  padding: 8px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background-color: #ffffff;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.nav-btn:hover:not(:disabled) {
+  background-color: #007bff;
+  color: #ffffff;
+  border-color: #007bff;
+}
+
+.nav-btn:disabled {
+  background-color: #f8f9fa;
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .content-section {
@@ -820,7 +924,8 @@ export default {
     flex-direction: column;
   }
 
-  .search-box {
+  .search-box,
+  .month-nav {
     min-width: 100%;
   }
 }

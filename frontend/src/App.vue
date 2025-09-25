@@ -159,19 +159,17 @@ export default {
       // Implémenter la logique de rapport ici si nécessaire
     };
 
-    // Calcul de la date du prochain rapport
+    // Calcul de la date du jour
     const nextReportDate = ref('');
     
     const updateNextReportDate = () => {
       const today = new Date();
-      // Ajouter 7 jours pour simuler le prochain rapport
-      const nextReport = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
       const options = { 
         year: 'numeric', 
         month: 'long', 
         day: 'numeric' 
       };
-      nextReportDate.value = nextReport.toLocaleDateString('fr-FR', options);
+      nextReportDate.value = today.toLocaleDateString('fr-FR', options);
     };
 
     onMounted(() => {
