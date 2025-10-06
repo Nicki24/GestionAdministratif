@@ -168,4 +168,89 @@ export const banqueService = {
   }
 };
 
+// Service pour les départements
+export const departementService = {
+  // Récupérer tous les départements
+  async getDepartements() {
+    try {
+      const response = await api.get("/departement_api.php");
+      return response.data; // Retourne un tableau de départements
+    } catch (error) {
+      console.error("Erreur dans getDepartements:", error);
+      throw error;
+    }
+  },
+
+  // Récupérer un département spécifique
+  async getDepartement(id) {
+    try {
+      const response = await api.get(`/departement_api.php?id_departement=${id}`);
+      return response.data; // Retourne un département
+    } catch (error) {
+      console.error("Erreur dans getDepartement:", error);
+      throw error;
+    }
+  },
+
+  // Créer un nouveau département
+  async createDepartement(data) {
+    try {
+      const response = await api.post("/departement_api.php", data);
+      return response.data; // Retourne { message: "Département créé", id_departement: <id> }
+    } catch (error) {
+      console.error("Erreur dans createDepartement:", error);
+      throw error;
+    }
+  },
+
+  // Modifier un département
+  async updateDepartement(id_departement, data) {
+    try {
+      const response = await api.put(`/departement_api.php?id_departement=${id_departement}`, data);
+      return response.data; // Retourne { message: "Département mis à jour" }
+    } catch (error) {
+      console.error("Erreur dans updateDepartement:", error);
+      throw error;
+    }
+  },
+
+  // Supprimer un département
+  async deleteDepartement(id_departement) {
+    try {
+      const response = await api.delete(`/departement_api.php?id_departement=${id_departement}`);
+      return response.data; // Retourne { message: "Département supprimé" }
+    } catch (error) {
+      console.error("Erreur dans deleteDepartement:", error);
+      throw error;
+    }
+  }
+};
+
+// Nouveau service pour la recherche par date
+export const searchService = {
+  async searchByDate(date, type) {
+    try {
+      // Validation des paramètres
+      if (!date || !type) {
+        throw new Error('La date et le type sont requis');
+      }
+      
+      console.log(`🔍 Recherche par date: ${date}, type: ${type}`);
+      
+      const response = await api.get(`/search_api.php`, {
+        params: {
+          date: date,
+          type: type
+        }
+      });
+      
+      console.log('✅ Résultats recherche:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error("❌ Erreur dans searchByDate:", error);
+      throw error;
+    }
+  },
+};
+
 export default api;
