@@ -22,7 +22,7 @@
         <form @submit.prevent="handleLogin" class="login-form">
           <!-- Champ Email -->
           <div class="input-group">
-            <label for="email" class="input-label">Email ID</label>
+            <label for="email" class="input-label">Adresse Email</label>
             <div class="input-wrapper" :class="{ 'focused': emailFocused }">
               <span class="input-icon">📧</span>
               <input
@@ -34,6 +34,7 @@
                 required
                 @focus="emailFocused = true"
                 @blur="emailFocused = false"
+                ref="emailInput"
               >
               <div class="input-border"></div>
             </div>
@@ -41,7 +42,7 @@
 
           <!-- Champ Mot de passe -->
           <div class="input-group">
-            <label for="password" class="input-label">Password</label>
+            <label for="password" class="input-label">Mot de passe</label>
             <div class="input-wrapper" :class="{ 'focused': passwordFocused }">
               <span class="input-icon">🔒</span>
               <input
@@ -53,11 +54,13 @@
                 required
                 @focus="passwordFocused = true"
                 @blur="passwordFocused = false"
+                ref="passwordInput"
               >
               <button 
                 type="button" 
                 class="password-toggle"
                 @click="showPassword = !showPassword"
+                :title="showPassword ? 'Cacher le mot de passe' : 'Afficher le mot de passe'"
               >
                 {{ showPassword ? '👁️' : '👁️‍🗨️' }}
               </button>
@@ -70,21 +73,26 @@
             <label class="checkbox-container">
               <input type="checkbox" v-model="rememberMe">
               <span class="checkmark"></span>
-              Remember me
+              Se souvenir de moi
             </label>
-            <a href="#" class="forgot-password">Forget Password?</a>
+            <a href="#" class="forgot-password">Mot de passe oublié ?</a>
           </div>
 
           <!-- Bouton de connexion -->
           <button type="submit" class="login-btn" :disabled="loading">
             <span v-if="loading" class="btn-spinner"></span>
-            {{ loading ? 'CONNEXION...' : 'LOGIN' }}
+            {{ loading ? 'CONNEXION...' : 'SE CONNECTER' }}
           </button>
+
+          <!-- Message d'erreur -->
+          <div v-if="errorMessage" class="error-message">
+            {{ errorMessage }}
+          </div>
 
           <!-- Lien de démonstration -->
           <div class="demo-section">
             <button type="button" @click="goToDashboard" class="demo-btn">
-              🚀 Accéder au dashboard (démo)
+              🚀 Accéder au tableau de bord (démo)
             </button>
           </div>
         </form>
@@ -99,7 +107,7 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
 export default {
@@ -117,30 +125,101 @@ export default {
     const showPassword = ref(false);
     const emailFocused = ref(false);
     const passwordFocused = ref(false);
+    const errorMessage = ref('');
+
+    // Références pour les champs input
+    const emailInput = ref(null);
+    const passwordInput = ref(null);
+
+    // Charger les identifiants sauvegardés au montage du composant
+    onMounted(() => {
+      loadSavedCredentials();
+      
+      // Focus automatique sur le champ email si vide
+      if (!loginData.value.email && emailInput.value) {
+        emailInput.value.focus();
+      }
+    });
+
+    // Charger les identifiants depuis le localStorage
+    const loadSavedCredentials = () => {
+      const savedRememberMe = localStorage.getItem('rememberMe') === 'true';
+      const savedEmail = localStorage.getItem('savedEmail');
+      const savedPassword = localStorage.getItem('savedPassword');
+
+      if (savedRememberMe && savedEmail) {
+        rememberMe.value = true;
+        loginData.value.email = savedEmail;
+        
+        // Pré-remplir le mot de passe si disponible
+        if (savedPassword) {
+          loginData.value.password = savedPassword;
+        }
+        
+        console.log('🔐 Identifiants chargés depuis la mémoire');
+      }
+    };
+
+    // Sauvegarder les identifiants dans le localStorage
+    const saveCredentials = () => {
+      if (rememberMe.value) {
+        localStorage.setItem('rememberMe', 'true');
+        localStorage.setItem('savedEmail', loginData.value.email);
+        localStorage.setItem('savedPassword', loginData.value.password);
+        console.log('💾 Identifiants sauvegardés');
+      } else {
+        // Supprimer les identifiants sauvegardés si "Se souvenir de moi" est décoché
+        localStorage.removeItem('rememberMe');
+        localStorage.removeItem('savedEmail');
+        localStorage.removeItem('savedPassword');
+        console.log('🗑️ Identifiants supprimés de la mémoire');
+      }
+    };
 
     const handleLogin = async () => {
+      // Réinitialiser le message d'erreur
+      errorMessage.value = '';
+
       if (!loginData.value.email || !loginData.value.password) {
-        alert('Veuillez remplir tous les champs');
+        errorMessage.value = 'Veuillez remplir tous les champs';
         return;
       }
 
       loading.value = true;
       
       try {
-        // Simulation de connexion
-        console.log('Tentative de connexion:', loginData.value);
-        
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        
-        // Stocker l'état de connexion
-        localStorage.setItem('isAuthenticated', 'true');
-        localStorage.setItem('userEmail', loginData.value.email);
-        
-        // Rediriger vers le dashboard
-        router.push('/home'); // Changé de / vers /home
+        // Appel à l'API PHP réelle
+        const response = await fetch('http://localhost/bordereau/backend/login_api.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: loginData.value.email,
+            password: loginData.value.password
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          // Authentification réussie
+          localStorage.setItem('isAuthenticated', 'true');
+          localStorage.setItem('userEmail', loginData.value.email);
+          localStorage.setItem('userData', JSON.stringify(data.user));
+          
+          // Sauvegarder ou supprimer les identifiants selon le choix "Se souvenir de moi"
+          saveCredentials();
+          
+          // Rediriger vers le tableau de bord
+          router.push('/home');
+        } else {
+          // Échec de l'authentification
+          errorMessage.value = data.error || 'Email ou mot de passe incorrect';
+        }
       } catch (error) {
         console.error('Erreur de connexion:', error);
-        alert('Email ou mot de passe incorrect');
+        errorMessage.value = 'Erreur de connexion au serveur. Vérifiez que le serveur PHP est démarré.';
       } finally {
         loading.value = false;
       }
@@ -149,7 +228,12 @@ export default {
     const goToDashboard = () => {
       localStorage.setItem('isAuthenticated', 'true');
       localStorage.setItem('userEmail', 'demo@coachpro.com');
-      router.push('/home'); // Rediriger vers /home pour le mode démo
+      localStorage.setItem('userData', JSON.stringify({
+        id: 0,
+        email: 'demo@coachpro.com',
+        name: 'Utilisateur Démo'
+      }));
+      router.push('/home');
     };
 
     return {
@@ -159,6 +243,9 @@ export default {
       showPassword,
       emailFocused,
       passwordFocused,
+      errorMessage,
+      emailInput,
+      passwordInput,
       handleLogin,
       goToDashboard
     };
@@ -521,6 +608,18 @@ export default {
   100% { transform: rotate(360deg); }
 }
 
+/* Message d'erreur */
+.error-message {
+  background: #fee;
+  color: #c33;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  text-align: center;
+  border: 1px solid #fcc;
+  animation: fadeInUp 0.6s ease-out;
+}
+
 /* Section démo */
 .demo-section {
   text-align: center;
@@ -648,13 +747,13 @@ export default {
 @media (max-width: 768px) {
   .login-container {
     flex-direction: column;
-    height: auto; /* Hauteur dynamique pour s'adapter au contenu */
-    min-height: auto; /* Supprimer la contrainte de hauteur minimale */
-    margin: 5px; /* Réduire encore la marge */
-    overflow: hidden; /* Supprimer la barre de défilement */
+    height: auto;
+    min-height: auto;
+    margin: 5px;
+    overflow: hidden;
   }
   .login-left {
-    min-height: 100px; /* Réduire la hauteur pour compacter */
+    min-height: 100px;
     padding: 10px;
     width: 100%;
   }
@@ -667,20 +766,19 @@ export default {
     padding: 0 8px;
   }
   .form-header {
-    margin-bottom: 20px; /* Réduire l'espacement */
+    margin-bottom: 20px;
   }
   .form-options {
     flex-direction: column;
-    gap: 6px; /* Réduire l'espacement */
+    gap: 6px;
     align-items: flex-start;
     margin-bottom: 15px;
   }
   .login-btn, .demo-btn {
     font-size: 0.85rem;
-    padding: 10px; /* Réduire le padding */
+    padding: 10px;
     margin-bottom: 10px;
   }
-  /* Désactiver l'animation de fond pour améliorer les performances sur mobile */
   .login-container::before {
     animation: none;
     background: none;
@@ -689,11 +787,11 @@ export default {
 
 @media (max-width: 480px) {
   .login-left {
-    min-height: 80px; /* Encore plus compact */
+    min-height: 80px;
     padding: 8px;
   }
   .welcome-content h1 {
-    font-size: 1.3rem; /* Réduire la taille de la police */
+    font-size: 1.3rem;
     margin-bottom: 8px;
   }
   .welcome-content p {
@@ -713,7 +811,7 @@ export default {
     font-size: 0.8rem;
   }
   .input-group {
-    margin-bottom: 10px; /* Réduire l'espacement */
+    margin-bottom: 10px;
   }
   .input-label {
     font-size: 0.8rem;
@@ -721,7 +819,7 @@ export default {
   }
   .form-input {
     font-size: 0.85rem;
-    padding: 8px 8px 8px 30px; /* Réduire le padding */
+    padding: 8px 8px 8px 30px;
   }
   .input-icon {
     left: 8px;
@@ -740,7 +838,7 @@ export default {
     padding-top: 8px;
   }
   .login-container::before {
-    background-size: 20px 20px; /* Réduire la taille du motif */
+    background-size: 20px 20px;
   }
 }
 </style>

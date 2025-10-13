@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" v-if="isAuthenticated">
     <!-- Sidebar Navigation -->
     <div class="sidebar">
       <div class="logo">
@@ -24,13 +24,19 @@
           <span class="text">Statistiques</span>
         </router-link>
         <router-link to="/departement" class="nav-item" active-class="router-link-active">
-          <span class="icon">💰</span>
+          <span class="icon">📖</span>
           <span class="text">Département</span>
         </router-link>
         <router-link to="/search-by-date" class="nav-item" active-class="router-link-active">
           <span class="icon">🔍</span>
           <span class="text">Recherche par date</span>
         </router-link>
+        
+        <!-- Bouton Déconnexion -->
+        <div class="nav-item logout-item" @click="confirmLogout">
+          <span class="icon">🚪</span>
+          <span class="text">Déconnexion</span>
+        </div>
       </nav>
     </div>
 
@@ -43,7 +49,7 @@
         </div>
         <div class="header-right">
           <div class="user-info">
-            <span class="user-name">Admin</span>
+            <span class="user-name">{{ userEmail || 'Admin' }}</span>
             <div class="user-avatar">👤</div>
           </div>
         </div>
@@ -124,12 +130,48 @@
         </div>
       </main>
     </div>
+
+    <!-- Modal de confirmation de déconnexion -->
+    <div v-if="showLogoutModal" class="modal-overlay" @click="cancelLogout">
+      <div class="modal-content" @click.stop>
+        <div class="modal-header">
+          <h3>🔐 Confirmation de déconnexion</h3>
+        </div>
+        <div class="modal-body">
+          <p>Êtes-vous sûr de vouloir vous déconnecter ?</p>
+          <div class="user-info-modal">
+            <div class="user-avatar-modal">👤</div>
+            <div class="user-details">
+              <strong>{{ userEmail || 'norlandehubery@gmail.com' }}</strong>
+              <span>Utilisateur connecté</span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-cancel" @click="cancelLogout">
+            Annuler
+          </button>
+          <button class="btn-confirm" @click="confirmLogoutAction">
+            Se déconnecter
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Redirection si non authentifié -->
+  <div v-else class="redirect-overlay">
+    <div class="redirect-content">
+      <div class="spinner"></div>
+      <p>Vérification de l'authentification...</p>
+      <p class="redirect-message">Redirection vers la page de connexion</p>
+    </div>
   </div>
 </template>
 
 <script>
-import { computed, ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
+import { computed, ref, onMounted, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import StatisticsWidget from '../components/Statistics.vue';
 
 export default {
@@ -139,6 +181,20 @@ export default {
   },
   setup() {
     const route = useRoute();
+    const router = useRouter();
+
+    // État pour le modal de confirmation
+    const showLogoutModal = ref(false);
+
+    // Vérification de l'authentification
+    const isAuthenticated = computed(() => {
+      const auth = localStorage.getItem('isAuthenticated') === 'true';
+      return auth;
+    });
+
+    const userEmail = computed(() => {
+      return localStorage.getItem('userEmail') || 'norlandehubery@gmail.com';
+    });
 
     const currentPageTitle = computed(() => {
       switch (route.name) {
@@ -147,10 +203,44 @@ export default {
         case 'Banque': return 'Gestion des Banques';
         case 'Statistiques': return 'Statistiques';
         case 'Departement': return 'Gestion des Départements';
-        case 'SearchByDate': return 'Recherche par Date'; // Ajout pour mettre à jour le titre
+        case 'SearchByDate': return 'Recherche par Date';
         default: return 'Système de Gestion';
       }
     });
+
+    // Rediriger si non authentifié
+    watch(isAuthenticated, (newVal) => {
+      if (!newVal) {
+        router.push('/login');
+      }
+    });
+
+    // Vérifier l'authentification au montage
+    onMounted(() => {
+      if (!isAuthenticated.value) {
+        router.push('/login');
+      }
+    });
+
+    // Afficher la confirmation de déconnexion
+    const confirmLogout = () => {
+      showLogoutModal.value = true;
+    };
+
+    // Annuler la déconnexion
+    const cancelLogout = () => {
+      showLogoutModal.value = false;
+    };
+
+    // Confirmer et exécuter la déconnexion
+    const confirmLogoutAction = () => {
+      console.log('🚪 Déconnexion confirmée...');
+      localStorage.removeItem('isAuthenticated');
+      localStorage.removeItem('userEmail');
+      localStorage.removeItem('userData');
+      showLogoutModal.value = false;
+      router.push('/login');
+    };
 
     const generateReport = () => {
       console.log('Génération du rapport...');
@@ -170,9 +260,15 @@ export default {
     });
 
     return {
+      isAuthenticated,
+      userEmail,
       currentPageTitle,
       generateReport,
       nextReportDate,
+      showLogoutModal,
+      confirmLogout,
+      cancelLogout,
+      confirmLogoutAction
     };
   },
 };
@@ -194,6 +290,196 @@ body {
 #app {
   display: flex;
   min-height: 100vh;
+}
+
+/* Overlay de redirection */
+.redirect-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.redirect-content {
+  text-align: center;
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 40px;
+  border-radius: 15px;
+  backdrop-filter: blur(10px);
+}
+
+.redirect-content p {
+  margin: 10px 0;
+  font-size: 1.1rem;
+}
+
+.redirect-message {
+  font-size: 0.9rem !important;
+  opacity: 0.8;
+}
+
+.spinner {
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top: 4px solid white;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Modal de confirmation de déconnexion */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 15px;
+  padding: 0;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  animation: slideIn 0.3s ease;
+}
+
+.modal-header {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  color: white;
+  padding: 20px;
+  border-radius: 15px 15px 0 0;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.modal-body {
+  padding: 25px;
+}
+
+.modal-body p {
+  margin-bottom: 20px;
+  color: #2c3e50;
+  font-size: 1rem;
+}
+
+.user-info-modal {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  border-left: 4px solid #3498db;
+}
+
+.user-avatar-modal {
+  width: 50px;
+  height: 50px;
+  background: #3498db;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-details strong {
+  color: #2c3e50;
+  font-size: 1rem;
+}
+
+.user-details span {
+  color: #7f8c8d;
+  font-size: 0.8rem;
+}
+
+.modal-footer {
+  padding: 20px;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  border-top: 1px solid #e1e8ed;
+}
+
+.btn-cancel {
+  padding: 10px 20px;
+  background: #95a5a6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.3s ease;
+}
+
+.btn-cancel:hover {
+  background: #7f8c8d;
+}
+
+.btn-confirm {
+  padding: 10px 20px;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: background 0.3s ease;
+}
+
+.btn-confirm:hover {
+  background: #c0392b;
+}
+
+/* Animations pour le modal */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { 
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 /* Sidebar Styles (fixe à gauche) */
@@ -242,6 +528,7 @@ body {
   border-radius: 8px;
   margin: 5px 0;
   transition: all 0.3s ease;
+  cursor: pointer;
 }
 
 .nav-item:hover {
@@ -260,6 +547,18 @@ body {
 
 .nav-item .text {
   font-size: 0.95rem;
+}
+
+/* Bouton déconnexion */
+.logout-item {
+  margin-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 15px;
+  background: rgba(231, 76, 60, 0.2);
+}
+
+.logout-item:hover {
+  background: rgba(231, 76, 60, 0.3);
 }
 
 /* Main Content Styles (ajusté pour sidebar fixe) */
@@ -500,6 +799,20 @@ body {
   
   .header {
     left: 60px;
+  }
+
+  .modal-content {
+    width: 95%;
+    margin: 20px;
+  }
+
+  .modal-footer {
+    flex-direction: column;
+  }
+
+  .btn-cancel,
+  .btn-confirm {
+    width: 100%;
   }
 }
 </style>

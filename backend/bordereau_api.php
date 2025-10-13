@@ -9,7 +9,7 @@ require 'db_connect.php';
 
 // Activer CORS
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
 // Gérer les requêtes OPTIONS (préliminaires CORS)
@@ -18,11 +18,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
-// Récupérer la méthode HTTP
+// Récupérer la méthode HTTP et l'URI
 $method = $_SERVER['REQUEST_METHOD'];
+$request_uri = $_SERVER['REQUEST_URI'];
 
 // Log pour débogage
-file_put_contents('debug.log', "[$method] Requête reçue à " . date('Y-m-d H:i:s') . "\n", FILE_APPEND);
+file_put_contents('debug.log', "[$method] Requête reçue à " . date('Y-m-d H:i:s') . " - URI: $request_uri\n", FILE_APPEND);
 
 try {
     switch ($method) {
@@ -36,12 +37,12 @@ try {
                 echo json_encode($result);
             } elseif (isset($_GET['id_bordereau']) && is_numeric($_GET['id_bordereau'])) {
                 $id_bordereau = (int)$_GET['id_bordereau'];
-                $stmt = $pdo->prepare("SELECT * FROM bordereau WHERE id_bordereau = ?");
+                $stmt = $pdo->prepare("SELECT id_bordereau, matricule, reference, objet, statut, date_creation, est_envoye FROM bordereau WHERE id_bordereau = ?");
                 $stmt->execute([$id_bordereau]);
                 $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 echo json_encode($result);
             } else {
-                $stmt = $pdo->query("SELECT * FROM bordereau");
+                $stmt = $pdo->query("SELECT id_bordereau, matricule, reference, objet, statut, date_creation, est_envoye FROM bordereau");
                 $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 echo json_encode($result);
             }
@@ -68,12 +69,12 @@ try {
             $objet = trim($data['objet']);
             $statut = $data['statut'];
 
-            // Valider les matricules (6 chiffres chacun)
+            // Valider les matricules (6 caractères alphanumériques)
             foreach ($matricules as $matricule) {
                 $matricule = trim($matricule);
-                if (!preg_match('/^\d{6}$/', $matricule)) {
+                if (!preg_match('/^[a-zA-Z0-9]{6}$/', $matricule)) {
                     http_response_code(400);
-                    $error = ['error' => "Le matricule '$matricule' doit contenir exactement 6 chiffres"];
+                    $error = ['error' => "Le matricule '$matricule' doit contenir exactement 6 caractères alphanumériques"];
                     file_put_contents('debug.log', "[POST] Erreur : " . json_encode($error) . "\n", FILE_APPEND);
                     echo json_encode($error);
                     break 2;
@@ -134,7 +135,7 @@ try {
 
             try {
                 $pdo->beginTransaction();
-                $stmt = $pdo->prepare("INSERT INTO bordereau (id_bordereau, matricule, reference, objet, statut, date_creation) VALUES (?, ?, ?, ?, ?, NOW())");
+                $stmt = $pdo->prepare("INSERT INTO bordereau (id_bordereau, matricule, reference, objet, statut, date_creation, est_envoye) VALUES (?, ?, ?, ?, ?, NOW(), FALSE)");
                 foreach ($matricules as $matricule) {
                     $matricule = trim($matricule);
                     $stmt->execute([$id_bordereau, $matricule, $reference, $objet, $statut]);
@@ -175,12 +176,12 @@ try {
                 $objet = trim($data['objet']);
                 $statut = $data['statut'];
 
-                // Valider les matricules (6 chiffres chacun)
+                // Valider les matricules (6 caractères alphanumériques)
                 foreach ($matricules as $matricule) {
                     $matricule = trim($matricule);
-                    if (!preg_match('/^\d{6}$/', $matricule)) {
+                    if (!preg_match('/^[a-zA-Z0-9]{6}$/', $matricule)) {
                         http_response_code(400);
-                        $error = ['error' => "Le matricule '$matricule' doit contenir exactement 6 chiffres"];
+                        $error = ['error' => "Le matricule '$matricule' doit contenir exactement 6 caractères alphanumériques"];
                         file_put_contents('debug.log', "[PUT] Erreur : " . json_encode($error) . "\n", FILE_APPEND);
                         echo json_encode($error);
                         break 2;
@@ -221,7 +222,7 @@ try {
                     $stmt->execute([$id_bordereau]);
 
                     // Insérer les nouvelles lignes
-                    $stmt = $pdo->prepare("INSERT INTO bordereau (id_bordereau, matricule, reference, objet, statut, date_creation) VALUES (?, ?, ?, ?, ?, NOW())");
+                    $stmt = $pdo->prepare("INSERT INTO bordereau (id_bordereau, matricule, reference, objet, statut, date_creation, est_envoye) VALUES (?, ?, ?, ?, ?, NOW(), FALSE)");
                     foreach ($matricules as $matricule) {
                         $matricule = trim($matricule);
                         $stmt->execute([$id_bordereau, $matricule, $reference, $objet, $statut]);
@@ -241,6 +242,64 @@ try {
                 http_response_code(400);
                 $error = ['error' => 'ID bordereau invalide'];
                 file_put_contents('debug.log', "[PUT] Erreur : " . json_encode($error) . "\n", FILE_APPEND);
+                echo json_encode($error);
+            }
+            break;
+
+        // PATCH : Marquer un ou plusieurs bordereaux comme envoyés
+        case 'PATCH':
+            if (strpos($request_uri, '/mark-as-sent') !== false) {
+                $data = json_decode(file_get_contents('php://input'), true);
+                file_put_contents('debug.log', "[PATCH] Données reçues : " . json_encode($data) . "\n", FILE_APPEND);
+
+                // Vérifier si des bordereaux sont fournis
+                if (!isset($data['bordereauIds']) || !is_array($data['bordereauIds']) || empty($data['bordereauIds'])) {
+                    http_response_code(400);
+                    $error = ['error' => 'Liste d\'ID de bordereaux requise'];
+                    file_put_contents('debug.log', "[PATCH] Erreur : " . json_encode($error) . "\n", FILE_APPEND);
+                    echo json_encode($error);
+                    break;
+                }
+
+                $bordereauIds = array_map('intval', $data['bordereauIds']);
+                try {
+                    $placeholders = implode(',', array_fill(0, count($bordereauIds), '?'));
+                    $stmt = $pdo->prepare("UPDATE bordereau SET est_envoye = TRUE WHERE id_bordereau IN ($placeholders)");
+                    $stmt->execute($bordereauIds);
+                    $response = ['message' => count($bordereauIds) . ' bordereau(x) marqué(s) comme envoyé(s)'];
+                    file_put_contents('debug.log', "[PATCH] Succès : " . json_encode($response) . "\n", FILE_APPEND);
+                    echo json_encode($response);
+                } catch (Exception $e) {
+                    http_response_code(500);
+                    $error = ['error' => 'Erreur lors du marquage : ' . $e->getMessage()];
+                    file_put_contents('debug.log', "[PATCH] Erreur : " . json_encode($error) . "\n", FILE_APPEND);
+                    echo json_encode($error);
+                }
+            } elseif (preg_match('/\/bordereaux\/(\d+)\/mark-as-sent/', $request_uri, $matches)) {
+                $id_bordereau = (int)$matches[1];
+                try {
+                    $stmt = $pdo->prepare("UPDATE bordereau SET est_envoye = TRUE WHERE id_bordereau = ?");
+                    $stmt->execute([$id_bordereau]);
+                    if ($stmt->rowCount() > 0) {
+                        $response = ['message' => 'Bordereau marqué comme envoyé'];
+                        file_put_contents('debug.log', "[PATCH] Succès : " . json_encode($response) . "\n", FILE_APPEND);
+                        echo json_encode($response);
+                    } else {
+                        http_response_code(404);
+                        $error = ['error' => 'Bordereau non trouvé'];
+                        file_put_contents('debug.log', "[PATCH] Erreur : " . json_encode($error) . "\n", FILE_APPEND);
+                        echo json_encode($error);
+                    }
+                } catch (Exception $e) {
+                    http_response_code(500);
+                    $error = ['error' => 'Erreur lors du marquage : ' . $e->getMessage()];
+                    file_put_contents('debug.log', "[PATCH] Erreur : " . json_encode($error) . "\n", FILE_APPEND);
+                    echo json_encode($error);
+                }
+            } else {
+                http_response_code(400);
+                $error = ['error' => 'Requête PATCH invalide'];
+                file_put_contents('debug.log', "[PATCH] Erreur : " . json_encode($error) . "\n", FILE_APPEND);
                 echo json_encode($error);
             }
             break;

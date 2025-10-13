@@ -118,6 +118,28 @@ export const bordereauService = {
       console.error("Erreur dans deleteBordereauComplet:", error);
       throw error;
     }
+  },
+
+  // Marquer plusieurs bordereaux comme envoyés
+  async markBordereauxAsSent(bordereauIds) {
+    try {
+      const response = await api.patch("/bordereau_api.php/mark-as-sent", { bordereauIds });
+      return response.data; // Retourne { message: "<nombre> bordereau(x) marqué(s) comme envoyé(s)" }
+    } catch (error) {
+      console.error("Erreur dans markBordereauxAsSent:", error);
+      throw error;
+    }
+  },
+
+  // Marquer un seul bordereau comme envoyé
+  async markSingleBordereauAsSent(id) {
+    try {
+      const response = await api.patch(`/bordereau_api.php/bordereaux/${id}/mark-as-sent`);
+      return response.data; // Retourne { message: "Bordereau marqué comme envoyé" }
+    } catch (error) {
+      console.error("Erreur dans markSingleBordereauAsSent:", error);
+      throw error;
+    }
   }
 };
 

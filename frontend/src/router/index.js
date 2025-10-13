@@ -5,37 +5,33 @@ import Banque from "../views/Banque.vue";
 import Statistics from "../views/Statistics.vue";
 import DepartementList from "../views/Departement.vue";
 import Login from "../views/login.vue";
-import SearchByDate from "../views/SearchByDate.vue"; // Ajout du nouveau composant
+import SearchByDate from "../views/SearchByDate.vue";
 
 const routes = [
-  // Route par défaut redirigeant vers /login
   {
     path: "/",
-    redirect: "/login", // Redirige automatiquement vers la page de connexion au démarrage
-    meta: { 
-      title: "Redirection - CoachPro",
-    },
+    redirect: "/login",
   },
   
-  // Routes avec layout d'authentification (sans sidebar)
   {
     path: "/login",
     name: "Login",
     component: Login,
     meta: { 
       title: "Connexion - CoachPro",
-      layout: 'auth'
+      layout: 'auth',
+      requiresAuth: false
     }
   },
   
-  // Routes avec layout par défaut (avec sidebar)
   { 
     path: "/home", 
     name: "Home", 
     component: Home,
     meta: { 
       title: "Accueil - CoachPro",
-      layout: 'default'
+      layout: 'default',
+      requiresAuth: true
     }
   },
   { 
@@ -44,7 +40,8 @@ const routes = [
     component: Bordereaux,
     meta: { 
       title: "Bordereaux - CoachPro",
-      layout: 'default'
+      layout: 'default',
+      requiresAuth: true
     }
   },
   { 
@@ -53,7 +50,8 @@ const routes = [
     component: Banque,
     meta: { 
       title: "Banques - CoachPro",
-      layout: 'default'
+      layout: 'default',
+      requiresAuth: true
     }
   },
   { 
@@ -62,7 +60,8 @@ const routes = [
     component: Statistics,
     meta: { 
       title: "Statistiques - CoachPro",
-      layout: 'default'
+      layout: 'default',
+      requiresAuth: true
     }
   },
   { 
@@ -71,7 +70,8 @@ const routes = [
     component: DepartementList,
     meta: { 
       title: "Départements - CoachPro",
-      layout: 'default'
+      layout: 'default',
+      requiresAuth: true
     }
   },
   { 
@@ -80,7 +80,8 @@ const routes = [
     component: SearchByDate,
     meta: { 
       title: "Recherche par Date - CoachPro",
-      layout: 'default'
+      layout: 'default',
+      requiresAuth: true
     }
   }
 ];
@@ -91,15 +92,25 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  document.title = to.meta.title || 'CoachPro - Dashboard';
-  
-  // Vérifier si l'utilisateur est authentifié (basé sur localStorage)
   const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
   
-  // Si l'utilisateur est authentifié et tente d'accéder à "/", rediriger vers /home
-  if (to.path === "/" && isAuthenticated) {
+  console.log('🔄 Navigation:', {
+    from: from.path,
+    to: to.path,
+    authenticated: isAuthenticated,
+    requiresAuth: to.meta.requiresAuth
+  });
+  
+  document.title = to.meta.title || 'CoachPro - Dashboard';
+  
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    console.log('❌ Accès refusé - Redirection vers /login');
+    next('/login');
+  } else if (to.path === '/login' && isAuthenticated) {
+    console.log('✅ Déjà authentifié - Redirection vers /home');
     next('/home');
   } else {
+    console.log('✅ Accès autorisé');
     next();
   }
 });

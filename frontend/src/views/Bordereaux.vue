@@ -3,10 +3,21 @@
     <!-- En-tête de page -->
     <div class="page-header">
       <h2>📋 Gestion des Bordereaux</h2>
-      <button class="btn-primary" @click="showAddModal = true" :disabled="loading">
-        <span class="btn-icon">➕</span>
-        Nouveau Bordereau
-      </button>
+      <div class="header-actions">
+        <button class="btn-primary" @click="showAddModal = true" :disabled="loading">
+          <span class="btn-icon">➕</span>
+          Nouveau Bordereau
+        </button>
+        <button 
+          v-if="selectedBordereaux.length > 0"
+          class="btn-success" 
+          @click="markAsSent"
+          :disabled="loading || markingAsSent"
+        >
+          <span class="btn-icon">✅</span>
+          Marquer comme envoyé ({{ selectedBordereaux.length }})
+        </button>
+      </div>
     </div>
 
     <!-- Filtres et recherche -->
@@ -30,6 +41,15 @@
           <option value="VISA">VISA</option>
         </select>
       </div>
+
+      <div class="filter-group">
+        <select v-model="sentFilter" class="filter-select" :disabled="loading">
+          <option value="">Tous les états</option>
+          <option value="sent">Envoyés</option>
+          <option value="not_sent">Non envoyés</option>
+        </select>
+      </div>
+
       <!-- Contrôle de navigation par mois -->
       <div class="month-nav">
         <button @click="prevMonth" :disabled="loading" class="nav-btn">⬅ Précédent</button>
@@ -57,7 +77,7 @@
       <div v-else-if="groupedBordereaux.length === 0" class="empty-state">
         <div class="empty-icon">📋</div>
         <h3>Aucun bordereau trouvé</h3>
-        <p v-if="searchQuery || statusFilter">Aucun résultat pour vos critères de recherche</p>
+        <p v-if="searchQuery || statusFilter || sentFilter">Aucun résultat pour vos critères de recherche</p>
         <p v-else>Commencez par créer votre premier bordereau pour {{ currentMonthYear }}</p>
         <button class="btn-primary" @click="showAddModal = true" :disabled="loading">
           ➕ Créer un bordereau
@@ -69,6 +89,15 @@
         <table class="bordereaux-table">
           <thead>
             <tr>
+              <th class="checkbox-column">
+                <input
+                  type="checkbox"
+                  :checked="allSelected"
+                  @change="toggleSelectAll"
+                  :disabled="loading"
+                  class="select-all-checkbox"
+                />
+              </th>
               <th @click="sortBy('id_bordereau')" class="sortable">
                 ID 📊 <span v-if="sortField === 'id_bordereau'" class="sort-icon">{{ sortOrder === 'asc' ? '↑' : '↓' }}</span>
               </th>
@@ -83,20 +112,50 @@
               <th @click="sortBy('date_creation')" class="sortable">
                 Date 📅 <span v-if="sortField === 'date_creation'" class="sort-icon">{{ sortOrder === 'asc' ? '↑' : '↓' }}</span>
               </th>
+              <th @click="sortBy('est_envoye')" class="sortable">
+                État 📬 <span v-if="sortField === 'est_envoye'" class="sort-icon">{{ sortOrder === 'asc' ? '↑' : '↓' }}</span>
+              </th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="bordereau in paginatedBordereaux" :key="bordereau.id_bordereau">
+            <tr 
+              v-for="bordereau in paginatedBordereaux" 
+              :key="bordereau.id_bordereau"
+              :class="{ 'selected-row': isSelected(bordereau.id_bordereau) }"
+            >
+              <td class="checkbox-cell" data-label="Sélection">
+                <input
+                  type="checkbox"
+                  :checked="isSelected(bordereau.id_bordereau)"
+                  @change="toggleSelect(bordereau.id_bordereau)"
+                  :disabled="loading"
+                  class="row-checkbox"
+                />
+              </td>
               <td class="id-cell" data-label="ID">#{{ bordereau.id_bordereau }}</td>
               <td class="reference-cell" data-label="Référence"><strong>{{ bordereau.reference || '(vide)' }}</strong></td>
               <td class="matricule-cell" data-label="Matricules">{{ bordereau.matricules.join(', ') }}</td>
               <td class="objet-cell" data-label="Description"><div class="objet-text" :title="bordereau.objet">{{ truncateText(bordereau.objet, 60) }}</div></td>
               <td class="status-cell" data-label="Statut"><span class="status-badge" :class="bordereau.statut.toLowerCase()">{{ bordereau.statut }}</span></td>
               <td class="date-cell" data-label="Date">{{ formatDate(bordereau.date_creation) }}<div class="time-text">{{ formatTime(bordereau.date_creation) }}</div></td>
+              <td class="sent-cell" data-label="État">
+                <span class="sent-badge" :class="{ 'sent': bordereau.est_envoye, 'not-sent': !bordereau.est_envoye }">
+                  {{ bordereau.est_envoye ? '✅ Envoyé' : '⏳ Non envoyé' }}
+                </span>
+              </td>
               <td class="actions-cell" data-label="Actions">
                 <button class="btn-action edit-btn" @click="editBordereau(bordereau)" title="Modifier" :disabled="loading">✏️</button>
                 <button class="btn-action delete-btn" @click="confirmDelete(bordereau)" title="Supprimer" :disabled="loading">🗑️</button>
+                <button 
+                  v-if="!bordereau.est_envoye"
+                  class="btn-action send-btn" 
+                  @click="markSingleAsSent(bordereau.id_bordereau)" 
+                  title="Marquer comme envoyé"
+                  :disabled="loading || markingAsSent"
+                >
+                  📤
+                </button>
               </td>
             </tr>
           </tbody>
@@ -110,7 +169,12 @@
         </div>
 
         <!-- Informations de pagination -->
-        <div class="pagination-info">Affichage de {{ startIndex + 1 }} à {{ endIndex }} sur {{ groupedBordereaux.length }} bordereaux</div>
+        <div class="pagination-info">
+          Affichage de {{ startIndex + 1 }} à {{ endIndex }} sur {{ groupedBordereaux.length }} bordereaux
+          <span v-if="selectedBordereaux.length > 0" class="selection-info">
+            • {{ selectedBordereaux.length }} bordereau(x) sélectionné(s)
+          </span>
+        </div>
       </div>
     </div>
 
@@ -148,12 +212,12 @@
               />
             </div>
             <div class="form-group">
-              <label>Matricule(s) * (6 chiffres)</label>
+              <label>Matricule(s) * (6 caractères alphanumériques)</label>
               <div class="matricule-input-group">
                 <input
                   v-model="formData.matriculeInput"
                   type="text"
-                  :placeholder="formData.matricules.length > 0 ? `${formData.matricules.length} matricule(s) ajouté(s)` : 'Ex: 501111'"
+                  :placeholder="formData.matricules.length > 0 ? `${formData.matricules.length} matricule(s) ajouté(s)` : 'Ex: AB1234'"
                   class="form-input"
                   :disabled="saving"
                   @input="validateSingleMatricule"
@@ -212,12 +276,12 @@
         </div>
         <div class="modal-body">
           <div class="form-group">
-            <label>Ajouter un matricule (6 chiffres)</label>
+            <label>Ajouter un matricule (6 caractères alphanumériques)</label>
             <div class="matricule-input-group">
               <input
                 v-model="newMatricule"
                 type="text"
-                placeholder="Ex: 501111"
+                placeholder="Ex: AB1234"
                 class="form-input"
                 @input="validateNewMatricule"
                 :disabled="saving"
@@ -296,6 +360,7 @@ export default {
       error: null,
       searchQuery: '',
       statusFilter: '',
+      sentFilter: '',
       sortField: 'id_bordereau',
       sortOrder: 'desc',
       currentPage: 1,
@@ -319,9 +384,12 @@ export default {
       newMatriculeError: '',
       matriculeError: '',
       isValidNewMatricule: false,
-      currentMonth: new Date().getMonth() + 1, // Mois courant (1-12)
-      currentYear: new Date().getFullYear(),   // Année courante
-      interval: null
+      currentMonth: new Date().getMonth() + 1,
+      currentYear: new Date().getFullYear(),
+      interval: null,
+      // Nouveaux états pour la sélection
+      selectedBordereaux: [],
+      markingAsSent: false
     };
   },
   computed: {
@@ -336,7 +404,8 @@ export default {
             matricules: [],
             objet: b.objet,
             statut: b.statut,
-            date_creation: b.date_creation
+            date_creation: b.date_creation,
+            est_envoye: b.est_envoye || false // S'assurer que le champ est toujours défini
           };
         }
         grouped[b.id_bordereau].matricules.push(b.matricule);
@@ -362,12 +431,22 @@ export default {
       if (this.statusFilter) {
         result = result.filter(b => b.statut === this.statusFilter);
       }
+      if (this.sentFilter) {
+        if (this.sentFilter === 'sent') {
+          result = result.filter(b => b.est_envoye);
+        } else if (this.sentFilter === 'not_sent') {
+          result = result.filter(b => !b.est_envoye);
+        }
+      }
 
       // Appliquer le tri
       return result.sort((a, b) => {
         let modifier = this.sortOrder === 'asc' ? 1 : -1;
         if (this.sortField === 'date_creation') {
           return (new Date(a[this.sortField]) - new Date(b[this.sortField])) * modifier;
+        }
+        if (this.sortField === 'est_envoye') {
+          return (a[this.sortField] - b[this.sortField]) * modifier;
         }
         if (a[this.sortField] < b[this.sortField]) return -1 * modifier;
         if (a[this.sortField] > b[this.sortField]) return 1 * modifier;
@@ -393,6 +472,10 @@ export default {
         'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
       ];
       return `${months[this.currentMonth - 1]} ${this.currentYear}`;
+    },
+    allSelected() {
+      return this.paginatedBordereaux.length > 0 && 
+             this.paginatedBordereaux.every(b => this.isSelected(b.id_bordereau));
     }
   },
   watch: {
@@ -400,6 +483,9 @@ export default {
       this.currentPage = 1;
     },
     statusFilter() {
+      this.currentPage = 1;
+    },
+    sentFilter() {
       this.currentPage = 1;
     },
     'formData.objet'(value) {
@@ -412,17 +498,16 @@ export default {
         });
       }
     },
-    // Détecter un changement de mois automatique
     currentMonth(newMonth, oldMonth) {
       if (newMonth !== oldMonth) {
-        this.currentPage = 1; // Réinitialiser la pagination
-        this.loadBordereaux(); // Recharger les données si nécessaire (optionnel)
+        this.currentPage = 1;
+        this.selectedBordereaux = []; // Réinitialiser la sélection
       }
     },
     currentYear(newYear, oldYear) {
       if (newYear !== oldYear) {
-        this.currentPage = 1; // Réinitialiser la pagination
-        this.loadBordereaux(); // Recharger les données si nécessaire (optionnel)
+        this.currentPage = 1;
+        this.selectedBordereaux = []; // Réinitialiser la sélection
       }
     }
   },
@@ -430,11 +515,10 @@ export default {
     console.log('BordereauxView mounted');
     this.updateCurrentDate();
     await this.loadBordereaux();
-    // Vérifier le mois toutes les minutes
     this.interval = setInterval(this.updateCurrentDate, 60000);
   },
   beforeUnmount() {
-    if (this.interval) clearInterval(this.interval); // Nettoyer l'intervalle
+    if (this.interval) clearInterval(this.interval);
   },
   methods: {
     async loadBordereaux() {
@@ -456,6 +540,101 @@ export default {
         this.loading = false;
       }
     },
+
+    // Méthodes pour la sélection
+    isSelected(bordereauId) {
+      return this.selectedBordereaux.includes(bordereauId);
+    },
+
+    toggleSelect(bordereauId) {
+      const index = this.selectedBordereaux.indexOf(bordereauId);
+      if (index > -1) {
+        this.selectedBordereaux.splice(index, 1);
+      } else {
+        this.selectedBordereaux.push(bordereauId);
+      }
+    },
+
+    toggleSelectAll() {
+      if (this.allSelected) {
+        // Désélectionner tous les bordereaux de la page courante
+        this.paginatedBordereaux.forEach(b => {
+          const index = this.selectedBordereaux.indexOf(b.id_bordereau);
+          if (index > -1) {
+            this.selectedBordereaux.splice(index, 1);
+          }
+        });
+      } else {
+        // Sélectionner tous les bordereaux de la page courante
+        this.paginatedBordereaux.forEach(b => {
+          if (!this.isSelected(b.id_bordereau)) {
+            this.selectedBordereaux.push(b.id_bordereau);
+          }
+        });
+      }
+    },
+
+    async markAsSent() {
+      if (this.selectedBordereaux.length === 0) return;
+
+      try {
+        this.markingAsSent = true;
+        
+        // Appeler l'API pour marquer plusieurs bordereaux comme envoyés
+        await bordereauService.markBordereauxAsSent(this.selectedBordereaux);
+
+        // Recharger les bordereaux pour refléter les changements
+        await this.loadBordereaux();
+
+        this.notify({
+          title: 'Succès',
+          text: `${this.selectedBordereaux.length} bordereau(x) marqué(s) comme envoyé(s)`,
+          type: 'success'
+        });
+
+        // Réinitialiser la sélection
+        this.selectedBordereaux = [];
+
+      } catch (error) {
+        console.error('Erreur lors du marquage:', error);
+        this.notify({
+          title: 'Erreur',
+          text: error.response?.data?.error || 'Erreur lors du marquage des bordereaux',
+          type: 'error'
+        });
+      } finally {
+        this.markingAsSent = false;
+      }
+    },
+
+    async markSingleAsSent(bordereauId) {
+      try {
+        this.markingAsSent = true;
+        
+        // Appeler l'API pour marquer un bordereau comme envoyé
+        await bordereauService.markSingleBordereauAsSent(bordereauId);
+
+        // Recharger les bordereaux pour refléter les changements
+        await this.loadBordereaux();
+
+        this.notify({
+          title: 'Succès',
+          text: 'Bordereau marqué comme envoyé',
+          type: 'success'
+        });
+
+      } catch (error) {
+        console.error('Erreur lors du marquage:', error);
+        this.notify({
+          title: 'Erreur',
+          text: error.response?.data?.error || 'Erreur lors du marquage du bordereau',
+          type: 'error'
+        });
+      } finally {
+        this.markingAsSent = false;
+      }
+    },
+
     sortBy(field) {
       if (this.sortField === field) {
         this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
@@ -464,6 +643,7 @@ export default {
         this.sortOrder = 'asc';
       }
     },
+
     editBordereau(bordereau) {
       this.isEditing = true;
       this.formData = {
@@ -476,10 +656,12 @@ export default {
       };
       this.showAddModal = true;
     },
+
     confirmDelete(bordereau) {
       this.bordereauToDelete = bordereau;
       this.showDeleteModal = true;
     },
+
     async deleteBordereau() {
       try {
         this.deleting = true;
@@ -504,12 +686,13 @@ export default {
         this.deleting = false;
       }
     },
+
     validateSingleMatricule() {
       this.matriculeError = '';
       if (this.formData.matriculeInput) {
         const matricule = this.formData.matriculeInput.trim();
-        if (!/^\d{6}$/.test(matricule)) {
-          this.matriculeError = 'Le matricule doit contenir exactement 6 chiffres';
+        if (!/^[a-zA-Z0-9]{6}$/.test(matricule)) {
+          this.matriculeError = 'Le matricule doit contenir exactement 6 caractères alphanumériques';
         } else if (!this.formData.matricules.includes(matricule)) {
           this.formData.matricules = [matricule];
         }
@@ -517,13 +700,14 @@ export default {
         this.formData.matricules = [];
       }
     },
+
     validateNewMatricule() {
       this.newMatriculeError = '';
       this.isValidNewMatricule = false;
       const matricule = this.newMatricule.trim();
       if (matricule) {
-        if (!/^\d{6}$/.test(matricule)) {
-          this.newMatriculeError = 'Le matricule doit contenir exactement 6 chiffres';
+        if (!/^[a-zA-Z0-9]{6}$/.test(matricule)) {
+          this.newMatriculeError = 'Le matricule doit contenir exactement 6 caractères alphanumériques';
         } else if (this.formData.matricules.includes(matricule)) {
           this.newMatriculeError = 'Ce matricule est déjà ajouté';
         } else {
@@ -531,6 +715,7 @@ export default {
         }
       }
     },
+
     addMatricule() {
       if (this.isValidNewMatricule) {
         this.formData.matricules.push(this.newMatricule.trim());
@@ -538,29 +723,27 @@ export default {
         this.validateNewMatricule();
       }
     },
+
     removeMatricule(index) {
       this.formData.matricules.splice(index, 1);
     },
+
     async saveBordereau() {
       try {
         this.saving = true;
 
-        // Valider l'id_bordereau
         if (!this.formData.id_bordereau || this.formData.id_bordereau < 1) {
           throw new Error('L\'ID bordereau doit être un nombre positif');
         }
 
-        // Valider les matricules
         if (this.formData.matricules.length === 0) {
           throw new Error('Au moins un matricule est requis');
         }
 
-        // Valider la référence
         if (this.formData.reference.length > 50) {
           throw new Error('La référence dépasse la limite de 50 caractères');
         }
 
-        // Valider les champs obligatoires
         if (!this.formData.objet || !this.formData.statut) {
           throw new Error('Les champs objet et statut sont requis');
         }
@@ -573,6 +756,7 @@ export default {
           statut: this.formData.statut,
           isEditing: this.isEditing
         };
+        
         console.log('Données envoyées à l\'API:', data);
         if (this.isEditing) {
           console.log('Requête PUT:', this.formData.id_bordereau);
@@ -605,6 +789,7 @@ export default {
         this.saving = false;
       }
     },
+
     closeModal() {
       this.showAddModal = false;
       this.showMatriculeModal = false;
@@ -623,22 +808,26 @@ export default {
       this.isValidNewMatricule = false;
       this.error = null;
     },
+
     closeMatriculeModal() {
       this.showMatriculeModal = false;
       this.newMatricule = '';
       this.newMatriculeError = '';
       this.isValidNewMatricule = false;
     },
+
     nextPage() {
       if (this.currentPage < this.totalPages && !this.loading) {
         this.currentPage++;
       }
     },
+
     prevPage() {
       if (this.currentPage > 1 && !this.loading) {
         this.currentPage--;
       }
     },
+
     formatDate(dateString) {
       return new Date(dateString).toLocaleDateString('fr-FR', {
         year: 'numeric',
@@ -646,25 +835,29 @@ export default {
         day: '2-digit'
       });
     },
+
     formatTime(dateString) {
       return new Date(dateString).toLocaleTimeString('fr-FR', {
         hour: '2-digit',
         minute: '2-digit'
       });
     },
+
     truncateText(text, length) {
       if (!text) return '';
       return text.length > length ? text.substring(0, length) + '...' : text;
     },
+
     updateCurrentDate() {
       const now = new Date();
-      const newMonth = now.getMonth() + 1; // Mois en 1-12
+      const newMonth = now.getMonth() + 1;
       const newYear = now.getFullYear();
       if (this.currentMonth !== newMonth || this.currentYear !== newYear) {
         this.currentMonth = newMonth;
         this.currentYear = newYear;
       }
     },
+
     prevMonth() {
       if (this.currentMonth === 1) {
         this.currentMonth = 12;
@@ -672,8 +865,10 @@ export default {
       } else {
         this.currentMonth--;
       }
-      this.currentPage = 1; // Réinitialiser la pagination
+      this.currentPage = 1;
+      this.selectedBordereaux = [];
     },
+
     nextMonth() {
       if (this.currentMonth === 12) {
         this.currentMonth = 1;
@@ -681,13 +876,151 @@ export default {
       } else {
         this.currentMonth++;
       }
-      this.currentPage = 1; // Réinitialiser la pagination
+      this.currentPage = 1;
+      this.selectedBordereaux = [];
     }
   }
 };
 </script>
 
 <style scoped>
+/* Styles existants... */
+
+/* Nouveaux styles pour la sélection */
+.header-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.btn-success {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background-color: #28a745;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-success:hover:not(:disabled) {
+  background-color: #218838;
+}
+
+.btn-success:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+/* Colonne checkbox */
+.checkbox-column {
+  width: 40px;
+  text-align: center;
+}
+
+.checkbox-cell {
+  width: 40px;
+  text-align: center;
+}
+
+.select-all-checkbox,
+.row-checkbox {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+/* Ligne sélectionnée */
+.selected-row {
+  background-color: #e3f2fd !important;
+}
+
+.selected-row:hover {
+  background-color: #bbdefb !important;
+}
+
+/* Badge d'état d'envoi */
+.sent-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.sent-badge.sent {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.sent-badge.not-sent {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+/* Bouton d'envoi individuel */
+.send-btn {
+  padding: 6px;
+  border: none;
+  border-radius: 4px;
+  background-color: #f8f9fa;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.send-btn:hover:not(:disabled) {
+  background-color: #28a745;
+  color: #ffffff;
+}
+
+.send-btn:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+  color: #fff;
+}
+
+/* Information de sélection */
+.selection-info {
+  color: #007bff;
+  font-weight: 500;
+  margin-left: 8px;
+}
+
+/* Adaptation responsive */
+@media (max-width: 768px) {
+  .header-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btn-success {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .checkbox-cell {
+    width: 30px;
+  }
+
+  .bordereaux-table td[data-label="Sélection"]::before {
+    content: "Sélection: ";
+  }
+
+  .bordereaux-table td[data-label="État"]::before {
+    content: "État: ";
+  }
+}
+
+/* Le reste des styles CSS existants reste inchangé... */
 .bordereaux-page {
   padding: 24px;
   max-width: 1200px;

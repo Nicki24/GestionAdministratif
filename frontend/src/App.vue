@@ -1,6 +1,6 @@
 <template>
   <component :is="currentLayout">
-    <router-view v-if="currentLayout === 'DefaultLayout'" />
+    <router-view />
   </component>
 </template>
 
@@ -20,18 +20,24 @@ export default {
     const route = useRoute();
     
     const currentLayout = computed(() => {
-      return route.meta.layout === 'auth' ? 'AuthLayout' : 'DefaultLayout';
+      const layout = route.meta.layout === 'auth' ? 'AuthLayout' : 'DefaultLayout';
+      console.log('🎨 App.vue - Layout sélectionné:', layout);
+      return layout;
     });
 
     return {
       currentLayout
     };
+  },
+  mounted() {
+    console.log('🏗️ App.vue monté');
+    console.log('📊 État initial auth:', localStorage.getItem('isAuthenticated'));
   }
 };
 </script>
 
 <style>
-/* Styles globaux - garder ceux de votre App.vue actuel */
+/* Styles globaux */
 * {
   margin: 0;
   padding: 0;
