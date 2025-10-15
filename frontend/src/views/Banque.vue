@@ -3,7 +3,16 @@
     <!-- En-tête de page -->
     <div class="page-header">
       <h2>🏦 Gestion des Banques</h2>
-      <button class="btn-primary" @click="showAddModal = true" :disabled="loading">
+      <div class="user-info" v-if="currentUser">
+        <span class="user-email">{{ currentUser.email }}</span>
+        <span class="user-type" :class="currentUser.type_utilisateur">{{ currentUser.type_utilisateur }}</span>
+      </div>
+      <button 
+        class="btn-primary" 
+        @click="showAddModal = true" 
+        :disabled="loading || !canCreate"
+        v-if="canCreate"
+      >
         <span class="btn-icon">➕</span>
         Nouvelle Banque
       </button>
@@ -50,7 +59,12 @@
         <h3>Aucune banque trouvée</h3>
         <p v-if="searchQuery">Aucun résultat pour vos critères de recherche</p>
         <p v-else>Commencez par ajouter une banque pour {{ currentMonthYear }}</p>
-        <button class="btn-primary" @click="showAddModal = true" :disabled="loading">
+        <button 
+          class="btn-primary" 
+          @click="showAddModal = true" 
+          :disabled="loading || !canCreate"
+          v-if="canCreate"
+        >
           ➕ Ajouter une banque
         </button>
       </div>
@@ -78,8 +92,32 @@
               <td class="section-cell">{{ banque.section }}</td>
               <td class="date-cell">{{ formatDate(banque.date_creation) }}</td>
               <td class="actions-cell">
-                <button class="btn-action edit-btn" @click="editBanque(banque)" title="Modifier" :disabled="loading">✏️</button>
-                <button class="btn-action delete-btn" @click="confirmDelete(banque)" title="Supprimer" :disabled="loading">🗑️</button>
+                <!-- Bouton Modifier - seulement pour admin -->
+                <button 
+                  v-if="canUpdate"
+                  class="btn-action edit-btn" 
+                  @click="editBanque(banque)" 
+                  title="Modifier" 
+                  :disabled="loading"
+                >
+                  ✏️
+                </button>
+                
+                <!-- Bouton Supprimer - seulement pour admin -->
+                <button 
+                  v-if="canDelete"
+                  class="btn-action delete-btn" 
+                  @click="confirmDelete(banque)" 
+                  title="Supprimer" 
+                  :disabled="loading"
+                >
+                  🗑️
+                </button>
+
+                <!-- Message pour utilisateurs non-admin -->
+                <span v-if="!canUpdate" class="no-permission-text">
+                  Lecture seule
+                </span>
               </td>
             </tr>
           </tbody>
@@ -177,6 +215,7 @@
 <script>
 import { banqueService } from '../services/api';
 import { useNotification } from '@kyvg/vue3-notification';
+import { authService } from '../services/auth'; // IMPORT DU SERVICE AUTH
 
 export default {
   name: 'BanqueView',
@@ -208,7 +247,8 @@ export default {
       idError: '',
       currentMonth: new Date().getMonth() + 1, // Mois courant (1-12)
       currentYear: new Date().getFullYear(),   // Année courante
-      interval: null
+      interval: null,
+      currentUser: null // AJOUT pour stocker l'utilisateur connecté
     };
   },
   computed: {
@@ -254,6 +294,18 @@ export default {
         'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
       ];
       return `${months[this.currentMonth - 1]} ${this.currentYear}`;
+    },
+    // NOUVEAU: Permissions basées sur l'utilisateur
+    canCreate() {
+      return this.currentUser && this.currentUser.type_utilisateur === 'admin';
+    },
+    
+    canUpdate() {
+      return this.currentUser && this.currentUser.type_utilisateur === 'admin';
+    },
+    
+    canDelete() {
+      return this.currentUser && this.currentUser.type_utilisateur === 'admin';
     }
   },
   watch: {
@@ -275,6 +327,20 @@ export default {
     }
   },
   async mounted() {
+    // Récupérer l'utilisateur connecté
+    this.currentUser = authService.getCurrentUser();
+    
+    if (!this.currentUser) {
+      this.notify({
+        title: 'Erreur',
+        text: 'Utilisateur non connecté',
+        type: 'error'
+      });
+      return;
+    }
+    
+    console.log('Utilisateur connecté:', this.currentUser);
+    
     this.updateCurrentDate();
     await this.loadBanques();
     // Vérifier le mois toutes les minutes
@@ -309,15 +375,36 @@ export default {
         this.sortOrder = 'asc';
       }
     },
+
+    // MODIFIÉ: Vérifier les permissions avant modification
     editBanque(banque) {
+      if (!this.canUpdate) {
+        this.notify({
+          title: 'Permission refusée',
+          text: 'Vous n\'avez pas les droits pour modifier les banques',
+          type: 'warning'
+        });
+        return;
+      }
       this.isEditing = true;
       this.formData = { ...banque };
       this.showAddModal = true;
     },
+
+    // MODIFIÉ: Vérifier les permissions avant suppression
     confirmDelete(banque) {
+      if (!this.canDelete) {
+        this.notify({
+          title: 'Permission refusée',
+          text: 'Vous n\'avez pas les droits pour supprimer les banques',
+          type: 'warning'
+        });
+        return;
+      }
       this.banqueToDelete = banque;
       this.showDeleteModal = true;
     },
+
     async deleteBanque() {
       try {
         this.deleting = true;
@@ -340,7 +427,27 @@ export default {
         this.deleting = false;
       }
     },
+
+    // MODIFIÉ: Vérifier les permissions avant sauvegarde
     async saveBanque() {
+      if (this.isEditing && !this.canUpdate) {
+        this.notify({
+          title: 'Permission refusée',
+          text: 'Vous n\'avez pas les droits pour modifier les banques',
+          type: 'warning'
+        });
+        return;
+      }
+      
+      if (!this.isEditing && !this.canCreate) {
+        this.notify({
+          title: 'Permission refusée',
+          text: 'Vous n\'avez pas les droits pour créer des banques',
+          type: 'warning'
+        });
+        return;
+      }
+
       try {
         this.saving = true;
         this.idError = '';
@@ -494,6 +601,44 @@ export default {
 
 .btn-icon {
   font-size: 16px;
+}
+
+/* NOUVEAUX STYLES POUR LES PERMISSIONS */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+  margin-right: 16px;
+}
+
+.user-email {
+  font-size: 14px;
+  color: #6c757d;
+}
+
+.user-type {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.user-type.admin {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.user-type.user {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.no-permission-text {
+  font-size: 12px;
+  color: #6c757d;
+  font-style: italic;
 }
 
 .filters-section {
@@ -680,6 +825,7 @@ export default {
 .actions-cell {
   display: flex;
   gap: 8px;
+  align-items: center;
 }
 
 .btn-action {
@@ -927,6 +1073,14 @@ export default {
   .search-box,
   .month-nav {
     min-width: 100%;
+  }
+
+  .user-info {
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 10px;
+    width: 100%;
+    justify-content: center;
   }
 }
 

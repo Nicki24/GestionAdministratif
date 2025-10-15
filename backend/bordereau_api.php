@@ -18,12 +18,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
-// Récupérer la méthode HTTP et l'URI
+// Récupérer la méthode HTTP
 $method = $_SERVER['REQUEST_METHOD'];
 $request_uri = $_SERVER['REQUEST_URI'];
+$path_info = $_SERVER['PATH_INFO'] ?? '';  // Utiliser PATH_INFO pour parser le chemin sans query strings
 
 // Log pour débogage
-file_put_contents('debug.log', "[$method] Requête reçue à " . date('Y-m-d H:i:s') . " - URI: $request_uri\n", FILE_APPEND);
+file_put_contents('debug.log', "[$method] Requête reçue à " . date('Y-m-d H:i:s') . " - URI: $request_uri - PATH_INFO: $path_info\n", FILE_APPEND);
+
+// Extraire les segments du PATH_INFO pour un parsing robuste
+$segments = $path_info ? array_filter(explode('/', trim($path_info, '/'))) : [];
 
 try {
     switch ($method) {
@@ -248,60 +252,57 @@ try {
 
         // PATCH : Marquer un ou plusieurs bordereaux comme envoyés
         case 'PATCH':
-            if (strpos($request_uri, '/mark-as-sent') !== false) {
-                $data = json_decode(file_get_contents('php://input'), true);
-                file_put_contents('debug.log', "[PATCH] Données reçues : " . json_encode($data) . "\n", FILE_APPEND);
+            file_put_contents('debug.log', "[PATCH] Segments: " . json_encode($segments) . "\n", FILE_APPEND);
 
-                // Vérifier si des bordereaux sont fournis
+            // Route pour plusieurs bordereaux : /mark-as-sent
+            if (count($segments) === 1 && $segments[0] === 'mark-as-sent') {
+                $data = json_decode(file_get_contents('php://input'), true);
+                file_put_contents('debug.log', "[PATCH multiple] Données reçues : " . json_encode($data) . "\n", FILE_APPEND);
+
                 if (!isset($data['bordereauIds']) || !is_array($data['bordereauIds']) || empty($data['bordereauIds'])) {
                     http_response_code(400);
                     $error = ['error' => 'Liste d\'ID de bordereaux requise'];
-                    file_put_contents('debug.log', "[PATCH] Erreur : " . json_encode($error) . "\n", FILE_APPEND);
+                    file_put_contents('debug.log', "[PATCH multiple] Erreur : " . json_encode($error) . "\n", FILE_APPEND);
                     echo json_encode($error);
                     break;
                 }
 
                 $bordereauIds = array_map('intval', $data['bordereauIds']);
-                try {
-                    $placeholders = implode(',', array_fill(0, count($bordereauIds), '?'));
-                    $stmt = $pdo->prepare("UPDATE bordereau SET est_envoye = TRUE WHERE id_bordereau IN ($placeholders)");
-                    $stmt->execute($bordereauIds);
-                    $response = ['message' => count($bordereauIds) . ' bordereau(x) marqué(s) comme envoyé(s)'];
-                    file_put_contents('debug.log', "[PATCH] Succès : " . json_encode($response) . "\n", FILE_APPEND);
-                    echo json_encode($response);
-                } catch (Exception $e) {
-                    http_response_code(500);
-                    $error = ['error' => 'Erreur lors du marquage : ' . $e->getMessage()];
-                    file_put_contents('debug.log', "[PATCH] Erreur : " . json_encode($error) . "\n", FILE_APPEND);
-                    echo json_encode($error);
-                }
-            } elseif (preg_match('/\/bordereaux\/(\d+)\/mark-as-sent/', $request_uri, $matches)) {
-                $id_bordereau = (int)$matches[1];
-                try {
-                    $stmt = $pdo->prepare("UPDATE bordereau SET est_envoye = TRUE WHERE id_bordereau = ?");
-                    $stmt->execute([$id_bordereau]);
-                    if ($stmt->rowCount() > 0) {
-                        $response = ['message' => 'Bordereau marqué comme envoyé'];
-                        file_put_contents('debug.log', "[PATCH] Succès : " . json_encode($response) . "\n", FILE_APPEND);
-                        echo json_encode($response);
-                    } else {
-                        http_response_code(404);
-                        $error = ['error' => 'Bordereau non trouvé'];
-                        file_put_contents('debug.log', "[PATCH] Erreur : " . json_encode($error) . "\n", FILE_APPEND);
-                        echo json_encode($error);
-                    }
-                } catch (Exception $e) {
-                    http_response_code(500);
-                    $error = ['error' => 'Erreur lors du marquage : ' . $e->getMessage()];
-                    file_put_contents('debug.log', "[PATCH] Erreur : " . json_encode($error) . "\n", FILE_APPEND);
-                    echo json_encode($error);
-                }
-            } else {
-                http_response_code(400);
-                $error = ['error' => 'Requête PATCH invalide'];
-                file_put_contents('debug.log', "[PATCH] Erreur : " . json_encode($error) . "\n", FILE_APPEND);
-                echo json_encode($error);
+                $placeholders = implode(',', array_fill(0, count($bordereauIds), '?'));
+                $stmt = $pdo->prepare("UPDATE bordereau SET est_envoye = TRUE WHERE id_bordereau IN ($placeholders)");
+                $stmt->execute($bordereauIds);
+                $response = ['message' => count($bordereauIds) . ' bordereau(x) marqué(s) comme envoyé(s)'];
+                file_put_contents('debug.log', "[PATCH multiple] Succès : " . json_encode($response) . "\n", FILE_APPEND);
+                echo json_encode($response);
+                break;
             }
+
+            // Route pour un seul bordereau : /bordereaux/{id}/mark-as-sent
+            if (count($segments) === 3 && $segments[0] === 'bordereaux' && $segments[2] === 'mark-as-sent' && is_numeric($segments[1])) {
+                $id_bordereau = (int)$segments[1];
+                $data = json_decode(file_get_contents('php://input'), true) ?: [];  // Body optionnel
+                file_put_contents('debug.log', "[PATCH single] ID: $id_bordereau, Données: " . json_encode($data) . "\n", FILE_APPEND);
+
+                $stmt = $pdo->prepare("UPDATE bordereau SET est_envoye = TRUE WHERE id_bordereau = ?");
+                $stmt->execute([$id_bordereau]);
+                if ($stmt->rowCount() > 0) {
+                    $response = ['message' => 'Bordereau marqué comme envoyé'];
+                    file_put_contents('debug.log', "[PATCH single] Succès : " . json_encode($response) . "\n", FILE_APPEND);
+                    echo json_encode($response);
+                } else {
+                    http_response_code(404);
+                    $error = ['error' => 'Bordereau non trouvé'];
+                    file_put_contents('debug.log', "[PATCH single] Erreur : " . json_encode($error) . "\n", FILE_APPEND);
+                    echo json_encode($error);
+                }
+                break;
+            }
+
+            // Erreur par défaut pour PATCH
+            http_response_code(400);
+            $error = ['error' => 'Requête PATCH invalide - Route non reconnue'];
+            file_put_contents('debug.log', "[PATCH] Erreur : " . json_encode($error) . "\n", FILE_APPEND);
+            echo json_encode($error);
             break;
 
         // DELETE : Supprimer un bordereau spécifique

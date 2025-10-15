@@ -1,278 +1,313 @@
 import axios from "axios";
 
-// Configuration de base d'Axios
-const API_BASE_URL = "http://localhost/bordereau/backend";
+// Configuration automatique selon l'environnement
+const isDevelopment = window.location.hostname === 'localhost' || 
+                     window.location.hostname === '127.0.0.1' ||
+                     window.location.port === '8080'; // Port de dev Vue.js
+
+const API_BASE_URL = isDevelopment 
+    ? "http://localhost/bordereau/backend"  // Développement
+    : "/backend";  // Production - chemin relatif
+
+console.log(`🌍 Environnement: ${isDevelopment ? 'Développement' : 'Production'}`);
+console.log(`🔗 URL API: ${API_BASE_URL}`);
 
 // Créer une instance axios avec une configuration de base
 const api = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
-  timeout: 10000, // 10 secondes de timeout
+    baseURL: API_BASE_URL,
+    headers: {
+        "Content-Type": "application/json",
+    },
+    timeout: isDevelopment ? 10000 : 30000, // 30s timeout en production
 });
 
 // Intercepteur pour les requêtes
 api.interceptors.request.use(
-  (config) => {
-    console.log(`🔄 Making ${config.method?.toUpperCase()} request to: ${config.url}`);
-    return config;
-  },
-  (error) => {
-    console.error("❌ Request error:", error);
-    return Promise.reject(error);
-  }
+    (config) => {
+        if (isDevelopment) {
+            console.log(`[ ] Making ${config.method?.toUpperCase()} request to: ${config.url}`);
+        }
+        return config;
+    },
+    (error) => {
+        console.error(" [x] Request error:", error);
+        return Promise.reject(error);
+    }
 );
 
 // Intercepteur pour les réponses
 api.interceptors.response.use(
-  (response) => {
-    console.log("✅ Response received:", response.status, response.data);
-    return response;
-  },
-  (error) => {
-    console.error("❌ Response error:", error.response?.status, error.message);
-    if (error.response) {
-      switch (error.response.status) {
-        case 404:
-          error.message = "Ressource non trouvée";
-          break;
-        case 500:
-          error.message = "Erreur interne du serveur";
-          break;
-        default:
-          error.message = `Erreur ${error.response.status}: ${error.response.statusText}`;
-      }
-    } else if (error.request) {
-      error.message = "Impossible de se connecter au serveur. Vérifiez que le serveur est démarré.";
-    } else {
-      error.message = "Erreur de configuration de la requête";
+    (response) => {
+        if (isDevelopment) {
+            console.log(" [✓] Response received:", response.status, response.data);
+        }
+        return response;
+    },
+    (error) => {
+        console.error(" [x] Response error:", error.response?.status, error.message);
+        
+        if (error.response) {
+            switch (error.response.status) {
+                case 400:
+                    error.message = "Données invalides";
+                    break;
+                case 401:
+                    error.message = "Email ou mot de passe incorrect";
+                    break;
+                case 403:
+                    error.message = "Accès non autorisé";
+                    break;
+                case 404:
+                    error.message = "Resource non trouvée";
+                    break;
+                case 500:
+                    error.message = "Erreur interne du serveur";
+                    break;
+                case 502:
+                    error.message = "Serveur indisponible";
+                    break;
+                case 503:
+                    error.message = "Service temporairement indisponible";
+                    break;
+                default:
+                    error.message = `Erreur ${error.response.status}: ${error.response.statusText}`;
+            }
+        } else if (error.request) {
+            // Pas de réponse du serveur
+            if (isDevelopment) {
+                error.message = "Impossible de se connecter au serveur. Vérifiez que WAMP est démarré.";
+            } else {
+                error.message = "Serveur temporairement indisponible. Veuillez réessayer.";
+            }
+        } else {
+            error.message = "Erreur de configuration de la requête";
+        }
+        
+        return Promise.reject(error);
     }
-    return Promise.reject(error);
-  }
 );
+
+// Service pour l'authentification (login)
+export const authService = {
+    async login(email, password) {
+        try {
+            if (isDevelopment) {
+                console.log("🔐 Tentative de connexion pour:", email);
+            }
+            const response = await api.post('/login_api.php', { 
+                email: email.trim(), 
+                password: password 
+            });
+            
+            // Stocker les infos utilisateur si succès
+            if (response.data.success && response.data.user) {
+                localStorage.setItem('userData', JSON.stringify(response.data.user));
+                localStorage.setItem('isAuthenticated', 'true');
+                localStorage.setItem('userEmail', response.data.user.email);
+            }
+            
+            return response.data;
+        } catch (error) {
+            console.error("Erreur dans login:", error);
+            throw error;
+        }
+    }
+};
 
 // Service pour les bordereaux
 export const bordereauService = {
-  // Récupérer tous les bordereaux
-  async getBordereaux() {
-    try {
-      const response = await api.get("/bordereau_api.php");
-      return response.data; // Retourne un tableau de bordereaux
-    } catch (error) {
-      console.error("Erreur dans getBordereaux:", error);
-      throw error;
-    }
-  },
+    async getBordereaux() {
+        try {
+            const response = await api.get("/bordereau_api.php");
+            return response.data;
+        } catch (error) {
+            console.error("Erreur dans getBordereaux:", error);
+            throw error;
+        }
+    },
 
-  // Récupérer un bordereau spécifique
-  async getBordereau(id) {
-    try {
-      const response = await api.get(`/bordereau_api.php?id_bordereau=${id}`);
-      return response.data; // Retourne un tableau de bordereaux pour l'id_bordereau
-    } catch (error) {
-      console.error("Erreur dans getBordereau:", error);
-      throw error;
-    }
-  },
+    async getBordereau(id) {
+        try {
+            const response = await api.get(`/bordereau_api.php?id_bordereau=${id}`);
+            return response.data;
+        } catch (error) {
+            console.error("Erreur dans getBordereau:", error);
+            throw error;
+        }
+    },
 
-  // Créer un nouveau bordereau
-  async createBordereau(data) {
-    try {
-      const response = await api.post("/bordereau_api.php", data);
-      return response.data; // Retourne { message: "Bordereau créé", id_bordereau: <id>, matricules: [...] }
-    } catch (error) {
-      console.error("Erreur dans createBordereau:", error);
-      throw error;
-    }
-  },
+    async createBordereau(data) {
+        try {
+            const response = await api.post("/bordereau_api.php", data);
+            return response.data;
+        } catch (error) {
+            console.error("Erreur dans createBordereau:", error);
+            throw error;
+        }
+    },
 
-  // Modifier un bordereau
-  async updateBordereau(id_bordereau, data) {
-    try {
-      const response = await api.put(`/bordereau_api.php?id_bordereau=${id_bordereau}`, data);
-      return response.data; // Retourne { message: "Bordereau mis à jour" }
-    } catch (error) {
-      console.error("Erreur dans updateBordereau:", error);
-      throw error;
-    }
-  },
+    async updateBordereau(id_bordereau, data) {
+        try {
+            const response = await api.put(`/bordereau_api.php?id_bordereau=${id_bordereau}`, data);
+            return response.data;
+        } catch (error) {
+            console.error("Erreur dans updateBordereau:", error);
+            throw error;
+        }
+    },
 
-  // Supprimer un bordereau
-  async deleteBordereau(id_bordereau) {
-    try {
-      const response = await api.delete(`/bordereau_api.php?id_bordereau=${id_bordereau}`);
-      return response.data; // Retourne { message: "Bordereau supprimé" }
-    } catch (error) {
-      console.error("Erreur dans deleteBordereau:", error);
-      throw error;
-    }
-  },
+    async deleteBordereau(id_bordereau) {
+        try {
+            const response = await api.delete(`/bordereau_api.php?id_bordereau=${id_bordereau}`);
+            return response.data;
+        } catch (error) {
+            console.error("Erreur dans deleteBordereau:", error);
+            throw error;
+        }
+    },
 
-  // Supprimer un bordereau complet
-  async deleteBordereauComplet(id_bordereau) {
-    try {
-      const response = await api.delete(`/bordereau_api.php?id_bordereau=${id_bordereau}`);
-      return response.data; // Retourne { message: "Bordereau supprimé" }
-    } catch (error) {
-      console.error("Erreur dans deleteBordereauComplet:", error);
-      throw error;
-    }
-  },
+    async markBordereauxAsSent(bordereauIds) {
+        try {
+            const response = await api.patch("/bordereau_api.php/mark-as-sent", { bordereauIds });
+            return response.data;
+        } catch (error) {
+            console.error("Erreur dans markBordereauxAsSent:", error);
+            throw error;
+        }
+    },
 
-  // Marquer plusieurs bordereaux comme envoyés
-  async markBordereauxAsSent(bordereauIds) {
-    try {
-      const response = await api.patch("/bordereau_api.php/mark-as-sent", { bordereauIds });
-      return response.data; // Retourne { message: "<nombre> bordereau(x) marqué(s) comme envoyé(s)" }
-    } catch (error) {
-      console.error("Erreur dans markBordereauxAsSent:", error);
-      throw error;
+    async markSingleBordereauAsSent(id) {
+        try {
+            const response = await api.patch(`/bordereau_api.php/bordereaux/${id}/mark-as-sent`);
+            return response.data;
+        } catch (error) {
+            console.error("Erreur dans markSingleBordereauAsSent:", error);
+            throw error;
+        }
     }
-  },
-
-  // Marquer un seul bordereau comme envoyé
-  async markSingleBordereauAsSent(id) {
-    try {
-      const response = await api.patch(`/bordereau_api.php/bordereaux/${id}/mark-as-sent`);
-      return response.data; // Retourne { message: "Bordereau marqué comme envoyé" }
-    } catch (error) {
-      console.error("Erreur dans markSingleBordereauAsSent:", error);
-      throw error;
-    }
-  }
 };
 
 // Service pour les banques
 export const banqueService = {
-  // Récupérer toutes les banques
-  async getBanques() {
-    try {
-      const response = await api.get("/banque_api.php");
-      return response.data; // Retourne un tableau de banques
-    } catch (error) {
-      console.error("Erreur dans getBanques:", error);
-      throw error;
-    }
-  },
+    async getBanques() {
+        try {
+            const response = await api.get("/banque_api.php");
+            return response.data;
+        } catch (error) {
+            console.error("Erreur dans getBanques:", error);
+            throw error;
+        }
+    },
 
-  // Créer une nouvelle banque
-  async createBanque(data) {
-    try {
-      const response = await api.post("/banque_api.php", data);
-      return response.data; // Retourne { message: "Banque ajoutée", id_banque: <id> }
-    } catch (error) {
-      console.error("Erreur dans createBanque:", error);
-      throw error;
-    }
-  },
+    async createBanque(data) {
+        try {
+            const response = await api.post("/banque_api.php", data);
+            return response.data;
+        } catch (error) {
+            console.error("Erreur dans createBanque:", error);
+            throw error;
+        }
+    },
 
-  // Modifier une banque
-  async updateBanque(id_banque, data) {
-    try {
-      const response = await api.put(`/banque_api.php?id_banque=${id_banque}`, data);
-      return response.data; // Retourne { message: "Banque mise à jour" }
-    } catch (error) {
-      console.error("Erreur dans updateBanque:", error);
-      throw error;
-    }
-  },
+    async updateBanque(id_banque, data) {
+        try {
+            const response = await api.put(`/banque_api.php?id_banque=${id_banque}`, data);
+            return response.data;
+        } catch (error) {
+            console.error("Erreur dans updateBanque:", error);
+            throw error;
+        }
+    },
 
-  // Supprimer une banque
-  async deleteBanque(id_banque) {
-    try {
-      const response = await api.delete(`/banque_api.php?id_banque=${id_banque}`);
-      return response.data; // Retourne { message: "Banque supprimée" }
-    } catch (error) {
-      console.error("Erreur dans deleteBanque:", error);
-      throw error;
+    async deleteBanque(id_banque) {
+        try {
+            const response = await api.delete(`/banque_api.php?id_banque=${id_banque}`);
+            return response.data;
+        } catch (error) {
+            console.error("Erreur dans deleteBanque:", error);
+            throw error;
+        }
     }
-  }
 };
 
 // Service pour les départements
 export const departementService = {
-  // Récupérer tous les départements
-  async getDepartements() {
-    try {
-      const response = await api.get("/departement_api.php");
-      return response.data; // Retourne un tableau de départements
-    } catch (error) {
-      console.error("Erreur dans getDepartements:", error);
-      throw error;
-    }
-  },
+    async getDepartements() {
+        try {
+            const response = await api.get("/departement_api.php");
+            return response.data;
+        } catch (error) {
+            console.error("Erreur dans getDepartements:", error);
+            throw error;
+        }
+    },
 
-  // Récupérer un département spécifique
-  async getDepartement(id) {
-    try {
-      const response = await api.get(`/departement_api.php?id_departement=${id}`);
-      return response.data; // Retourne un département
-    } catch (error) {
-      console.error("Erreur dans getDepartement:", error);
-      throw error;
-    }
-  },
+    async getDepartement(id) {
+        try {
+            const response = await api.get(`/departement_api.php?id_departement=${id}`);
+            return response.data;
+        } catch (error) {
+            console.error("Erreur dans getDepartement:", error);
+            throw error;
+        }
+    },
 
-  // Créer un nouveau département
-  async createDepartement(data) {
-    try {
-      const response = await api.post("/departement_api.php", data);
-      return response.data; // Retourne { message: "Département créé", id_departement: <id> }
-    } catch (error) {
-      console.error("Erreur dans createDepartement:", error);
-      throw error;
-    }
-  },
+    async createDepartement(data) {
+        try {
+            const response = await api.post("/departement_api.php", data);
+            return response.data;
+        } catch (error) {
+            console.error("Erreur dans createDepartement:", error);
+            throw error;
+        }
+    },
 
-  // Modifier un département
-  async updateDepartement(id_departement, data) {
-    try {
-      const response = await api.put(`/departement_api.php?id_departement=${id_departement}`, data);
-      return response.data; // Retourne { message: "Département mis à jour" }
-    } catch (error) {
-      console.error("Erreur dans updateDepartement:", error);
-      throw error;
-    }
-  },
+    async updateDepartement(id_departement, data) {
+        try {
+            const response = await api.put(`/departement_api.php?id_departement=${id_departement}`, data);
+            return response.data;
+        } catch (error) {
+            console.error("Erreur dans updateDepartement:", error);
+            throw error;
+        }
+    },
 
-  // Supprimer un département
-  async deleteDepartement(id_departement) {
-    try {
-      const response = await api.delete(`/departement_api.php?id_departement=${id_departement}`);
-      return response.data; // Retourne { message: "Département supprimé" }
-    } catch (error) {
-      console.error("Erreur dans deleteDepartement:", error);
-      throw error;
+    async deleteDepartement(id_departement) {
+        try {
+            const response = await api.delete(`/departement_api.php?id_departement=${id_departement}`);
+            return response.data;
+        } catch (error) {
+            console.error("Erreur dans deleteDepartement:", error);
+            throw error;
+        }
     }
-  }
 };
 
-// Nouveau service pour la recherche par date
+// Service pour la recherche par date
 export const searchService = {
-  async searchByDate(date, type) {
-    try {
-      // Validation des paramètres
-      if (!date || !type) {
-        throw new Error('La date et le type sont requis');
-      }
-      
-      console.log(`🔍 Recherche par date: ${date}, type: ${type}`);
-      
-      const response = await api.get(`/search_api.php`, {
-        params: {
-          date: date,
-          type: type
+    async searchByDate(date, type) {
+        try {
+            if (!date || !type) {
+                throw new Error('La date et le type sont requis');
+            }
+
+            if (isDevelopment) {
+                console.log(`[ ] Recherche par date: ${date}, type: ${type}`);
+            }
+
+            const response = await api.get('/search_api.php', {
+                params: { date, type }
+            });
+
+            if (isDevelopment) {
+                console.log("📞 Résultats recherche:", response.data);
+            }
+            return response.data;
+        } catch (error) {
+            console.error("✗ Erreur dans searchByDate:", error);
+            throw error;
         }
-      });
-      
-      console.log('✅ Résultats recherche:', response.data);
-      return response.data;
-    } catch (error) {
-      console.error("❌ Erreur dans searchByDate:", error);
-      throw error;
     }
-  },
 };
 
 export default api;

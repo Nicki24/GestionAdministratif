@@ -3,13 +3,22 @@
     <!-- En-tête de page -->
     <div class="page-header">
       <h2>📋 Gestion des Bordereaux</h2>
+      <div class="user-info" v-if="currentUser">
+        <span class="user-email">{{ currentUser.email }}</span>
+        <span class="user-type" :class="currentUser.type_utilisateur">{{ currentUser.type_utilisateur }}</span>
+      </div>
       <div class="header-actions">
-        <button class="btn-primary" @click="showAddModal = true" :disabled="loading">
+        <button 
+          class="btn-primary" 
+          @click="showAddModal = true" 
+          :disabled="loading || !canCreate"
+          v-if="canCreate"
+        >
           <span class="btn-icon">➕</span>
           Nouveau Bordereau
         </button>
         <button 
-          v-if="selectedBordereaux.length > 0"
+          v-if="selectedBordereaux.length > 0 && canUpdate"
           class="btn-success" 
           @click="markAsSent"
           :disabled="loading || markingAsSent"
@@ -79,7 +88,12 @@
         <h3>Aucun bordereau trouvé</h3>
         <p v-if="searchQuery || statusFilter || sentFilter">Aucun résultat pour vos critères de recherche</p>
         <p v-else>Commencez par créer votre premier bordereau pour {{ currentMonthYear }}</p>
-        <button class="btn-primary" @click="showAddModal = true" :disabled="loading">
+        <button 
+          class="btn-primary" 
+          @click="showAddModal = true" 
+          :disabled="loading || !canCreate"
+          v-if="canCreate"
+        >
           ➕ Créer un bordereau
         </button>
       </div>
@@ -89,7 +103,7 @@
         <table class="bordereaux-table">
           <thead>
             <tr>
-              <th class="checkbox-column">
+              <th class="checkbox-column" v-if="canUpdate">
                 <input
                   type="checkbox"
                   :checked="allSelected"
@@ -124,7 +138,7 @@
               :key="bordereau.id_bordereau"
               :class="{ 'selected-row': isSelected(bordereau.id_bordereau) }"
             >
-              <td class="checkbox-cell" data-label="Sélection">
+              <td class="checkbox-cell" data-label="Sélection" v-if="canUpdate">
                 <input
                   type="checkbox"
                   :checked="isSelected(bordereau.id_bordereau)"
@@ -145,10 +159,31 @@
                 </span>
               </td>
               <td class="actions-cell" data-label="Actions">
-                <button class="btn-action edit-btn" @click="editBordereau(bordereau)" title="Modifier" :disabled="loading">✏️</button>
-                <button class="btn-action delete-btn" @click="confirmDelete(bordereau)" title="Supprimer" :disabled="loading">🗑️</button>
+                <!-- Bouton Modifier - seulement pour admin -->
                 <button 
-                  v-if="!bordereau.est_envoye"
+                  v-if="canUpdate"
+                  class="btn-action edit-btn" 
+                  @click="editBordereau(bordereau)" 
+                  title="Modifier" 
+                  :disabled="loading"
+                >
+                  ✏️
+                </button>
+                
+                <!-- Bouton Supprimer - seulement pour admin -->
+                <button 
+                  v-if="canDelete"
+                  class="btn-action delete-btn" 
+                  @click="confirmDelete(bordereau)" 
+                  title="Supprimer" 
+                  :disabled="loading"
+                >
+                  🗑️
+                </button>
+                
+                <!-- Bouton Marquer comme envoyé - pour admin seulement -->
+                <button 
+                  v-if="!bordereau.est_envoye && canUpdate"
                   class="btn-action send-btn" 
                   @click="markSingleAsSent(bordereau.id_bordereau)" 
                   title="Marquer comme envoyé"
@@ -156,6 +191,11 @@
                 >
                   📤
                 </button>
+
+                <!-- Message pour utilisateurs non-admin -->
+                <span v-if="!canUpdate" class="no-permission-text">
+                  Lecture seule
+                </span>
               </td>
             </tr>
           </tbody>
@@ -346,6 +386,7 @@
 <script>
 import { bordereauService } from '../services/api';
 import { useNotification } from '@kyvg/vue3-notification';
+import { authService } from '../services/auth'; // IMPORT DU SERVICE AUTH
 
 export default {
   name: 'BordereauxView',
@@ -389,7 +430,8 @@ export default {
       interval: null,
       // Nouveaux états pour la sélection
       selectedBordereaux: [],
-      markingAsSent: false
+      markingAsSent: false,
+      currentUser: null // AJOUT pour stocker l'utilisateur connecté
     };
   },
   computed: {
@@ -476,6 +518,18 @@ export default {
     allSelected() {
       return this.paginatedBordereaux.length > 0 && 
              this.paginatedBordereaux.every(b => this.isSelected(b.id_bordereau));
+    },
+    // NOUVEAU: Permissions basées sur l'utilisateur
+    canCreate() {
+      return this.currentUser && this.currentUser.type_utilisateur === 'admin';
+    },
+    
+    canUpdate() {
+      return this.currentUser && this.currentUser.type_utilisateur === 'admin';
+    },
+    
+    canDelete() {
+      return this.currentUser && this.currentUser.type_utilisateur === 'admin';
     }
   },
   watch: {
@@ -513,6 +567,21 @@ export default {
   },
   async mounted() {
     console.log('BordereauxView mounted');
+    
+    // Récupérer l'utilisateur connecté
+    this.currentUser = authService.getCurrentUser();
+    
+    if (!this.currentUser) {
+      this.notify({
+        title: 'Erreur',
+        text: 'Utilisateur non connecté',
+        type: 'error'
+      });
+      return;
+    }
+    
+    console.log('Utilisateur connecté:', this.currentUser);
+    
     this.updateCurrentDate();
     await this.loadBordereaux();
     this.interval = setInterval(this.updateCurrentDate, 60000);
@@ -644,7 +713,16 @@ export default {
       }
     },
 
+    // MODIFIÉ: Vérifier les permissions avant modification
     editBordereau(bordereau) {
+      if (!this.canUpdate) {
+        this.notify({
+          title: 'Permission refusée',
+          text: 'Vous n\'avez pas les droits pour modifier les bordereaux',
+          type: 'warning'
+        });
+        return;
+      }
       this.isEditing = true;
       this.formData = {
         id_bordereau: bordereau.id_bordereau,
@@ -657,7 +735,16 @@ export default {
       this.showAddModal = true;
     },
 
+    // MODIFIÉ: Vérifier les permissions avant suppression
     confirmDelete(bordereau) {
+      if (!this.canDelete) {
+        this.notify({
+          title: 'Permission refusée',
+          text: 'Vous n\'avez pas les droits pour supprimer les bordereaux',
+          type: 'warning'
+        });
+        return;
+      }
       this.bordereauToDelete = bordereau;
       this.showDeleteModal = true;
     },
@@ -728,7 +815,26 @@ export default {
       this.formData.matricules.splice(index, 1);
     },
 
+    // MODIFIÉ: Vérifier les permissions avant sauvegarde
     async saveBordereau() {
+      if (this.isEditing && !this.canUpdate) {
+        this.notify({
+          title: 'Permission refusée',
+          text: 'Vous n\'avez pas les droits pour modifier les bordereaux',
+          type: 'warning'
+        });
+        return;
+      }
+      
+      if (!this.isEditing && !this.canCreate) {
+        this.notify({
+          title: 'Permission refusée',
+          text: 'Vous n\'avez pas les droits pour créer des bordereaux',
+          type: 'warning'
+        });
+        return;
+      }
+
       try {
         this.saving = true;
 
@@ -995,6 +1101,44 @@ export default {
   margin-left: 8px;
 }
 
+/* NOUVEAUX STYLES POUR LES PERMISSIONS */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+  margin-right: 16px;
+}
+
+.user-email {
+  font-size: 14px;
+  color: #6c757d;
+}
+
+.user-type {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.user-type.admin {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.user-type.user {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.no-permission-text {
+  font-size: 12px;
+  color: #6c757d;
+  font-style: italic;
+}
+
 /* Adaptation responsive */
 @media (max-width: 768px) {
   .header-actions {
@@ -1017,6 +1161,14 @@ export default {
 
   .bordereaux-table td[data-label="État"]::before {
     content: "État: ";
+  }
+
+  .user-info {
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 10px;
+    width: 100%;
+    justify-content: center;
   }
 }
 

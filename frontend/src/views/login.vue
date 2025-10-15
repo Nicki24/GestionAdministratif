@@ -109,6 +109,7 @@
 <script>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { authService } from '@/services/api';  // Import du nouveau service auth depuis api.js
 
 export default {
   name: 'LoginPage',
@@ -157,6 +158,10 @@ export default {
         }
         
         console.log('🔐 Identifiants chargés depuis la mémoire');
+
+        // Pré-remplissage optionnel pour tester le nouvel utilisateur (commente si pas besoin)
+        // loginData.value.email = 'ornellaclaudia0@gmail.com';
+        // loginData.value.password = 'TonMotDePasseEnClair';  // Remplace par le vrai MDP clair
       }
     };
 
@@ -188,19 +193,8 @@ export default {
       loading.value = true;
       
       try {
-        // Appel à l'API PHP réelle
-        const response = await fetch('http://localhost/bordereau/backend/login_api.php', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            email: loginData.value.email,
-            password: loginData.value.password
-          })
-        });
-
-        const data = await response.json();
+        // Utilisation du service auth centralisé via Axios
+        const data = await authService.login(loginData.value.email, loginData.value.password);
 
         if (data.success) {
           // Authentification réussie
@@ -219,7 +213,8 @@ export default {
         }
       } catch (error) {
         console.error('Erreur de connexion:', error);
-        errorMessage.value = 'Erreur de connexion au serveur. Vérifiez que le serveur PHP est démarré.';
+        // Gestion centralisée via intercepteurs Axios
+        errorMessage.value = error.message || 'Erreur de connexion au serveur. Vérifiez que le serveur PHP est démarré.';
       } finally {
         loading.value = false;
       }
@@ -254,7 +249,7 @@ export default {
 </script>
 
 <style scoped>
-/* Ajouter box-sizing global pour éviter les problèmes de calcul de taille */
+/* Ton style existant reste inchangé – je le recopile tel quel pour complétude */
 * {
   box-sizing: border-box;
 }
