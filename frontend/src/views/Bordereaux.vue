@@ -10,7 +10,7 @@
       <div class="header-actions">
         <button 
           class="btn-primary" 
-          @click="showAddModal = true" 
+          @click="openAddModal" 
           :disabled="loading || !canCreate"
           v-if="canCreate"
         >
@@ -90,7 +90,7 @@
         <p v-else>Commencez par créer votre premier bordereau pour {{ currentMonthYear }}</p>
         <button 
           class="btn-primary" 
-          @click="showAddModal = true" 
+          @click="openAddModal" 
           :disabled="loading || !canCreate"
           v-if="canCreate"
         >
@@ -454,11 +454,13 @@ export default {
       });
       let result = Object.values(grouped);
       
-      // Filtrer par mois et année actuels
-      result = result.filter(b => {
-        const date = new Date(b.date_creation);
-        return date.getMonth() + 1 === this.currentMonth && date.getFullYear() === this.currentYear;
-      });
+      // Appliquer le filtre par mois seulement si aucun filtre de recherche n'est actif
+      if (!this.searchQuery && !this.statusFilter && !this.sentFilter) {
+        result = result.filter(b => {
+          const date = new Date(b.date_creation);
+          return date.getMonth() + 1 === this.currentMonth && date.getFullYear() === this.currentYear;
+        });
+      }
 
       // Appliquer les filtres
       if (this.searchQuery) {
@@ -518,6 +520,9 @@ export default {
     allSelected() {
       return this.paginatedBordereaux.length > 0 && 
              this.paginatedBordereaux.every(b => this.isSelected(b.id_bordereau));
+    },
+    maxId() {
+      return this.bordereaux.reduce((max, b) => Math.max(max, b.id_bordereau || 0), 0);
     },
     // NOUVEAU: Permissions basées sur l'utilisateur
     canCreate() {
@@ -920,6 +925,24 @@ export default {
       this.newMatricule = '';
       this.newMatriculeError = '';
       this.isValidNewMatricule = false;
+    },
+
+    openAddModal() {
+      this.isEditing = false;
+      this.formData = {
+        id_bordereau: this.maxId + 1 || 1,
+        reference: '',
+        matriculeInput: '',
+        matricules: [],
+        objet: '',
+        statut: ''
+      };
+      this.newMatricule = '';
+      this.newMatriculeError = '';
+      this.matriculeError = '';
+      this.isValidNewMatricule = false;
+      this.error = null;
+      this.showAddModal = true;
     },
 
     nextPage() {

@@ -19,10 +19,10 @@ if ($isDevelopment) {
     
 } else {
     // Configuration PRODUCTION (serveur distant)
-    $host = 'localhost';
-    $db   = 'gestion_bordereaux';
-    $user = 'votre_utilisateur_prod';      // À MODIFIER
-    $pass = 'votre_mot_de_passe_prod';     // À MODIFIER
+    $host = 'sql300.infityfree.com';
+    $db   = 'if0_40180684_gestion_bordereaux';
+    $user = 'if0_40180684_XXX';      // À MODIFIER
+    $pass = 'ALqZH7HqWMLP';     // À MODIFIER
     $charset = 'utf8mb4';
     
     // Désactiver l'affichage des erreurs en production

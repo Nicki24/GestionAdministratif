@@ -4608,3 +4608,599 @@ Détails: [{"id_bordereau":2021,"matricule":"031002","reference":"01\/CISCO","ob
 [GET] Requête reçue à 2025-10-15 07:34:44
 [GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
 [GET] Requête reçue à 2025-10-15 07:34:44 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-15 13:54:32 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-15 13:54:32 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-15 13:54:32
+[GET] Requête reçue à 2025-10-15 13:54:32
+[GET] Requête reçue à 2025-10-15 13:54:32 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-15 14:10:09 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-15 14:12:25 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-15 18:48:59 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-15 18:49:00 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-15 18:49:00 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-15 18:49:00
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-15 18:49:00
+[GET] Requête reçue à 2025-10-15 18:55:37 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-15 18:55:38 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-15 18:55:38 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-15 18:55:38
+[GET] Requête reçue à 2025-10-15 18:55:38
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-15 18:56:09 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-15 18:56:09 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-15 18:56:09
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-15 18:56:09 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-15 18:56:09
+[GET] Requête reçue à 2025-10-15 18:56:12 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-15 18:56:19
+[GET] Requête reçue à 2025-10-15 18:56:45 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-15 18:56:45 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-15 18:56:45
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-15 18:56:45
+[GET] Requête reçue à 2025-10-15 18:56:45 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-15 18:56:53 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-15 18:56:53 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-15 18:56:53
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-15 18:56:53 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-15 18:56:53
+[GET] Requête reçue à 2025-10-15 19:00:38 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-15 19:00:38 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-15 19:00:38 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-15 19:00:39
+[GET] Requête reçue à 2025-10-15 19:00:39
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-15 19:01:05 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-15 19:02:54 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-15 19:02:54 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-15 19:02:54
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-15 19:02:54 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-15 19:02:54
+[GET] Requête reçue à 2025-10-15 19:42:32 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-15 19:42:32 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-15 19:42:32
+[GET] Requête reçue à 2025-10-15 19:42:32 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-15 19:42:32
+[GET] Requête reçue à 2025-10-15 19:42:37
+[GET] Requête reçue à 2025-10-15 19:42:38 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-15 20:19:32 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 05:05:44 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 05:05:45 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 05:05:45
+[GET] Requête reçue à 2025-10-16 05:05:45 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 05:05:45
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-16 05:05:48 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 05:05:49
+[GET] Requête reçue à 2025-10-16 05:05:51 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 05:05:51 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 05:05:51
+[GET] Requête reçue à 2025-10-16 05:05:51
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-16 05:05:52
+[GET] Requête reçue à 2025-10-16 05:06:00
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-16 05:06:00 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 05:06:00 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 05:06:00
+[GET] Requête reçue à 2025-10-16 05:06:08 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 05:06:45 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 05:06:46 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 05:06:46
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-16 05:06:46 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 05:06:46
+[GET] Requête reçue à 2025-10-16 05:06:58 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 05:06:59
+[GET] Requête reçue à 2025-10-16 05:06:59 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 05:06:59 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 05:06:59
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-16 05:07:02 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 12:11:20 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 12:11:20 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 12:11:20 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 12:11:20
+[GET] Requête reçue à 2025-10-16 12:11:20
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-16 12:11:24 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 12:16:28
+[GET] Requête reçue à 2025-10-16 12:16:47
+[GET] Requête reçue à 2025-10-16 12:19:06 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 12:26:05
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-16 12:26:05 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 12:26:05 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 12:26:05
+[GET] Requête reçue à 2025-10-16 12:26:06
+[GET] Requête reçue à 2025-10-16 12:26:07 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 12:26:07 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 12:26:07 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 12:26:08
+[GET] Requête reçue à 2025-10-16 12:26:09 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 12:26:09 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 12:35:33 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 12:35:33 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 12:35:33
+[GET] Requête reçue à 2025-10-16 12:35:33 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 12:35:33
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-16 12:35:35 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 13:01:05 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 13:01:06 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 13:01:06
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-16 13:01:06 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 13:01:06
+[GET] Requête reçue à 2025-10-16 13:04:17 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 13:05:20
+[GET] Requête reçue à 2025-10-16 13:05:27 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 13:05:27
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-16 13:05:27
+[GET] Requête reçue à 2025-10-16 13:05:27 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 13:05:31
+[GET] Requête reçue à 2025-10-16 13:08:07
+=== NOUVELLE RECHERCHE ===
+Date: 2025-10-15, Type: bordereaux
+SQL: SELECT id_bordereau, matricule, reference, objet, statut, date_creation FROM bordereau WHERE DATE(date_creation) = :date
+Résultats: 1 enregistrement(s)
+Détails: [{"id_bordereau":2021,"matricule":"031002","reference":"01\/CISCO","objet":"Demande d'Avenant au nom de Norlande","statut":"VISA","date_creation":"2025-10-15 09:59:36"}]
+
+[GET] Requête reçue à 2025-10-16 13:23:49 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 13:23:49 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 13:23:49
+[GET] Requête reçue à 2025-10-16 13:23:49
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-16 13:37:16 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 13:37:16
+[GET] Requête reçue à 2025-10-16 13:37:17 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 13:37:18 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 13:37:19
+[GET] Requête reçue à 2025-10-16 13:37:20 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 13:37:21 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 13:37:22 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[POST] Requête reçue à 2025-10-16 13:38:17 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[POST] Données reçues : {"id_bordereau":2296,"matricules":["460250"],"reference":"","objet":"Demande de cr\u00e9ation de bon de caisse","statut":"Mandatement","isEditing":false}
+[POST] Succès : {"message":"Bordereau cr\u00e9\u00e9","id_bordereau":2296,"matricules":["460250"]}
+[GET] Requête reçue à 2025-10-16 13:38:17 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 13:42:58 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 13:42:58 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 13:42:58 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 13:42:58
+[GET] Requête reçue à 2025-10-16 13:42:58
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-16 13:45:40 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 13:45:40 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 13:45:40
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-16 13:45:40 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 13:45:40
+[GET] Requête reçue à 2025-10-16 13:45:45 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 13:45:46 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 13:45:46
+[GET] Requête reçue à 2025-10-16 13:45:46 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 13:45:46
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-16 13:45:48 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 13:56:43 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 13:56:47 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 13:56:48 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 13:56:48
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-16 13:56:48
+[GET] Requête reçue à 2025-10-16 13:56:48 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-16 13:56:49 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 05:14:29 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 05:14:30 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 05:14:30
+[GET] Requête reçue à 2025-10-17 05:14:30 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 05:14:30
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-17 05:14:32 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 05:15:01 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 05:15:01 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 05:15:01
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-17 05:15:01 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 05:15:01
+[GET] Requête reçue à 2025-10-17 05:15:07 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[POST] Requête reçue à 2025-10-17 05:18:04 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[POST] Données reçues : {"id_bordereau":1,"matricules":["145878"],"reference":"","objet":"tztz","statut":"VISA","isEditing":false}
+[POST] Succès : {"message":"Bordereau cr\u00e9\u00e9","id_bordereau":1,"matricules":["145878"]}
+[GET] Requête reçue à 2025-10-17 05:18:04 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 05:18:34 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 05:18:35 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 05:18:35
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-17 05:18:35 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 05:18:35
+[GET] Requête reçue à 2025-10-17 05:18:38 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[POST] Requête reçue à 2025-10-17 05:19:09 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[POST] Données reçues : {"id_bordereau":2297,"matricules":["142564"],"reference":"","objet":"ffeefef","statut":"VISA","isEditing":false}
+[POST] Succès : {"message":"Bordereau cr\u00e9\u00e9","id_bordereau":2297,"matricules":["142564"]}
+[GET] Requête reçue à 2025-10-17 05:19:09 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[DELETE] Requête reçue à 2025-10-17 05:19:47 - URI: /bordereau/backend/bordereau_api.php?id_bordereau=2297 - PATH_INFO: 
+[DELETE] Succès : {"message":"Bordereau supprim\u00e9"}
+[GET] Requête reçue à 2025-10-17 05:19:47 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[PUT] Requête reçue à 2025-10-17 05:19:58 - URI: /bordereau/backend/bordereau_api.php?id_bordereau=2296 - PATH_INFO: 
+[PUT] Données reçues pour id_bordereau 2296 : {"id_bordereau":2296,"matricules":["460250"],"reference":"","objet":"Demande de cr\u00e9ation de bon de caisse","statut":"VISA","isEditing":true}
+[PUT] Succès : {"message":"Bordereau mis \u00e0 jour"}
+[GET] Requête reçue à 2025-10-17 05:19:58 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[PUT] Requête reçue à 2025-10-17 05:20:08 - URI: /bordereau/backend/bordereau_api.php?id_bordereau=2296 - PATH_INFO: 
+[PUT] Données reçues pour id_bordereau 2296 : {"id_bordereau":2296,"matricules":["460250"],"reference":"","objet":"Demande de cr\u00e9ation de bon de caisse","statut":"Mandatement","isEditing":true}
+[PUT] Succès : {"message":"Bordereau mis \u00e0 jour"}
+[GET] Requête reçue à 2025-10-17 05:20:08 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 05:20:14
+[POST] Requête reçue à 2025-10-17 05:20:29
+[POST] Données reçues : {"id_banque":106,"nom":"Gge","section":"PVO005"}
+[POST] Succès : {"message":"Banque ajout\u00e9e avec succ\u00e8s","id_banque":106}
+[GET] Requête reçue à 2025-10-17 05:20:29
+[DELETE] Requête reçue à 2025-10-17 05:20:38
+[DELETE] Succès : {"message":"Banque supprim\u00e9e avec succ\u00e8s"}
+[GET] Requête reçue à 2025-10-17 05:20:38
+[GET] Requête reçue à 2025-10-17 05:20:41 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[POST] Requête reçue à 2025-10-17 05:21:21 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[POST] Données reçues : {"id_bordereau":2297,"matricules":["412365"],"reference":"15\/MM","objet":"\"t\"t\"t\"t","statut":"Mandatement","isEditing":false}
+[POST] Succès : {"message":"Bordereau cr\u00e9\u00e9","id_bordereau":2297,"matricules":["412365"]}
+[GET] Requête reçue à 2025-10-17 05:21:21 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[DELETE] Requête reçue à 2025-10-17 05:21:31 - URI: /bordereau/backend/bordereau_api.php?id_bordereau=2297 - PATH_INFO: 
+[DELETE] Succès : {"message":"Bordereau supprim\u00e9"}
+[GET] Requête reçue à 2025-10-17 05:21:31 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[DELETE] Requête reçue à 2025-10-17 05:21:46 - URI: /bordereau/backend/bordereau_api.php?id_bordereau=1 - PATH_INFO: 
+[DELETE] Succès : {"message":"Bordereau supprim\u00e9"}
+[GET] Requête reçue à 2025-10-17 05:21:46 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 05:21:49
+[GET] Requête reçue à 2025-10-17 05:21:52 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 05:21:52
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-17 05:21:52 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 05:21:52
+[GET] Requête reçue à 2025-10-17 05:21:52
+[GET] Requête reçue à 2025-10-17 05:36:30 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 05:36:31 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 05:36:31
+[GET] Requête reçue à 2025-10-17 05:36:31 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-17 05:36:31
+[GET] Requête reçue à 2025-10-17 05:36:38 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[POST] Requête reçue à 2025-10-17 05:39:29 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[POST] Données reçues : {"id_bordereau":2297,"matricules":["408812"],"reference":"424\/MCC","objet":"Acte format\u00e9 a\/n de REMBILA Sonjonirina Juie Savana","statut":"Mandatement","isEditing":false}
+[POST] Succès : {"message":"Bordereau cr\u00e9\u00e9","id_bordereau":2297,"matricules":["408812"]}
+[GET] Requête reçue à 2025-10-17 05:39:29 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 05:40:02 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 05:40:03 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 05:40:09
+[GET] Requête reçue à 2025-10-17 05:40:12 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 05:55:24 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 05:56:56
+[GET] Requête reçue à 2025-10-17 05:56:59 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 05:57:00 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 05:57:02 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:01:09
+[GET] Requête reçue à 2025-10-17 06:16:46
+[GET] Requête reçue à 2025-10-17 06:16:47 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:16:47
+[GET] Requête reçue à 2025-10-17 06:16:47 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:16:47
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-17 06:16:48 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:18:07 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:18:07
+[GET] Requête reçue à 2025-10-17 06:18:07 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-17 06:18:07
+[GET] Requête reçue à 2025-10-17 06:18:07
+[GET] Requête reçue à 2025-10-17 06:18:09 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:18:09 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:18:09
+[GET] Requête reçue à 2025-10-17 06:18:09
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-17 06:18:11
+[GET] Requête reçue à 2025-10-17 06:18:14
+[GET] Requête reçue à 2025-10-17 06:18:15 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:18:15
+[GET] Requête reçue à 2025-10-17 06:18:15 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:18:15
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-17 06:18:17
+[GET] Requête reçue à 2025-10-17 06:18:20 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:18:20 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:18:21
+[GET] Requête reçue à 2025-10-17 06:18:22 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:18:23
+[GET] Requête reçue à 2025-10-17 06:29:42 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:29:44 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:29:47 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:29:47
+[GET] Requête reçue à 2025-10-17 06:29:49 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:29:49
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-17 06:29:49
+[GET] Requête reçue à 2025-10-17 06:29:49 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:29:50
+[GET] Requête reçue à 2025-10-17 06:29:52
+[GET] Requête reçue à 2025-10-17 06:29:53 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:29:53 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:29:53
+[GET] Requête reçue à 2025-10-17 06:29:53
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-17 06:29:53
+[GET] Requête reçue à 2025-10-17 06:29:54 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:29:54 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:29:55 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:29:55
+[GET] Requête reçue à 2025-10-17 06:29:56 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:29:56
+[GET] Requête reçue à 2025-10-17 06:29:56 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-17 06:29:56
+[GET] Requête reçue à 2025-10-17 06:29:57
+[GET] Requête reçue à 2025-10-17 06:30:34 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:30:34
+[GET] Requête reçue à 2025-10-17 06:30:34
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-17 06:30:34 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:30:36
+[GET] Requête reçue à 2025-10-17 06:30:37 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:30:37
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-17 06:30:37 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:30:37
+[GET] Requête reçue à 2025-10-17 06:30:38
+[GET] Requête reçue à 2025-10-17 06:30:47
+[GET] Requête reçue à 2025-10-17 06:30:50
+[GET] Requête reçue à 2025-10-17 06:31:03
+[GET] Requête reçue à 2025-10-17 06:31:03 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:31:03
+[GET] Requête reçue à 2025-10-17 06:31:03 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-17 06:31:04
+[GET] Requête reçue à 2025-10-17 06:31:05
+[GET] Requête reçue à 2025-10-17 06:31:06 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:31:06
+[GET] Requête reçue à 2025-10-17 06:31:06 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-17 06:31:06
+[GET] Requête reçue à 2025-10-17 06:31:07
+[GET] Requête reçue à 2025-10-17 06:31:08 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:31:08 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:31:09 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:31:09
+[GET] Requête reçue à 2025-10-17 06:31:54
+[GET] Requête reçue à 2025-10-17 06:31:55 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:31:55 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:31:55
+[GET] Requête reçue à 2025-10-17 06:31:55
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-17 06:31:57
+[GET] Requête reçue à 2025-10-17 06:32:18 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:32:18
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1},{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-17 06:32:18 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=30 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:32:18
+[GET] Requête reçue à 2025-10-17 06:32:20 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=90 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:32:20 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:32:20
+[GET] Requête reçue à 2025-10-17 06:32:20
+[GET] Statistiques retournées : [{"day":"2025-09-21","count":3},{"day":"2025-09-23","count":1},{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-17 06:32:21 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:32:21
+[GET] Requête reçue à 2025-10-17 06:32:21
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-17 06:32:21 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:32:28 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:32:30 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:32:31
+[GET] Requête reçue à 2025-10-17 06:32:33 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:32:36
+[GET] Requête reçue à 2025-10-17 06:32:38 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:33:33
+[GET] Requête reçue à 2025-10-17 06:34:03 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:34:03 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:40:41 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:40:45 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:40:46 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[POST] Requête reçue à 2025-10-17 06:42:16 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[POST] Données reçues : {"id_bordereau":2298,"matricules":["456070"],"reference":"354\/MSANP","objet":"Projet d'AVENAT et renouvellement contrat au nom de Mme VITASOA GEROMINE ","statut":"VISA","isEditing":false}
+[POST] Succès : {"message":"Bordereau cr\u00e9\u00e9","id_bordereau":2298,"matricules":["456070"]}
+[GET] Requête reçue à 2025-10-17 06:42:16 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 06:45:39
+[GET] Requête reçue à 2025-10-17 06:46:25 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[POST] Requête reçue à 2025-10-17 06:57:23 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[POST] Données reçues : {"id_bordereau":2299,"matricules":["275289"],"reference":"329\/MSANP","objet":"Dossier cong\u00e9 non pris au nom de RANDRIAMANAMPISON Jacques","statut":"VISA","isEditing":false}
+[POST] Succès : {"message":"Bordereau cr\u00e9\u00e9","id_bordereau":2299,"matricules":["275289"]}
+[GET] Requête reçue à 2025-10-17 06:57:23 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:15:15 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:15:17 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:15:17
+[GET] Requête reçue à 2025-10-17 07:15:17
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-17 07:15:17 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:15:19 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:15:34
+[GET] Requête reçue à 2025-10-17 07:15:36 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:16:49 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:18:48 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:19:12
+[GET] Requête reçue à 2025-10-17 07:19:15 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:19:15
+[GET] Requête reçue à 2025-10-17 07:19:15 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-17 07:19:15
+[GET] Requête reçue à 2025-10-17 07:19:17 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:19:17 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:19:19 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:19:38
+[GET] Requête reçue à 2025-10-17 07:19:39
+[GET] Requête reçue à 2025-10-17 07:19:52 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:21:20 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:21:21 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:21:21 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:21:21
+[GET] Requête reçue à 2025-10-17 07:21:21
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-17 07:22:13 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:22:20
+[GET] Requête reçue à 2025-10-17 07:22:26 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:22:28
+[GET] Requête reçue à 2025-10-17 07:22:29 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:22:29
+[GET] Requête reçue à 2025-10-17 07:22:29 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:22:29
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-17 07:22:31
+[GET] Requête reçue à 2025-10-17 07:22:34
+[GET] Requête reçue à 2025-10-17 07:22:35 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:23:16 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[POST] Requête reçue à 2025-10-17 07:28:34 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[POST] Données reçues : {"id_bordereau":2300,"matricules":["323014"],"reference":"045\/MEF","objet":"Acte format\u00e9 portant cr\u00e9ation de code rubrique au nom de OUI Watez","statut":"Mandatement","isEditing":false}
+[POST] Succès : {"message":"Bordereau cr\u00e9\u00e9","id_bordereau":2300,"matricules":["323014"]}
+[GET] Requête reçue à 2025-10-17 07:28:34 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[PATCH] Requête reçue à 2025-10-17 07:28:57 - URI: /bordereau/backend/bordereau_api.php/mark-as-sent - PATH_INFO: /mark-as-sent
+[PATCH] Segments: ["mark-as-sent"]
+[PATCH multiple] Données reçues : {"bordereauIds":[2299,2298,2297,2296,2021,2020,2019]}
+[PATCH multiple] Succès : {"message":"7 bordereau(x) marqu\u00e9(s) comme envoy\u00e9(s)"}
+[GET] Requête reçue à 2025-10-17 07:28:57 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:30:00 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:30:02 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:30:02 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:30:02
+[GET] Requête reçue à 2025-10-17 07:30:02
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-17 07:30:03 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:30:16
+[GET] Requête reçue à 2025-10-17 07:30:28
+[GET] Requête reçue à 2025-10-17 07:30:34
+[GET] Requête reçue à 2025-10-17 07:31:11 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:31:11 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:31:11 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:31:11
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-17 07:31:11
+[GET] Requête reçue à 2025-10-17 07:31:13
+[GET] Requête reçue à 2025-10-17 07:33:34 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:33:35 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:33:35
+[GET] Requête reçue à 2025-10-17 07:33:35 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:33:35
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-17 07:33:38 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:33:40
+[GET] Requête reçue à 2025-10-17 07:36:24 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:36:25 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:36:25 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:36:25
+[GET] Requête reçue à 2025-10-17 07:36:25
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-17 07:36:28 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:36:29
+[GET] Requête reçue à 2025-10-17 07:37:01 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:37:02 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:37:02
+[GET] Requête reçue à 2025-10-17 07:37:02 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:37:02
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-17 07:37:28 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:37:28 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:37:28
+[GET] Requête reçue à 2025-10-17 07:37:28 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-17 07:37:28
+[GET] Requête reçue à 2025-10-17 07:37:30 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:41:55 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:41:56 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:41:56
+[GET] Requête reçue à 2025-10-17 07:41:56 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:41:56
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-17 07:41:58 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:42:01
+[GET] Requête reçue à 2025-10-17 07:42:12 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:56:26 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:56:27 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:56:27
+[GET] Requête reçue à 2025-10-17 07:56:27 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-17 07:56:27
+[GET] Requête reçue à 2025-10-17 07:56:30 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 07:56:33
+[GET] Requête reçue à 2025-10-17 07:56:38 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[POST] Requête reçue à 2025-10-17 07:57:38 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[POST] Données reçues : {"id_bordereau":2301,"matricules":["481286"],"reference":"","objet":"Demande de rappel des solde au nom de LIZARA","statut":"Mandatement","isEditing":false}
+[POST] Succès : {"message":"Bordereau cr\u00e9\u00e9","id_bordereau":2301,"matricules":["481286"]}
+[GET] Requête reçue à 2025-10-17 07:57:38 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 08:14:37 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 08:14:37 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 08:14:37 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 08:14:37
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-17 08:14:37
+[GET] Requête reçue à 2025-10-17 08:14:40 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 08:14:42
+[GET] Requête reçue à 2025-10-17 08:15:01
+[GET] Requête reçue à 2025-10-17 08:15:04
+[GET] Requête reçue à 2025-10-17 08:16:26
+[GET] Requête reçue à 2025-10-17 08:16:39
+[GET] Requête reçue à 2025-10-17 08:16:40
+[GET] Requête reçue à 2025-10-17 08:25:40 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 08:25:42 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 08:25:42
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-17 08:25:42 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 08:25:42
+[GET] Requête reçue à 2025-10-17 08:25:49 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 08:25:50
+[GET] Requête reçue à 2025-10-17 08:33:01 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 08:33:02 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 08:33:02 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 08:33:02
+[GET] Requête reçue à 2025-10-17 08:33:02
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-17 08:33:08 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 08:33:09
+[GET] Requête reçue à 2025-10-17 08:33:14 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 08:33:14 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 08:33:14
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-17 08:33:14 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 08:33:14
+[GET] Requête reçue à 2025-10-17 08:33:17 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 08:33:20
+[GET] Requête reçue à 2025-10-17 09:17:53 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 09:17:53 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 09:17:53
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-17 09:17:53
+[GET] Requête reçue à 2025-10-17 09:17:59 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 09:18:04 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 09:18:05 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 09:18:05 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 09:18:05
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-17 09:18:05
+[GET] Requête reçue à 2025-10-17 09:18:06 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 09:18:07
+[GET] Requête reçue à 2025-10-17 09:18:21 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 09:18:21 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 09:18:38 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 09:18:38 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 09:18:38
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-17 09:18:38
+[GET] Requête reçue à 2025-10-17 09:18:38 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 09:18:40 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 09:19:10 - URI: /bordereau/backend/bordereau_api.php?stats=true&period=7 - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 09:19:10 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 09:19:10
+[GET] Statistiques retournées : [{"day":"2025-10-15","count":1}]
+[GET] Requête reçue à 2025-10-17 09:19:10
+[GET] Requête reçue à 2025-10-17 09:19:10
+[GET] Requête reçue à 2025-10-17 09:19:11 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 
+[GET] Requête reçue à 2025-10-17 09:19:11 - URI: /bordereau/backend/bordereau_api.php - PATH_INFO: 

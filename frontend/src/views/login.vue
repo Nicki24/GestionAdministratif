@@ -89,9 +89,25 @@
             {{ errorMessage }}
           </div>
 
-          <!-- Lien de démonstration -->
+          <!-- Notification personnalisée -->
+          <Transition name="notification-slide">
+            <div v-if="showNotification" class="custom-notification">
+              <div class="notification-header">
+                <span class="notification-icon">🔒</span>
+                <span class="notification-title">Accès Anticipé</span>
+                <button @click="closeNotification" class="notification-close">&times;</button>
+              </div>
+              <div class="notification-message">
+                Veuillez vous connecter avec vos identifiants pour accéder au tableau de bord. 
+                La démo est temporairement désactivée pour des raisons de sécurité.
+              </div>
+              <div class="notification-progress"></div>
+            </div>
+          </Transition>
+
+          <!-- Bouton démo -->
           <div class="demo-section">
-            <button type="button" @click="goToDashboard" class="demo-btn">
+            <button type="button" @click="handleDemoClick" class="demo-btn">
               🚀 Accéder au tableau de bord (démo)
             </button>
           </div>
@@ -107,9 +123,9 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
-import { authService } from '@/services/api';  // Import du nouveau service auth depuis api.js
+import { authService } from '@/services/api';
 
 export default {
   name: 'LoginPage',
@@ -127,6 +143,7 @@ export default {
     const emailFocused = ref(false);
     const passwordFocused = ref(false);
     const errorMessage = ref('');
+    const showNotification = ref(false);
 
     // Références pour les champs input
     const emailInput = ref(null);
@@ -138,7 +155,9 @@ export default {
       
       // Focus automatique sur le champ email si vide
       if (!loginData.value.email && emailInput.value) {
-        emailInput.value.focus();
+        nextTick(() => {
+          emailInput.value.focus();
+        });
       }
     });
 
@@ -158,10 +177,6 @@ export default {
         }
         
         console.log('🔐 Identifiants chargés depuis la mémoire');
-
-        // Pré-remplissage optionnel pour tester le nouvel utilisateur (commente si pas besoin)
-        // loginData.value.email = 'ornellaclaudia0@gmail.com';
-        // loginData.value.password = 'TonMotDePasseEnClair';  // Remplace par le vrai MDP clair
       }
     };
 
@@ -173,7 +188,6 @@ export default {
         localStorage.setItem('savedPassword', loginData.value.password);
         console.log('💾 Identifiants sauvegardés');
       } else {
-        // Supprimer les identifiants sauvegardés si "Se souvenir de moi" est décoché
         localStorage.removeItem('rememberMe');
         localStorage.removeItem('savedEmail');
         localStorage.removeItem('savedPassword');
@@ -182,7 +196,6 @@ export default {
     };
 
     const handleLogin = async () => {
-      // Réinitialiser le message d'erreur
       errorMessage.value = '';
 
       if (!loginData.value.email || !loginData.value.password) {
@@ -193,42 +206,48 @@ export default {
       loading.value = true;
       
       try {
-        // Utilisation du service auth centralisé via Axios
         const data = await authService.login(loginData.value.email, loginData.value.password);
 
         if (data.success) {
-          // Authentification réussie
           localStorage.setItem('isAuthenticated', 'true');
           localStorage.setItem('userEmail', loginData.value.email);
           localStorage.setItem('userData', JSON.stringify(data.user));
-          
-          // Sauvegarder ou supprimer les identifiants selon le choix "Se souvenir de moi"
           saveCredentials();
-          
-          // Rediriger vers le tableau de bord
           router.push('/home');
         } else {
-          // Échec de l'authentification
           errorMessage.value = data.error || 'Email ou mot de passe incorrect';
         }
       } catch (error) {
         console.error('Erreur de connexion:', error);
-        // Gestion centralisée via intercepteurs Axios
-        errorMessage.value = error.message || 'Erreur de connexion au serveur. Vérifiez que le serveur PHP est démarré.';
+        errorMessage.value = error.message || 'Erreur de connexion au serveur.';
       } finally {
         loading.value = false;
       }
     };
 
-    const goToDashboard = () => {
-      localStorage.setItem('isAuthenticated', 'true');
-      localStorage.setItem('userEmail', 'demo@coachpro.com');
-      localStorage.setItem('userData', JSON.stringify({
-        id: 0,
-        email: 'demo@coachpro.com',
-        name: 'Utilisateur Démo'
-      }));
-      router.push('/home');
+    const handleDemoClick = () => {
+      // Afficher la notification personnalisée
+      showNotification.value = true;
+      
+      // Effet visuel sur le bouton
+      const demoBtn = document.querySelector('.demo-btn');
+      if (demoBtn) {
+        demoBtn.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+          demoBtn.style.transform = '';
+        }, 150);
+      }
+
+      // Auto-close après 5 secondes
+      setTimeout(() => {
+        closeNotification();
+      }, 5000);
+
+      console.log('🚫 Tentative d\'accès démo bloquée avec notification personnalisée');
+    };
+
+    const closeNotification = () => {
+      showNotification.value = false;
     };
 
     return {
@@ -239,31 +258,33 @@ export default {
       emailFocused,
       passwordFocused,
       errorMessage,
+      showNotification,
       emailInput,
       passwordInput,
       handleLogin,
-      goToDashboard
+      handleDemoClick,
+      closeNotification
     };
   }
 };
 </script>
 
 <style scoped>
-/* Ton style existant reste inchangé – je le recopile tel quel pour complétude */
+/* Styles existants inchangés */
 * {
   box-sizing: border-box;
 }
 
 .login-container {
   display: flex;
-  min-height: 90vh; /* Hauteur minimale pour desktop */
-  max-height: 100vh; /* Limite la hauteur à la fenêtre */
+  min-height: 90vh;
+  max-height: 100vh;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   position: relative;
-  overflow: hidden; /* Pas de défilement par défaut */
+  overflow: hidden;
   border-radius: 20px;
-  margin: 10px; /* Réduire la marge pour éviter le débordement */
+  margin: 10px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
 }
 
@@ -287,7 +308,7 @@ export default {
   100% { transform: translate(-50px, -50px) rotate(360deg); }
 }
 
-/* Section gauche avec fond */
+/* Section gauche */
 .login-left {
   flex: 1;
   background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
@@ -330,7 +351,7 @@ export default {
   line-height: 1.6;
 }
 
-/* Section droite avec formulaire */
+/* Section droite */
 .login-right {
   flex: 1;
   background: #ffffff;
@@ -367,7 +388,7 @@ export default {
   font-size: 1rem;
 }
 
-/* Formulaire */
+/* Formulaire - styles inchangés */
 .login-form {
   width: 100%;
   animation: fadeInUp 0.6s ease-out 0.4s both;
@@ -467,7 +488,6 @@ export default {
   background: rgba(102, 126, 234, 0.1);
 }
 
-/* Options du formulaire */
 .form-options {
   display: flex;
   justify-content: space-between;
@@ -535,7 +555,6 @@ export default {
   background: rgba(102, 126, 234, 0.1);
 }
 
-/* Bouton de connexion */
 .login-btn {
   width: 100%;
   padding: 16px;
@@ -579,14 +598,9 @@ export default {
   box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
 }
 
-.login-btn:active:not(:disabled) {
-  transform: translateY(-1px);
-}
-
 .login-btn:disabled {
   opacity: 0.7;
   cursor: not-allowed;
-  transform: none;
 }
 
 .btn-spinner {
@@ -603,7 +617,6 @@ export default {
   100% { transform: rotate(360deg); }
 }
 
-/* Message d'erreur */
 .error-message {
   background: #fee;
   color: #c33;
@@ -615,7 +628,101 @@ export default {
   animation: fadeInUp 0.6s ease-out;
 }
 
-/* Section démo */
+/* Notification personnalisée */
+.custom-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 350px;
+  max-width: 90vw;
+  background: linear-gradient(135deg, #f39c12, #e67e22);
+  color: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(243, 156, 18, 0.4);
+  z-index: 10000;
+  overflow: hidden;
+  animation: notificationSlideIn 0.3s ease-out;
+}
+
+.notification-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 20px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.notification-icon {
+  font-size: 1.2rem;
+  margin-right: 10px;
+}
+
+.notification-title {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.notification-close {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.2s ease;
+}
+
+.notification-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.notification-message {
+  padding: 10px 20px 20px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.notification-progress {
+  height: 3px;
+  background: rgba(255, 255, 255, 0.3);
+  animation: progressBar 5s linear forwards;
+}
+
+@keyframes progressBar {
+  from { width: 100%; background: rgba(255, 255, 255, 0.8); }
+  to { width: 0%; }
+}
+
+/* Animations de transition */
+.notification-slide-enter-active,
+.notification-slide-leave-active {
+  transition: all 0.3s ease;
+}
+
+.notification-slide-enter-from,
+.notification-slide-leave-to {
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+@keyframes notificationSlideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Bouton démo - aspect original */
 .demo-section {
   text-align: center;
   margin-bottom: 30px;
@@ -658,7 +765,6 @@ export default {
   box-shadow: 0 6px 20px rgba(39, 174, 96, 0.3);
 }
 
-/* Pied de page */
 .login-footer {
   text-align: center;
   padding-top: 20px;
@@ -668,172 +774,34 @@ export default {
   animation: fadeInUp 0.6s ease-out 1.2s both;
 }
 
-/* Animations */
+/* Animations existantes */
 @keyframes slideInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  from { opacity: 0; transform: translateX(-50px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes slideInRight {
-  from {
-    opacity: 0;
-    transform: translateX(50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  from { opacity: 0; transform: translateX(50px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* Responsive Design - Améliorations */
-@media (max-width: 1200px) {
-  .login-left {
-    padding: 30px;
-  }
-  .welcome-content h1 {
-    font-size: 2.2rem;
-  }
-  .welcome-content p {
-    font-size: 1.1rem;
-  }
-  .login-right {
-    padding: 30px;
-  }
-}
-
-@media (max-width: 1024px) {
-  .login-left {
-    padding: 25px;
-  }
-  .welcome-content h1 {
-    font-size: 2rem;
-  }
-  .welcome-content p {
-    font-size: 1rem;
-  }
-  .login-right {
-    padding: 25px;
-  }
-  .login-form-container {
-    max-width: 350px;
-  }
-  .form-header h2 {
-    font-size: 1.8rem;
-  }
-}
-
+/* Responsive - simplifié */
 @media (max-width: 768px) {
+  .custom-notification {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    width: auto;
+  }
+  
   .login-container {
     flex-direction: column;
-    height: auto;
-    min-height: auto;
     margin: 5px;
-    overflow: hidden;
-  }
-  .login-left {
-    min-height: 100px;
-    padding: 10px;
-    width: 100%;
-  }
-  .login-right {
-    padding: 10px;
-    width: 100%;
-  }
-  .login-form-container {
-    max-width: 100%;
-    padding: 0 8px;
-  }
-  .form-header {
-    margin-bottom: 20px;
-  }
-  .form-options {
-    flex-direction: column;
-    gap: 6px;
-    align-items: flex-start;
-    margin-bottom: 15px;
-  }
-  .login-btn, .demo-btn {
-    font-size: 0.85rem;
-    padding: 10px;
-    margin-bottom: 10px;
-  }
-  .login-container::before {
-    animation: none;
-    background: none;
-  }
-}
-
-@media (max-width: 480px) {
-  .login-left {
-    min-height: 80px;
-    padding: 8px;
-  }
-  .welcome-content h1 {
-    font-size: 1.3rem;
-    margin-bottom: 8px;
-  }
-  .welcome-content p {
-    font-size: 0.75rem;
-    line-height: 1.4;
-  }
-  .login-form-container {
-    padding: 0 5px;
-  }
-  .form-header {
-    margin-bottom: 15px;
-  }
-  .form-header h2 {
-    font-size: 1.3rem;
-  }
-  .form-header p {
-    font-size: 0.8rem;
-  }
-  .input-group {
-    margin-bottom: 10px;
-  }
-  .input-label {
-    font-size: 0.8rem;
-    margin-bottom: 5px;
-  }
-  .form-input {
-    font-size: 0.85rem;
-    padding: 8px 8px 8px 30px;
-  }
-  .input-icon {
-    left: 8px;
-    font-size: 0.85rem;
-  }
-  .password-toggle {
-    right: 8px;
-    font-size: 0.85rem;
-  }
-  .login-btn, .demo-btn {
-    padding: 8px;
-    font-size: 0.8rem;
-  }
-  .login-footer {
-    font-size: 0.65rem;
-    padding-top: 8px;
-  }
-  .login-container::before {
-    background-size: 20px 20px;
   }
 }
 </style>

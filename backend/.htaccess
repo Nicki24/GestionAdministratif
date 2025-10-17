@@ -1,0 +1,27 @@
+# --- Activer le module de réécriture ---
+RewriteEngine On
+
+# --- Gérer les en-têtes CORS (pour Vue.js) ---
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+    Header set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
+</IfModule>
+
+# --- Réponse directe aux requêtes OPTIONS (CORS preflight) ---
+RewriteCond %{REQUEST_METHOD} OPTIONS
+RewriteRule ^ - [R=200,L]
+
+# --- Rediriger vers fichiers PHP correspondants (ex: /bordereau_api -> /bordereau_api.php) ---
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ $1.php [QSA,L]
+
+# --- Bloquer les accès directs aux fichiers sensibles ---
+<Files "config/db.php">
+    Require all denied
+</Files>
+
+<FilesMatch "\.(sql|bak|ini|log)$">
+    Require all denied
+</FilesMatch>

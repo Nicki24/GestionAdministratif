@@ -9,7 +9,7 @@
       </div>
       <button 
         class="btn-primary" 
-        @click="showAddModal = true" 
+        @click="openAddModal" 
         :disabled="loading || !canCreate"
         v-if="canCreate"
       >
@@ -61,7 +61,7 @@
         <p v-else>Commencez par ajouter une banque pour {{ currentMonthYear }}</p>
         <button 
           class="btn-primary" 
-          @click="showAddModal = true" 
+          @click="openAddModal" 
           :disabled="loading || !canCreate"
           v-if="canCreate"
         >
@@ -255,11 +255,13 @@ export default {
     filteredBanques() {
       let result = [...this.banques];
       
-      // Filtrer par mois et année actuels
-      result = result.filter(b => {
-        const date = new Date(b.date_creation);
-        return date.getMonth() + 1 === this.currentMonth && date.getFullYear() === this.currentYear;
-      });
+      // Appliquer le filtre par mois seulement si aucun filtre de recherche n'est actif
+      if (!this.searchQuery) {
+        result = result.filter(b => {
+          const date = new Date(b.date_creation);
+          return date.getMonth() + 1 === this.currentMonth && date.getFullYear() === this.currentYear;
+        });
+      }
 
       if (this.searchQuery) {
         const query = this.searchQuery.toLowerCase();
@@ -294,6 +296,9 @@ export default {
         'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
       ];
       return `${months[this.currentMonth - 1]} ${this.currentYear}`;
+    },
+    maxId() {
+      return this.banques.reduce((max, b) => Math.max(max, b.id_banque || 0), 0);
     },
     // NOUVEAU: Permissions basées sur l'utilisateur
     canCreate() {
@@ -502,8 +507,19 @@ export default {
       this.idError = '';
       this.error = null;
     },
+    openAddModal() {
+      this.isEditing = false;
+      this.formData = {
+        id_banque: this.maxId + 1 || 1,
+        nom: '',
+        section: ''
+      };
+      this.idError = '';
+      this.error = null;
+      this.showAddModal = true;
+    },
     nextPage() {
-      if (this.currentPage < this.totalPages && !this.loading) this.currentPage++;
+      if (this.currentPage < this.totalPages && !this.loading) this.currentPage++
     },
     prevPage() {
       if (this.currentPage > 1 && !this.loading) this.currentPage--;
